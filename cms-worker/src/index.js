@@ -35,6 +35,7 @@ export default {
           return await saveInquiry(request, env, corsHeaders);
 
         case "GET /api/inquiries":
+        case "POST /api/inquiries/list":
           return await getInquiries(request, env, corsHeaders);
 
         case "PUT /api/inquiries":
@@ -267,6 +268,11 @@ async function handleInteraction(request, env, corsHeaders) {
 
 async function getAnalyticsReport(request, env, corsHeaders) {
   try {
+    const body = await request.json().catch(() => ({}));
+    const auth = requireAuth(body, env);
+    if (!auth.ok) {
+      return jsonResponse({ success: false, error: auth.error }, 401, corsHeaders);
+    }
     const url = new URL(request.url);
     const days = parseInt(url.searchParams.get("days") || "7", 10);
     const cutoff = new Date(Date.now() - days * 86400000).toISOString();

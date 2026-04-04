@@ -751,9 +751,9 @@ async function handleFormSubmit(e, type) {
     // 2. Open WhatsApp
     let msg = '';
     if (type === 'checklist') {
-        msg = `你好，我是${data.name}，電話：${data.phone}${data.email ? '，電郵：' + data.email : ''}${data.company ? '，公司：' + data.company : ''}。我想索取商戶申請文件清單，謝謝。`;
+        msg = `你好，我是${data.name}。\n電話：${data.phone}${data.email ? '\n電郵：' + data.email : ''}${data.company ? '\n公司：' + data.company : ''}\n\n我想索取商戶申請文件清單，謝謝。`;
     } else {
-        msg = `你好，我是${data.name}，電話：${data.phone}${data.email ? '，電郵：' + data.email : ''}${data.company ? '，公司：' + data.company : ''}${data.monthlyRevenue ? '，月營業額約 ' + data.monthlyRevenue : ''}。我有興趣了解駿匯聯的收款方案，請聯絡我，謝謝。`;
+        msg = `你好，我是${data.name}。\n電話：${data.phone}${data.email ? '\n電郵：' + data.email : ''}${data.company ? '\n公司：' + data.company : ''}${data.monthlyRevenue ? '\n月營業額約：' + data.monthlyRevenue : ''}\n\n我有興趣了解駿匯聯的收款方案，請聯絡我，謝謝。`;
     }
     const url = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg);
     window.open(url, '_blank');
@@ -771,18 +771,13 @@ async function handleFormSubmit(e, type) {
    Analytics Tracking
    ======================================== */
 function trackPageView() {
-    try {
-        fetch(API_BASE_URL + '/api/analytics/pageview', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                page: location.pathname + location.search,
-                referrer: document.referrer,
-                userAgent: navigator.userAgent,
-                sessionId: getSessionId()
-            })
-        }).catch(() => {});
-    } catch (e) {}
+    const payload = JSON.stringify({
+        page: location.pathname + location.search,
+        referrer: document.referrer,
+        userAgent: navigator.userAgent,
+        sessionId: getSessionId()
+    });
+    sendAnalytics('/api/analytics/pageview', payload);
 }
 
 function trackEvent(type, data) {
@@ -795,19 +790,36 @@ function trackEvent(type, data) {
             if (type === 'modal_open') fbq('track', 'Lead');
             if (type === 'lead_submit') fbq('track', 'Contact');
         }
-        // Also send to our worker analytics
-        fetch(API_BASE_URL + '/api/analytics/interaction', {
+    } catch (e) {}
+    const payload = JSON.stringify({
+        type: type === 'lead_submit' ? 'form_submit' : 'click',
+        element: data.label || type,
+        page: location.pathname,
+        value: data.label || '',
+        sessionId: getSessionId()
+    });
+    sendAnalytics('/api/analytics/interaction', payload);
+}
+
+function sendAnalytics(endpoint, payload) {
+    const url = API_BASE_URL + endpoint;
+    try {
+        if (navigator.sendBeacon) {
+            const blob = new Blob([payload], { type: 'application/json' });
+            const ok = navigator.sendBeacon(url, blob);
+            if (ok) return;
+        }
+    } catch (e) {}
+    try {
+        fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                type: type === 'lead_submit' ? 'form_submit' : 'click',
-                element: data.label || type,
-                page: location.pathname,
-                value: data.label || '',
-                sessionId: getSessionId()
-            })
-        }).catch(() => {});
-    } catch (e) {}
+            body: payload,
+            keepalive: true
+        }).catch((err) => { console.error('[Analytics]', err); });
+    } catch (e) {
+        console.error('[Analytics]', e);
+    }
 }
 
 function getSessionId() {

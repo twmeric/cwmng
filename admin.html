@@ -16,7 +16,8 @@
             --bg-body: #faf8f3; --bg-panel: #ffffff; --bg-card: #fefdfb; --bg-input: #ffffff; --bg-hover: #f4f4f5;
             --border: #e4e4e7;
         }
-        body { font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif; background: var(--bg-body); transition: background 0.3s; }
+        body { font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif; background: var(--bg-body); color: #fafafa; transition: background 0.3s; }
+        [data-theme="light"] body { color: #18181b; }
 
         .text-main { color: #fafafa; }
         .text-sub { color: #a1a1aa; }
@@ -721,7 +722,7 @@
             btn.disabled = true;
             document.getElementById('inquiriesList').innerHTML = '<div class="text-center py-12 text-muted">載入中...</div>';
             try {
-                const res = await fetch(API_BASE_URL + '/api/inquiries', {
+                const res = await fetch(API_BASE_URL + '/api/inquiries/list', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ password: currentPassword })

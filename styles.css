@@ -203,6 +203,10 @@ body {
     background: linear-gradient(135deg, var(--accent-blue-light), var(--accent-gold));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
+.text-gradient-red {
+    background: linear-gradient(135deg, #ff4d4f, #ff9c6e);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
 
 .hero-subtitle {
     font-size: 1.125rem; color: var(--text-secondary); margin-bottom: 2rem;
