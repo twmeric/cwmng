@@ -343,7 +343,7 @@ body {
 
 /* Marquee */
 .marquee-section {
-    background: #F37021; border-top: none; border-bottom: none;
+    background: var(--accent-blue-light); border-top: none; border-bottom: none;
     padding: 1.25rem 0; overflow: hidden;
 }
 .marquee-track { display: flex; width: max-content; animation: marquee 28s linear infinite; }
