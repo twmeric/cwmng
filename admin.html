@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant" data-theme="dark">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,23 +7,39 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --gold: #d4a853; --gold-hover: #e8c87a; --dark-bg: #0a0a0a; --panel-bg: #111111; --card-bg: #161616; --border: #27272a; }
-        [data-theme="light"] { --dark-bg: #faf8f3; --panel-bg: #ffffff; --card-bg: #fefdfb; --border: #e4e4e7; }
-        body { font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif; background: var(--dark-bg); color: #fafafa; transition: background 0.3s, color 0.3s; }
-        [data-theme="light"] body { color: #18181b; }
-        .sidebar { background: var(--panel-bg); border-right: 1px solid var(--border); transition: all 0.3s; }
+        :root {
+            --gold: #d4a853; --gold-hover: #e8c87a;
+            --bg-body: #0a0a0a; --bg-panel: #111111; --bg-card: #161616; --bg-input: #0a0a0a; --bg-hover: #1a1a1a;
+            --border: #27272a;
+        }
+        [data-theme="light"] {
+            --bg-body: #faf8f3; --bg-panel: #ffffff; --bg-card: #fefdfb; --bg-input: #ffffff; --bg-hover: #f4f4f5;
+            --border: #e4e4e7;
+        }
+        body { font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif; background: var(--bg-body); transition: background 0.3s; }
+
+        .text-main { color: #fafafa; }
+        .text-sub { color: #a1a1aa; }
+        .text-muted { color: #71717a; }
+        [data-theme="light"] .text-main { color: #18181b; }
+        [data-theme="light"] .text-sub { color: #52525b; }
+        [data-theme="light"] .text-muted { color: #a1a1aa; }
+
+        .bg-panel { background: var(--bg-panel); }
+        .bg-card { background: var(--bg-card); }
+        .border-theme { border-color: var(--border); }
+        .input-theme { background: var(--bg-input); border: 1px solid var(--border); color: inherit; }
+        .input-theme:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,168,83,0.12); }
+        .hover-theme:hover { background: var(--bg-hover); }
+
         .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #a1a1aa; transition: all 0.2s; }
         .nav-item:hover { background: #1a1a1a; color: #fff; }
         [data-theme="light"] .nav-item:hover { background: #f4f4f5; color: #18181b; }
         .nav-item.active { background: var(--gold); color: #1e3a5f; }
-        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 1rem; }
-        .input-dark { background: #0a0a0a; border: 1px solid var(--border); color: #fafafa; }
-        [data-theme="light"] .input-dark { background: #fff; color: #18181b; }
-        .json-editor { font-family: 'Roboto Mono', monospace; min-height: 60vh; }
+
         .gold-btn { background: var(--gold); color: #1e3a5f; }
         .gold-btn:hover { background: var(--gold-hover); }
-        .inquiry-card { transition: all 0.2s; }
-        .inquiry-card:hover { border-color: var(--gold); }
+
         .status-pending { background: rgba(234,179,8,0.15); color: #facc15; border: 1px solid rgba(234,179,8,0.25); }
         .status-contacted { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.25); }
         .status-completed { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
@@ -32,7 +48,8 @@
         [data-theme="light"] .status-contacted { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
         [data-theme="light"] .status-completed { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
         [data-theme="light"] .status-closed { background: #f4f4f5; color: #52525b; border-color: #e4e4e7; }
-        .fade-in { animation: fadeIn 0.3s ease; }
+
+        .fade-in { animation: fadeIn 0.25s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -47,18 +64,18 @@
     <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center" style="background: linear-gradient(135deg, #0a0a0a 0%, #141414 50%, #0f0f0f 100%);">
         <div class="w-full max-w-md p-6">
             <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-4 shadow-lg" style="background: var(--gold);">
-                    <span class="text-2xl font-bold text-[#1e3a5f]">C</span>
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4 shadow-lg overflow-hidden" style="background: var(--gold);">
+                    <img src="images/textless/216808905.png" alt="Logo" class="w-20 h-20 object-cover">
                 </div>
                 <h1 class="text-2xl font-bold text-white">CWMNG</h1>
                 <p class="text-sm text-gray-400 mt-1">網站管理系統</p>
             </div>
-            <div class="card p-8">
+            <div class="bg-panel border border-theme rounded-2xl p-8">
                 <h2 class="text-xl font-bold text-white mb-6 text-center" id="loginTitle">管理員登入</h2>
                 <form id="loginForm" class="space-y-5">
                     <div>
                         <label class="block text-sm font-medium text-gray-400 mb-2">密碼</label>
-                        <input type="password" id="adminPassword" class="w-full px-4 py-3 rounded-lg input-dark outline-none focus:ring-2 focus:ring-[#d4a853]" placeholder="請輸入管理密碼" required>
+                        <input type="password" id="adminPassword" class="w-full px-4 py-3 rounded-lg input-theme" placeholder="請輸入管理密碼" required>
                     </div>
                     <button type="submit" class="w-full gold-btn font-bold py-3 rounded-lg transition flex items-center justify-center gap-2">
                         <i class="fas fa-sign-in-alt"></i> 登入
@@ -73,134 +90,132 @@
     <!-- App -->
     <div id="app" class="hidden flex min-h-screen">
         <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar fixed h-full z-30 flex flex-col" style="width: 260px;">
-            <div class="h-16 flex items-center gap-3 px-6 border-b border-[var(--border)]">
-                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--gold);"><span class="font-bold text-[#1e3a5f]">C</span></div>
-                <span class="font-bold text-lg">CWMNG CMS</span>
+        <aside id="sidebar" class="bg-panel border-r border-theme fixed h-full z-30 flex flex-col transition-all" style="width: 260px;">
+            <div class="h-16 flex items-center gap-3 px-5 border-b border-theme">
+                <div class="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0" style="background: var(--gold);">
+                    <img src="images/textless/216808905.png" alt="Logo" class="w-10 h-10 object-cover">
+                </div>
+                <span class="font-bold text-lg text-main">CWMNG CMS</span>
             </div>
             <nav class="flex-1 py-4 px-3 space-y-1">
-                <a href="#" class="nav-item active" data-tab="dashboard"><i class="fas fa-th-large w-5"></i> 儀表板</a>
-                <a href="#" class="nav-item" data-tab="content"><i class="fas fa-edit w-5"></i> 內容管理</a>
-                <a href="#" class="nav-item" data-tab="inquiries"><i class="fas fa-inbox w-5"></i> 客戶查詢 <span id="sidebarBadge" class="hidden ml-auto text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full">0</span></a>
-                <a href="#" class="nav-item" data-tab="analytics"><i class="fas fa-chart-bar w-5"></i> 網站分析</a>
-                <a href="#" class="nav-item" data-tab="deploy"><i class="fas fa-rocket w-5"></i> 一鍵部署</a>
+                <a href="#" class="nav-item active" data-tab="dashboard"><i class="fas fa-th-large w-5"></i> <span>儀表板</span></a>
+                <a href="#" class="nav-item" data-tab="content"><i class="fas fa-edit w-5"></i> <span>內容管理</span></a>
+                <a href="#" class="nav-item" data-tab="inquiries"><i class="fas fa-inbox w-5"></i> <span>客戶查詢</span> <span id="sidebarBadge" class="hidden ml-auto text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full">0</span></a>
+                <a href="#" class="nav-item" data-tab="analytics"><i class="fas fa-chart-bar w-5"></i> <span>網站分析</span></a>
+                <a href="#" class="nav-item" data-tab="deploy"><i class="fas fa-rocket w-5"></i> <span>一鍵部署</span></a>
             </nav>
-            <div class="p-4 border-t border-[var(--border)] space-y-2">
+            <div class="p-4 border-t border-theme space-y-2">
                 <button onclick="toggleTheme()" class="nav-item w-full justify-start">
                     <i class="fas fa-moon w-5" id="themeIcon"></i> <span id="themeLabel">切換亮色</span>
                 </button>
                 <button onclick="logout()" class="nav-item w-full justify-start">
-                    <i class="fas fa-sign-out-alt w-5"></i> 登出
+                    <i class="fas fa-sign-out-alt w-5"></i> <span>登出</span>
                 </button>
             </div>
         </aside>
 
         <!-- Main -->
         <div id="mainWrap" class="flex-1 flex flex-col transition-all" style="margin-left: 260px;">
-            <!-- Header -->
-            <header class="h-16 card border-t-0 border-x-0 rounded-none flex items-center justify-between px-6 sticky top-0 z-20">
+            <header class="h-16 bg-panel border-b border-theme flex items-center justify-between px-6 sticky top-0 z-20">
                 <div class="flex items-center gap-3">
-                    <button id="sidebarToggle" class="p-2 rounded-lg hover:bg-[#1a1a1a] text-gray-400 transition">
+                    <button id="sidebarToggle" class="p-2 rounded-lg hover-theme text-sub transition">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <span class="font-semibold" id="pageTitle">儀表板</span>
+                    <span class="font-semibold text-main" id="pageTitle">儀表板</span>
                 </div>
                 <div class="flex items-center gap-4">
-                    <a href="/" target="_blank" class="text-sm text-gray-400 hover:text-[var(--gold)] transition flex items-center gap-1">
-                        <i class="fas fa-external-link-alt"></i> 查看網站
+                    <a href="/" target="_blank" class="text-sm text-sub hover:text-[var(--gold)] transition flex items-center gap-1">
+                        <i class="fas fa-external-link-alt"></i> <span class="hidden sm:inline">查看網站</span>
                     </a>
                     <div class="w-px h-6 bg-[var(--border)]"></div>
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" style="background: var(--gold); color: #1e3a5f;">A</div>
-                        <span class="text-sm font-medium text-gray-300 hidden sm:inline">管理員</span>
+                        <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0" style="background: var(--gold);">
+                            <img src="images/textless/216808905.png" alt="Admin" class="w-8 h-8 object-cover">
+                        </div>
+                        <span class="text-sm font-medium text-sub hidden sm:inline">管理員</span>
                     </div>
                 </div>
             </header>
 
-            <!-- Content -->
             <main class="p-6 flex-1">
                 <!-- Dashboard -->
                 <div id="panel-dashboard" class="tab-panel fade-in space-y-6">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
-                            <h1 class="text-2xl font-bold">歡迎回來，管理員</h1>
-                            <p class="text-sm text-gray-400 mt-1">在這裡管理網站內容、查看客戶查詢及分析數據。</p>
+                            <h1 class="text-2xl font-bold text-main">歡迎回來，管理員</h1>
+                            <p class="text-sm text-sub mt-1">在這裡管理網站內容、查看客戶查詢及分析數據。</p>
                         </div>
                         <div class="flex items-center gap-2" id="dashMessages"></div>
                     </div>
 
-                    <!-- Welcome Banner -->
                     <div class="rounded-2xl p-8 text-white" style="background: linear-gradient(135deg, #1e3a8a, #2d4a7c);">
                         <h2 class="text-2xl font-bold mb-2">CWMNG 管理後台</h2>
-                        <p class="text-gray-200">修改內容後網站會實時更新，無需重新部署。如需修改 HTML/CSS，請 Push 到 GitHub。</p>
+                        <p class="text-gray-200">修改 CMS 內容後網站會實時更新。如需修改 HTML/CSS，請 Push 到 GitHub。</p>
                     </div>
 
-                    <!-- Stats -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="dashStats">
-                        <div class="card p-5"><div class="text-2xl font-bold text-white" id="statServices">-</div><div class="text-sm text-gray-400">方案數量</div></div>
-                        <div class="card p-5"><div class="text-2xl font-bold text-[var(--gold)]" id="statInquiries">-</div><div class="text-sm text-gray-400">客戶查詢</div></div>
-                        <div class="card p-5"><div class="text-2xl font-bold text-blue-400" id="statPending">-</div><div class="text-sm text-gray-400">待跟進</div></div>
-                        <div class="card p-5"><div class="text-2xl font-bold text-green-400" id="statCompleted">-</div><div class="text-sm text-gray-400">已完成</div></div>
+                        <div class="bg-card border border-theme rounded-xl p-5"><div class="text-2xl font-bold text-main" id="statServices">-</div><div class="text-sm text-sub">方案數量</div></div>
+                        <div class="bg-card border border-theme rounded-xl p-5"><div class="text-2xl font-bold text-[var(--gold)]" id="statInquiries">-</div><div class="text-sm text-sub">客戶查詢</div></div>
+                        <div class="bg-card border border-theme rounded-xl p-5"><div class="text-2xl font-bold text-blue-400" id="statPending">-</div><div class="text-sm text-sub">待跟進</div></div>
+                        <div class="bg-card border border-theme rounded-xl p-5"><div class="text-2xl font-bold text-green-400" id="statCompleted">-</div><div class="text-sm text-sub">已完成</div></div>
                     </div>
 
-                    <!-- Quick Actions -->
-                    <div class="card p-6">
-                        <h2 class="text-lg font-bold mb-4">快速操作</h2>
+                    <div class="bg-card border border-theme rounded-xl p-6">
+                        <h2 class="text-lg font-bold text-main mb-4">快速操作</h2>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <button onclick="exportCMSData()" class="group flex items-center gap-3 p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                            <button onclick="exportCMSData()" class="group flex items-center gap-3 p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
                                 <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: #f97316;"><i class="fas fa-download"></i></div>
-                                <div class="text-left"><div class="font-semibold">導出數據</div><div class="text-xs text-gray-400">備份 CMS JSON</div></div>
+                                <div class="text-left"><div class="font-semibold text-main">導出數據</div><div class="text-xs text-muted">備份 CMS JSON</div></div>
                             </button>
-                            <button onclick="importCMSData()" class="group flex items-center gap-3 p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                            <button onclick="importCMSData()" class="group flex items-center gap-3 p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
                                 <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: #22c55e;"><i class="fas fa-upload"></i></div>
-                                <div class="text-left"><div class="font-semibold">導入數據</div><div class="text-xs text-gray-400">還原 CMS JSON</div></div>
+                                <div class="text-left"><div class="font-semibold text-main">導入數據</div><div class="text-xs text-muted">還原 CMS JSON</div></div>
                             </button>
-                            <button onclick="switchTab('deploy')" class="group flex items-center gap-3 p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                            <button onclick="switchTab('deploy')" class="group flex items-center gap-3 p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
                                 <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: #a855f7;"><i class="fas fa-rocket"></i></div>
-                                <div class="text-left"><div class="font-semibold">一鍵部署</div><div class="text-xs text-gray-400">觸發 GitHub Actions</div></div>
+                                <div class="text-left"><div class="font-semibold text-main">一鍵部署</div><div class="text-xs text-muted">觸發 GitHub Actions</div></div>
                             </button>
                         </div>
                         <input type="file" id="importFile" accept=".json" class="hidden" onchange="handleImportFile(this)">
                     </div>
 
-                    <!-- Feature Grid -->
-                    <div class="card p-6">
-                        <h2 class="text-lg font-bold mb-4">內容管理功能</h2>
+                    <div class="bg-card border border-theme rounded-xl p-6">
+                        <h2 class="text-lg font-bold text-main mb-4">內容管理功能</h2>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <a href="#" onclick="switchTab('content'); return false;" class="block p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                            <a href="#" onclick="switchTab('content'); setContentTab('site'); return false;" class="block p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-globe"></i></div>
+                                    <div><h3 class="font-bold text-main">網站資訊</h3><p class="text-sm text-sub">標題、聯絡方式、SEO</p></div>
+                                </div>
+                            </a>
+                            <a href="#" onclick="switchTab('content'); setContentTab('hero'); return false;" class="block p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
                                 <div class="flex items-start gap-3">
                                     <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-home"></i></div>
-                                    <div><h3 class="font-bold">Hero 區域</h3><p class="text-sm text-gray-400">標題、副標、CTA 按鈕</p></div>
+                                    <div><h3 class="font-bold text-main">首頁 Hero</h3><p class="text-sm text-sub">標題、副標、CTA</p></div>
                                 </div>
                             </a>
-                            <a href="#" onclick="switchTab('content'); return false;" class="block p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                            <a href="#" onclick="switchTab('content'); setContentTab('solutions'); return false;" class="block p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
                                 <div class="flex items-start gap-3">
                                     <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-box-open"></i></div>
-                                    <div><h3 class="font-bold">服務方案</h3><p class="text-sm text-gray-400">三種方案內容與價格</p></div>
+                                    <div><h3 class="font-bold text-main">服務方案</h3><p class="text-sm text-sub">三種方案內容與價格</p></div>
                                 </div>
                             </a>
-                            <a href="#" onclick="switchTab('content'); return false;" class="block p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                            <a href="#" onclick="switchTab('content'); setContentTab('testimonials'); return false;" class="block p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
                                 <div class="flex items-start gap-3">
                                     <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-comments"></i></div>
-                                    <div><h3 class="font-bold">客戶見證</h3><p class="text-sm text-gray-400">評價與作者資料</p></div>
+                                    <div><h3 class="font-bold text-main">客戶見證</h3><p class="text-sm text-sub">評價與作者資料</p></div>
                                 </div>
                             </a>
-                            <a href="#" onclick="switchTab('content'); return false;" class="block p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                            <a href="#" onclick="switchTab('content'); setContentTab('faq'); return false;" class="block p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
                                 <div class="flex items-start gap-3">
                                     <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-question-circle"></i></div>
-                                    <div><h3 class="font-bold">常見問題</h3><p class="text-sm text-gray-400">FAQ 內容編輯</p></div>
+                                    <div><h3 class="font-bold text-main">常見問題</h3><p class="text-sm text-sub">FAQ 內容編輯</p></div>
                                 </div>
                             </a>
-                            <a href="#" onclick="switchTab('content'); return false;" class="block p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
-                                <div class="flex items-start gap-3">
-                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-address-card"></i></div>
-                                    <div><h3 class="font-bold">聯絡資訊</h3><p class="text-sm text-gray-400">電話、電郵、WhatsApp</p></div>
-                                </div>
-                            </a>
-                            <a href="#" onclick="switchTab('inquiries'); return false;" class="block p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                            <a href="#" onclick="switchTab('inquiries'); return false;" class="block p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
                                 <div class="flex items-start gap-3">
                                     <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-inbox"></i></div>
-                                    <div><h3 class="font-bold">客戶查詢</h3><p class="text-sm text-gray-400">查看留痕與跟進狀態</p></div>
+                                    <div><h3 class="font-bold text-main">客戶查詢</h3><p class="text-sm text-sub">查看留痕與跟進狀態</p></div>
                                 </div>
                             </a>
                         </div>
@@ -211,26 +226,36 @@
                 <div id="panel-content" class="tab-panel hidden fade-in space-y-4">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div>
-                            <h2 class="text-xl font-bold">CMS 內容編輯器</h2>
-                            <p class="text-sm text-gray-400">直接編輯 JSON，儲存後即時生效。</p>
+                            <h2 class="text-xl font-bold text-main">內容管理</h2>
+                            <p class="text-sm text-sub">表單方式編輯 CMS 內容，更直觀不易出錯。</p>
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="formatJSON()" class="px-3 py-2 rounded-lg border border-[var(--border)] hover:bg-[#1a1a1a] text-sm transition"><i class="fas fa-code"></i> 格式化</button>
-                            <button onclick="saveCMS()" id="saveCmsBtn" class="px-4 py-2 rounded-lg gold-btn font-bold text-sm transition"><i class="fas fa-save"></i> 儲存變更</button>
-                        </div>
+                        <div id="contentSaveMsg" class="hidden text-sm px-3 py-1 rounded-lg"></div>
                     </div>
-                    <div class="card p-0 overflow-hidden">
-                        <textarea id="cmsEditor" class="json-editor w-full p-4 text-sm border-0 outline-none resize-y input-dark" spellcheck="false"></textarea>
+
+                    <!-- Content Tabs -->
+                    <div class="bg-card border border-theme rounded-xl p-2 flex flex-wrap gap-2">
+                        <button onclick="setContentTab('site')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="site">網站資訊</button>
+                        <button onclick="setContentTab('hero')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="hero">首頁 Hero</button>
+                        <button onclick="setContentTab('solutions')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="solutions">服務方案</button>
+                        <button onclick="setContentTab('pricing')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="pricing">定價比較</button>
+                        <button onclick="setContentTab('testimonials')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="testimonials">客戶見證</button>
+                        <button onclick="setContentTab('faq')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="faq">常見問題</button>
+                        <button onclick="setContentTab('cta')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="cta">CTA 區域</button>
+                        <button onclick="setContentTab('json')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="json">原始 JSON</button>
                     </div>
-                    <p id="cmsMessage" class="text-sm hidden"></p>
+
+                    <!-- Content Forms -->
+                    <div id="contentForms" class="bg-card border border-theme rounded-xl p-6">
+                        <!-- Injected by JS -->
+                    </div>
                 </div>
 
                 <!-- Inquiries -->
                 <div id="panel-inquiries" class="tab-panel hidden fade-in space-y-5">
                     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                         <div>
-                            <h2 class="text-xl font-bold">客戶查詢管理</h2>
-                            <p class="text-sm text-gray-400">查看和跟進所有客戶提交的查詢</p>
+                            <h2 class="text-xl font-bold text-main">客戶查詢管理</h2>
+                            <p class="text-sm text-sub">查看和跟進所有客戶提交的查詢</p>
                         </div>
                         <div class="flex items-center gap-3">
                             <div id="inqMessage" class="hidden text-sm px-3 py-2 rounded-lg"></div>
@@ -240,18 +265,16 @@
                         </div>
                     </div>
 
-                    <!-- Stats -->
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="inqStats">
-                        <div class="card p-4"><div class="text-2xl font-bold text-white" id="inqTotal">0</div><div class="text-sm text-gray-400">全部查詢</div></div>
-                        <div class="card p-4"><div class="text-2xl font-bold text-yellow-400" id="inqPending">0</div><div class="text-sm text-gray-400">待跟進</div></div>
-                        <div class="card p-4"><div class="text-2xl font-bold text-blue-400" id="inqContacted">0</div><div class="text-sm text-gray-400">已聯繫</div></div>
-                        <div class="card p-4"><div class="text-2xl font-bold text-green-400" id="inqCompleted">0</div><div class="text-sm text-gray-400">已完成</div></div>
+                        <div class="bg-card border border-theme rounded-xl p-4"><div class="text-2xl font-bold text-main" id="inqTotal">0</div><div class="text-sm text-sub">全部查詢</div></div>
+                        <div class="bg-card border border-theme rounded-xl p-4"><div class="text-2xl font-bold text-yellow-400" id="inqPending">0</div><div class="text-sm text-sub">待跟進</div></div>
+                        <div class="bg-card border border-theme rounded-xl p-4"><div class="text-2xl font-bold text-blue-400" id="inqContacted">0</div><div class="text-sm text-sub">已聯繫</div></div>
+                        <div class="bg-card border border-theme rounded-xl p-4"><div class="text-2xl font-bold text-green-400" id="inqCompleted">0</div><div class="text-sm text-sub">已完成</div></div>
                     </div>
 
-                    <!-- Filter -->
-                    <div class="card p-4 flex items-center gap-4">
-                        <span class="text-sm text-gray-400">狀態篩選：</span>
-                        <select id="inqFilter" onchange="renderInquiries()" class="px-3 py-2 rounded-lg input-dark text-sm outline-none focus:ring-2 focus:ring-[var(--gold)]">
+                    <div class="bg-card border border-theme rounded-xl p-4 flex items-center gap-4">
+                        <span class="text-sm text-sub">狀態篩選：</span>
+                        <select id="inqFilter" onchange="renderInquiries()" class="px-3 py-2 rounded-lg input-theme text-sm outline-none focus:ring-2 focus:ring-[var(--gold)]">
                             <option value="all">全部</option>
                             <option value="pending">待跟進</option>
                             <option value="contacted">已聯繫</option>
@@ -260,9 +283,8 @@
                         </select>
                     </div>
 
-                    <!-- List -->
                     <div id="inquiriesList" class="space-y-4">
-                        <div class="text-center py-12 text-gray-500">載入中...</div>
+                        <div class="text-center py-12 text-muted">載入中...</div>
                     </div>
                 </div>
 
@@ -270,27 +292,27 @@
                 <div id="panel-analytics" class="tab-panel hidden fade-in space-y-5">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h2 class="text-xl font-bold">網站分析</h2>
-                            <p class="text-sm text-gray-400">查看最近 7 日的瀏覽與互動數據</p>
+                            <h2 class="text-xl font-bold text-main">網站分析</h2>
+                            <p class="text-sm text-sub">查看最近 7 日的瀏覽與互動數據</p>
                         </div>
                         <button onclick="loadAnalytics()" class="px-4 py-2 rounded-lg gold-btn font-bold text-sm transition"><i class="fas fa-sync-alt"></i> 刷新</button>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="card p-5"><div class="text-2xl font-bold text-white" id="aPv">-</div><div class="text-sm text-gray-400">頁面瀏覽 (7日)</div></div>
-                        <div class="card p-5"><div class="text-2xl font-bold text-[var(--gold)]" id="aInt">-</div><div class="text-sm text-gray-400">互動事件 (7日)</div></div>
-                        <div class="card p-5"><div class="text-2xl font-bold text-blue-400" id="aSessions">-</div><div class="text-sm text-gray-400">獨立訪問</div></div>
+                        <div class="bg-card border border-theme rounded-xl p-5"><div class="text-2xl font-bold text-main" id="aPv">-</div><div class="text-sm text-sub">頁面瀏覽 (7日)</div></div>
+                        <div class="bg-card border border-theme rounded-xl p-5"><div class="text-2xl font-bold text-[var(--gold)]" id="aInt">-</div><div class="text-sm text-sub">互動事件 (7日)</div></div>
+                        <div class="bg-card border border-theme rounded-xl p-5"><div class="text-2xl font-bold text-blue-400" id="aSessions">-</div><div class="text-sm text-sub">獨立訪問</div></div>
                     </div>
-                    <div class="card p-6">
-                        <h3 class="font-bold mb-3">熱門頁面</h3>
-                        <div id="aPages" class="space-y-2 text-sm text-gray-300"></div>
+                    <div class="bg-card border border-theme rounded-xl p-6">
+                        <h3 class="font-bold text-main mb-3">熱門頁面</h3>
+                        <div id="aPages" class="space-y-2 text-sm text-sub"></div>
                     </div>
                 </div>
 
                 <!-- Deploy -->
                 <div id="panel-deploy" class="tab-panel hidden fade-in space-y-5">
                     <div class="max-w-2xl">
-                        <h2 class="text-xl font-bold mb-2">重新部署網站</h2>
-                        <p class="text-gray-400 mb-6">修改 CMS 內容後會自動生效；若修改了 HTML/CSS/JS，請觸發重新部署。</p>
+                        <h2 class="text-xl font-bold text-main mb-2">重新部署網站</h2>
+                        <p class="text-sub mb-6">修改 CMS 內容後會自動生效；若修改了 HTML/CSS/JS，請觸發重新部署。</p>
                         <button onclick="triggerDeploy()" id="deployBtn" class="px-6 py-3 rounded-lg gold-btn font-bold transition flex items-center gap-2">
                             <i class="fas fa-rocket"></i> 觸發 GitHub Actions 部署
                         </button>
@@ -305,6 +327,7 @@
         let currentPassword = '';
         let cmsData = {};
         let inquiries = [];
+        let currentContentTab = 'site';
 
         // Auth
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -330,7 +353,6 @@
                 document.getElementById('loginError').classList.remove('hidden');
             }
         });
-
         const savedPwd = localStorage.getItem('cwmng_admin_password');
         if (savedPwd) document.getElementById('adminPassword').value = savedPwd;
 
@@ -347,9 +369,9 @@
             sidebarOpen = !sidebarOpen;
             sidebar.style.width = sidebarOpen ? '260px' : '72px';
             mainWrap.style.marginLeft = sidebarOpen ? '260px' : '72px';
-            sidebar.querySelectorAll('.nav-item span, .nav-item #sidebarBadge').forEach(el => {
-                el.style.display = sidebarOpen ? 'inline-flex' : 'none';
-            });
+            sidebar.querySelectorAll('.nav-item span').forEach(el => el.style.display = sidebarOpen ? 'inline' : 'none');
+            const badge = document.getElementById('sidebarBadge');
+            if (badge) badge.style.display = sidebarOpen && !badge.classList.contains('hidden') ? 'inline-flex' : 'none';
         });
 
         function switchTab(tab) {
@@ -360,8 +382,8 @@
             const titles = { dashboard: '儀表板', content: '內容管理', inquiries: '客戶查詢', analytics: '網站分析', deploy: '一鍵部署' };
             document.getElementById('pageTitle').textContent = titles[tab];
             if (tab === 'inquiries') renderInquiries();
+            if (tab === 'content') renderContentForms();
         }
-
         document.querySelectorAll('.nav-item[data-tab]').forEach(el => {
             el.addEventListener('click', (e) => { e.preventDefault(); switchTab(el.dataset.tab); });
         });
@@ -391,7 +413,7 @@
         (function initTheme() {
             const saved = localStorage.getItem('cwmng_theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = saved || (prefersDark ? 'dark' : 'dark'); // default dark as requested
+            const theme = saved || (prefersDark ? 'dark' : 'dark');
             document.documentElement.setAttribute('data-theme', theme);
             updateThemeUI();
         })();
@@ -408,69 +430,263 @@
             try {
                 const res = await fetch(API_BASE_URL + '/api/cms/data');
                 cmsData = await res.json();
-                document.getElementById('cmsEditor').value = JSON.stringify(cmsData, null, 2);
+                renderContentForms();
                 updateDashStats();
             } catch (err) {}
         }
 
-        async function saveCMS() {
-            const btn = document.getElementById('saveCmsBtn');
-            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 儲存中...';
+        // Content Management Forms
+        function setContentTab(tab) {
+            currentContentTab = tab;
+            renderContentForms();
+        }
+
+        function renderContentForms() {
+            document.querySelectorAll('.content-tab-btn').forEach(b => {
+                if (b.dataset.ctab === currentContentTab) {
+                    b.className = 'content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm gold-btn';
+                } else {
+                    b.className = 'content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm text-sub hover-theme';
+                }
+            });
+            const container = document.getElementById('contentForms');
+            const renderers = {
+                site: renderSiteForm,
+                hero: renderHeroForm,
+                solutions: renderSolutionsForm,
+                pricing: renderPricingForm,
+                testimonials: renderTestimonialsForm,
+                faq: renderFaqForm,
+                cta: renderCtaForm,
+                json: renderJsonForm,
+            };
+            container.innerHTML = (renderers[currentContentTab] || renderSiteForm)();
+            attachFormListeners(container);
+        }
+
+        function attachFormListeners(container) {
+            container.querySelectorAll('input[data-path], textarea[data-path], select[data-path]').forEach(el => {
+                el.addEventListener('input', () => {
+                    const path = el.dataset.path;
+                    const value = el.value;
+                    setDeepValue(cmsData, path, value);
+                });
+            });
+        }
+
+        function setDeepValue(obj, path, value) {
+            const keys = path.split('.');
+            let cur = obj;
+            for (let i = 0; i < keys.length - 1; i++) {
+                const k = keys[i];
+                if (!cur[k]) cur[k] = {};
+                cur = cur[k];
+            }
+            cur[keys[keys.length - 1]] = value;
+        }
+
+        function inputRow(label, path, type='text', extra='') {
+            const val = getDeepValue(cmsData, path) || '';
+            if (type === 'textarea') {
+                return `<div class="mb-4"><label class="block text-sm font-medium text-sub mb-2">${label}</label><textarea data-path="${path}" rows="3" class="w-full px-4 py-2 rounded-lg input-theme">${esc(val)}</textarea>${extra}</div>`;
+            }
+            return `<div class="mb-4"><label class="block text-sm font-medium text-sub mb-2">${label}</label><input type="${type}" data-path="${path}" value="${esc(val)}" class="w-full px-4 py-2 rounded-lg input-theme">${extra}</div>`;
+        }
+
+        function getDeepValue(obj, path) {
+            return path.split('.').reduce((o, k) => o && o[k], obj);
+        }
+
+        function renderSiteForm() {
+            return `
+                <h3 class="text-lg font-bold text-main mb-4">網站基本資訊</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    ${inputRow('網站標題', 'site.title')}
+                    ${inputRow('WhatsApp 號碼', 'site.whatsappNumber')}
+                    ${inputRow('顯示電話', 'site.phoneDisplay')}
+                    ${inputRow('電郵地址', 'site.email', 'email')}
+                </div>
+                ${inputRow('網站描述 (SEO)', 'site.description', 'textarea')}
+                <div class="flex justify-end pt-2">
+                    <button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
+                </div>
+            `;
+        }
+
+        function renderHeroForm() {
+            return `
+                <h3 class="text-lg font-bold text-main mb-4">首頁 Hero 內容</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    ${inputRow('主標題 (可含 HTML)', 'hero.title')}
+                    ${inputRow('CTA 主按鈕', 'hero.ctaPrimary')}
+                    ${inputRow('CTA 副按鈕', 'hero.ctaSecondary')}
+                </div>
+                ${inputRow('副標題', 'hero.subtitle', 'textarea')}
+                <div class="flex justify-end pt-2">
+                    <button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
+                </div>
+            `;
+        }
+
+        function renderSolutionsForm() {
+            let html = `<h3 class="text-lg font-bold text-main mb-4">服務方案</h3><div class="mb-4">${inputRow('區塊標題', 'solutions.sectionTitle')}</div>`;
+            const items = cmsData.solutions?.items || [];
+            items.forEach((item, i) => {
+                html += `
+                    <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="font-bold text-main">方案 ${i + 1}: ${esc(item.title)}</span>
+                            ${item.featured ? '<span class="text-xs px-2 py-1 rounded-full gold-btn">最熱門</span>' : ''}
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">標題</label><input data-path="solutions.items.${i}.title" value="${esc(item.title || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">標籤</label><input data-path="solutions.items.${i}.tag" value="${esc(item.tag || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">適合對象</label><input data-path="solutions.items.${i}.for" value="${esc(item.for || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">價格數字</label><input data-path="solutions.items.${i}.priceNumber" value="${esc(item.priceNumber || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">價格單位</label><input data-path="solutions.items.${i}.priceUnit" value="${esc(item.priceUnit || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">按鈕文字</label><input data-path="solutions.items.${i}.cta" value="${esc(item.cta || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `<div class="flex justify-end pt-2"><button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button></div>`;
+            return html;
+        }
+
+        function renderPricingForm() {
+            return `
+                <h3 class="text-lg font-bold text-main mb-4">定價與比較</h3>
+                ${inputRow('區塊標題', 'pricing.sectionTitle')}
+                ${inputRow('區塊副標題', 'pricing.sectionSubtitle', 'textarea')}
+                ${inputRow('計算機 CTA 文字', 'pricing.cta')}
+                ${inputRow('計算機預設文字', 'pricing.resultPlaceholder')}
+                <div class="flex justify-end pt-2">
+                    <button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
+                </div>
+            `;
+        }
+
+        function renderTestimonialsForm() {
+            let html = `<h3 class="text-lg font-bold text-main mb-4">客戶見證</h3><div class="mb-4">${inputRow('區塊標題', 'testimonials.sectionTitle')}</div>`;
+            const items = cmsData.testimonials?.items || [];
+            items.forEach((item, i) => {
+                html += `
+                    <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
+                        <div class="font-bold text-main mb-2">見證 ${i + 1}</div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">作者</label><input data-path="testimonials.items.${i}.author" value="${esc(item.author || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">身份</label><input data-path="testimonials.items.${i}.role" value="${esc(item.role || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                        </div>
+                        <div class="mb-2"><label class="block text-xs text-sub mb-1">內容</label><textarea data-path="testimonials.items.${i}.text" rows="2" class="w-full px-3 py-2 rounded-lg input-theme text-sm">${esc(item.text || '')}</textarea></div>
+                    </div>
+                `;
+            });
+            html += `<div class="flex justify-end pt-2"><button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button></div>`;
+            return html;
+        }
+
+        function renderFaqForm() {
+            let html = `<h3 class="text-lg font-bold text-main mb-4">常見問題</h3><div class="mb-4">${inputRow('區塊標題', 'faq.sectionTitle')}</div>`;
+            const items = cmsData.faq?.items || [];
+            items.forEach((item, i) => {
+                html += `
+                    <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
+                        <div class="font-bold text-main mb-2">問題 ${i + 1}</div>
+                        <div class="mb-2"><label class="block text-xs text-sub mb-1">問題</label><input data-path="faq.items.${i}.question" value="${esc(item.question || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                        <div class="mb-2"><label class="block text-xs text-sub mb-1">回答</label><textarea data-path="faq.items.${i}.answer" rows="2" class="w-full px-3 py-2 rounded-lg input-theme text-sm">${esc(item.answer || '')}</textarea></div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div><label class="block text-xs text-sub mb-1">CTA 文字（選填）</label><input data-path="faq.items.${i}.ctaText" value="${esc(item.ctaText || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div><label class="block text-xs text-sub mb-1">CTA 連結（選填）</label><input data-path="faq.items.${i}.ctaLink" value="${esc(item.ctaLink || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `<div class="flex justify-end pt-2"><button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button></div>`;
+            return html;
+        }
+
+        function renderCtaForm() {
+            return `
+                <h3 class="text-lg font-bold text-main mb-4">CTA 區域</h3>
+                ${inputRow('標題', 'cta.title')}
+                ${inputRow('副標題', 'cta.subtitle', 'textarea')}
+                <div class="grid md:grid-cols-2 gap-4">
+                    ${inputRow('主按鈕文字', 'cta.ctaPrimary')}
+                    ${inputRow('副按鈕文字', 'cta.ctaSecondary')}
+                </div>
+                ${inputRow('底部說明 (可含 HTML)', 'cta.note', 'textarea')}
+                <div class="flex justify-end pt-2">
+                    <button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
+                </div>
+            `;
+        }
+
+        function renderJsonForm() {
+            return `
+                <h3 class="text-lg font-bold text-main mb-4">原始 JSON 編輯器</h3>
+                <p class="text-sm text-sub mb-3">進階用戶可直接編輯完整 JSON。請小心操作。</p>
+                <textarea id="cmsJsonEditor" rows="20" class="w-full p-4 rounded-lg input-theme text-sm font-mono">${esc(JSON.stringify(cmsData, null, 2))}</textarea>
+                <div class="flex justify-end gap-2 pt-3">
+                    <button onclick="formatJsonEditor()" class="px-4 py-2 rounded-lg border border-theme hover-theme font-medium transition text-sm">格式化</button>
+                    <button onclick="saveCMSFromJson()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
+                </div>
+            `;
+        }
+
+        async function saveCMSFromForm() {
+            await saveCMSData(cmsData);
+        }
+        async function saveCMSFromJson() {
             try {
-                const data = JSON.parse(document.getElementById('cmsEditor').value);
+                const data = JSON.parse(document.getElementById('cmsJsonEditor').value);
+                await saveCMSData(data);
+            } catch (e) {
+                showContentMsg('❌ JSON 格式錯誤：' + e.message, false);
+            }
+        }
+        async function saveCMSData(data) {
+            try {
                 const res = await fetch(API_BASE_URL + '/api/cms/data', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ password: currentPassword, data })
                 });
                 const result = await res.json();
-                showMessage('cmsMessage', result.success ? '✅ CMS 內容已儲存' : '❌ ' + (result.error || '失敗'), result.success ? 'success' : 'error');
-                if (result.success) { cmsData = data; updateDashStats(); }
+                if (result.success) {
+                    cmsData = data;
+                    showContentMsg('✅ CMS 內容已儲存', true);
+                    updateDashStats();
+                    renderContentForms();
+                } else {
+                    showContentMsg('❌ ' + (result.error || '儲存失敗'), false);
+                }
             } catch (err) {
-                showMessage('cmsMessage', '❌ JSON 格式錯誤：' + err.message, 'error');
-            } finally {
-                btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> 儲存變更';
+                showContentMsg('❌ ' + err.message, false);
             }
         }
-
-        function formatJSON() {
+        function showContentMsg(text, ok) {
+            const el = document.getElementById('contentSaveMsg');
+            el.textContent = text;
+            el.className = 'text-sm px-3 py-1 rounded-lg ' + (ok ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20');
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 3000);
+        }
+        function formatJsonEditor() {
             try {
-                const editor = document.getElementById('cmsEditor');
+                const editor = document.getElementById('cmsJsonEditor');
                 editor.value = JSON.stringify(JSON.parse(editor.value), null, 2);
-            } catch (e) { showMessage('cmsMessage', '❌ JSON 格式錯誤', 'error'); }
+            } catch (e) { showContentMsg('❌ JSON 格式錯誤', false); }
         }
 
-        function exportCMSData() {
-            const blob = new Blob([JSON.stringify(cmsData, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = `cwmng-cms-${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(url);
-            showDashMessage('✅ 導出成功', true);
-        }
-        function importCMSData() { document.getElementById('importFile').click(); }
-        function handleImportFile(input) {
-            const file = input.files?.[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    document.getElementById('cmsEditor').value = JSON.stringify(data, null, 2);
-                    showDashMessage('✅ 導入成功，請按「儲存變更」', true);
-                } catch { showDashMessage('❌ 文件格式錯誤', false); }
-            };
-            reader.readAsText(file); input.value = '';
-        }
-
-        // Dashboard Stats
+        // Dashboard helpers
         function updateDashStats() {
             const services = cmsData.solutions?.items?.length ?? '-';
             document.getElementById('statServices').textContent = services;
             document.getElementById('statInquiries').textContent = inquiries.length;
-            const pending = inquiries.filter(i => i.status === 'pending').length;
-            const completed = inquiries.filter(i => i.status === 'completed').length;
-            document.getElementById('statPending').textContent = pending;
-            document.getElementById('statCompleted').textContent = completed;
+            document.getElementById('statPending').textContent = inquiries.filter(i => i.status === 'pending').length;
+            document.getElementById('statCompleted').textContent = inquiries.filter(i => i.status === 'completed').length;
             const badge = document.getElementById('sidebarBadge');
+            const pending = inquiries.filter(i => i.status === 'pending').length;
             if (pending > 0) { badge.textContent = pending; badge.classList.remove('hidden'); badge.style.display = sidebarOpen ? 'inline-flex' : 'none'; }
             else { badge.classList.add('hidden'); }
         }
@@ -479,12 +695,31 @@
             el.innerHTML = `<div class="px-3 py-2 rounded-lg text-sm ${ok ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}">${text}</div>`;
             setTimeout(() => el.innerHTML = '', 3000);
         }
+        function exportCMSData() {
+            const blob = new Blob([JSON.stringify(cmsData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `cwmng-cms-${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(url);
+            showDashMessage('✅ 導出成功', true);
+        }
+        function importCMSData() { document.getElementById('importFile').click(); }
+        function handleImportFile(input) {
+            const file = input.files?.[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    cmsData = JSON.parse(e.target.result);
+                    renderContentForms();
+                    showDashMessage('✅ 導入成功，請儲存', true);
+                } catch { showDashMessage('❌ 文件格式錯誤', false); }
+            };
+            reader.readAsText(file); input.value = '';
+        }
 
         // Inquiries
         async function loadInquiries() {
             const btn = document.getElementById('reloadInqBtn');
             btn.disabled = true;
-            document.getElementById('inquiriesList').innerHTML = '<div class="text-center py-12 text-gray-500">載入中...</div>';
+            document.getElementById('inquiriesList').innerHTML = '<div class="text-center py-12 text-muted">載入中...</div>';
             try {
                 const res = await fetch(API_BASE_URL + '/api/inquiries', {
                     method: 'POST',
@@ -495,9 +730,7 @@
                 if (result.success) {
                     inquiries = result.data || [];
                     inquiries.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
-                    updateInqStats();
-                    renderInquiries();
-                    updateDashStats();
+                    updateInqStats(); renderInquiries(); updateDashStats();
                 } else {
                     document.getElementById('inquiriesList').innerHTML = '<div class="text-center py-12 text-red-400">載入失敗</div>';
                 }
@@ -505,44 +738,42 @@
                 document.getElementById('inquiriesList').innerHTML = '<div class="text-center py-12 text-red-400">載入失敗：' + err.message + '</div>';
             } finally { btn.disabled = false; }
         }
-
         function updateInqStats() {
             document.getElementById('inqTotal').textContent = inquiries.length;
             document.getElementById('inqPending').textContent = inquiries.filter(i => i.status === 'pending').length;
             document.getElementById('inqContacted').textContent = inquiries.filter(i => i.status === 'contacted').length;
             document.getElementById('inqCompleted').textContent = inquiries.filter(i => i.status === 'completed').length;
         }
-
         function renderInquiries() {
             const filter = document.getElementById('inqFilter').value;
             const list = document.getElementById('inquiriesList');
             const filtered = filter === 'all' ? inquiries : inquiries.filter(i => i.status === filter);
             if (filtered.length === 0) {
-                list.innerHTML = '<div class="text-center py-12 text-gray-500">' + (filter === 'all' ? '暫無客戶查詢記錄' : '該狀態下暫無記錄') + '</div>';
+                list.innerHTML = '<div class="text-center py-12 text-muted">' + (filter === 'all' ? '暫無客戶查詢記錄' : '該狀態下暫無記錄') + '</div>';
                 return;
             }
             list.innerHTML = filtered.map(iq => `
-                <div class="inquiry-card card p-5">
+                <div class="inquiry-card bg-card border border-theme rounded-xl p-5">
                     <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
                         <div class="flex-1 space-y-2">
                             <div class="flex items-center gap-3 flex-wrap">
-                                <h3 class="font-bold text-lg text-white">${esc(iq.name)}</h3>
+                                <h3 class="font-bold text-lg text-main">${esc(iq.name)}</h3>
                                 <span class="px-2 py-0.5 rounded-full text-xs font-medium ${statusClass(iq.status)}">${statusText(iq.status)}</span>
-                                <span class="text-xs text-gray-400">${fmtTime(iq.submittedAt)}</span>
-                                ${iq.interest ? `<span class="text-xs px-2 py-0.5 rounded bg-[#1a1a1a] border border-[var(--border)] text-gray-300">${esc(iq.interest)}</span>` : ''}
+                                <span class="text-xs text-muted">${fmtTime(iq.submittedAt)}</span>
+                                ${iq.interest ? `<span class="text-xs px-2 py-0.5 rounded bg-[var(--bg-hover)] border border-theme text-sub">${esc(iq.interest)}</span>` : ''}
                             </div>
-                            <div class="grid md:grid-cols-2 gap-2 text-sm text-gray-400">
+                            <div class="grid md:grid-cols-2 gap-2 text-sm text-sub">
                                 <div class="flex items-center gap-2"><i class="fas fa-phone text-[var(--gold)]"></i> ${esc(iq.phone)}</div>
                                 ${iq.email ? `<div class="flex items-center gap-2"><i class="fas fa-envelope text-[var(--gold)]"></i> ${esc(iq.email)}</div>` : ''}
                                 ${iq.company ? `<div class="flex items-center gap-2"><i class="fas fa-building text-[var(--gold)]"></i> ${esc(iq.company)}</div>` : ''}
                                 ${iq.monthlyRevenue ? `<div class="flex items-center gap-2"><i class="fas fa-coins text-[var(--gold)]"></i> ${esc(iq.monthlyRevenue)}</div>` : ''}
                             </div>
-                            ${iq.message ? `<div class="text-sm text-gray-300 bg-[#0f0f0f] border border-[var(--border)] rounded-lg p-3">${esc(iq.message)}</div>` : ''}
+                            ${iq.message ? `<div class="text-sm text-main bg-[var(--bg-hover)] border border-theme rounded-lg p-3">${esc(iq.message)}</div>` : ''}
                         </div>
                         <div class="lg:w-64 space-y-3">
                             <div>
-                                <label class="block text-xs text-gray-400 mb-1">狀態</label>
-                                <select onchange="updateInquiryStatus('${iq.id}', this.value)" class="w-full px-3 py-2 rounded-lg input-dark text-sm outline-none focus:ring-2 focus:ring-[var(--gold)]">
+                                <label class="block text-xs text-sub mb-1">狀態</label>
+                                <select onchange="updateInquiryStatus('${iq.id}', this.value)" class="w-full px-3 py-2 rounded-lg input-theme text-sm outline-none focus:ring-2 focus:ring-[var(--gold)]">
                                     <option value="pending" ${iq.status==='pending'?'selected':''}>待跟進</option>
                                     <option value="contacted" ${iq.status==='contacted'?'selected':''}>已聯繫</option>
                                     <option value="completed" ${iq.status==='completed'?'selected':''}>已完成</option>
@@ -550,8 +781,8 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs text-gray-400 mb-1">備註</label>
-                                <textarea onchange="updateInquiryNotes('${iq.id}', this.value)" rows="2" class="w-full px-3 py-2 rounded-lg input-dark text-sm outline-none focus:ring-2 focus:ring-[var(--gold)] resize-none" placeholder="輸入備註...">${esc(iq.notes||'')}</textarea>
+                                <label class="block text-xs text-sub mb-1">備註</label>
+                                <textarea onchange="updateInquiryNotes('${iq.id}', this.value)" rows="2" class="w-full px-3 py-2 rounded-lg input-theme text-sm outline-none focus:ring-2 focus:ring-[var(--gold)] resize-none" placeholder="輸入備註...">${esc(iq.notes||'')}</textarea>
                             </div>
                             <a href="https://wa.me/${(iq.phone||'').replace(/\D/g,'')}" target="_blank" class="flex items-center justify-center gap-2 w-full px-3 py-2 rounded-lg text-sm font-medium text-white" style="background: #16a34a;">
                                 <i class="fab fa-whatsapp"></i> WhatsApp 客戶
@@ -561,13 +792,8 @@
                 </div>
             `).join('');
         }
-
-        async function updateInquiryStatus(id, status) {
-            await updateInquiry(id, { status });
-        }
-        async function updateInquiryNotes(id, notes) {
-            await updateInquiry(id, { notes });
-        }
+        async function updateInquiryStatus(id, status) { await updateInquiry(id, { status }); }
+        async function updateInquiryNotes(id, notes) { await updateInquiry(id, { notes }); }
         async function updateInquiry(id, fields) {
             try {
                 const res = await fetch(API_BASE_URL + '/api/inquiries', {
@@ -589,15 +815,12 @@
             setTimeout(() => el.classList.add('hidden'), 2000);
         }
 
-        // Analytics (simple aggregation from KV keys)
+        // Analytics
         async function loadAnalytics() {
-            // We'll do client-side aggregation by listing keys isn't exposed directly,
-            // so we use a heuristic: we can't easily list all analytics keys without a new API.
-            // For now, display placeholder and explain.
             document.getElementById('aPv').textContent = '-';
             document.getElementById('aInt').textContent = '-';
             document.getElementById('aSessions').textContent = '-';
-            document.getElementById('aPages').innerHTML = '<div class="text-gray-500">請在 Worker 中啟用分析報告 API 以獲取完整數據。</div>';
+            document.getElementById('aPages').innerHTML = '<div class="text-muted">請在 Worker 中啟用分析報告 API 以獲取完整數據。</div>';
         }
 
         // Deploy
@@ -630,12 +853,6 @@
         }
 
         // Helpers
-        function showMessage(id, text, type) {
-            const el = document.getElementById(id);
-            el.textContent = text;
-            el.classList.remove('hidden', 'text-green-400', 'text-red-400');
-            el.classList.add(type === 'success' ? 'text-green-400' : 'text-red-400');
-        }
         function statusClass(s) {
             return { pending: 'status-pending', contacted: 'status-contacted', completed: 'status-completed', closed: 'status-closed' }[s] || 'status-closed';
         }

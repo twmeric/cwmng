@@ -133,18 +133,6 @@ function initBaseInteractions() {
     // Pricing Calculator
     initCalculator();
 
-    // Theme toggle in mobile menu if present
-    const themeToggle = document.getElementById('themeToggle');
-    if (themeToggle && !document.getElementById('themeToggle').dataset.bound) {
-        themeToggle.dataset.bound = '1';
-        themeToggle.addEventListener('click', () => {
-            const current = document.documentElement.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            setTheme(next);
-            localStorage.setItem('cwmng_theme', next);
-        });
-    }
-
     // Sticky CTA
     const stickyCta = document.getElementById('stickyCta');
     let ctaShown = false;
