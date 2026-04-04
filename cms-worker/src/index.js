@@ -46,7 +46,7 @@ export default {
         case "POST /api/analytics/interaction":
           return await handleInteraction(request, env, corsHeaders);
 
-        case "GET /api/analytics/report":
+        case "POST /api/analytics/report":
           return await getAnalyticsReport(request, env, corsHeaders);
 
         case "POST /api/deploy":
@@ -68,7 +68,7 @@ export default {
               "PUT /api/inquiries": "更新查詢狀態（需密碼）",
               "POST /api/analytics/pageview": "記錄頁面瀏覽",
               "POST /api/analytics/interaction": "記錄用戶互動",
-              "GET /api/analytics/report": "獲取分析報告（需密碼）",
+              "POST /api/analytics/report": "獲取分析報告（需密碼）",
               "POST /api/deploy": "觸發網站重新部署（需密碼）",
             }
           }, 200, corsHeaders);
