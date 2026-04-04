@@ -4,6 +4,11 @@ on:
   push:
     branches: [main, master]
   workflow_dispatch:
+    inputs:
+      reason:
+        description: '部署原因'
+        required: false
+        default: '手動觸發部署'
 
 jobs:
   deploy-worker:

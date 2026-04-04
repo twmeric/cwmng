@@ -46,6 +46,9 @@ export default {
         case "POST /api/analytics/interaction":
           return await handleInteraction(request, env, corsHeaders);
 
+        case "GET /api/analytics/report":
+          return await getAnalyticsReport(request, env, corsHeaders);
+
         case "POST /api/deploy":
           return await deployWebsite(request, env, corsHeaders);
 
@@ -65,6 +68,7 @@ export default {
               "PUT /api/inquiries": "更新查詢狀態（需密碼）",
               "POST /api/analytics/pageview": "記錄頁面瀏覽",
               "POST /api/analytics/interaction": "記錄用戶互動",
+              "GET /api/analytics/report": "獲取分析報告（需密碼）",
               "POST /api/deploy": "觸發網站重新部署（需密碼）",
             }
           }, 200, corsHeaders);
@@ -256,6 +260,57 @@ async function handleInteraction(request, env, corsHeaders) {
     const key = `analytics_int_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
     await env.CMS_DATA.put(key, JSON.stringify(record), { expirationTtl: 86400 * 90 });
     return jsonResponse({ success: true }, 200, corsHeaders);
+  } catch (e) {
+    return jsonResponse({ success: false, error: e.message }, 500, corsHeaders);
+  }
+}
+
+async function getAnalyticsReport(request, env, corsHeaders) {
+  try {
+    const url = new URL(request.url);
+    const days = parseInt(url.searchParams.get("days") || "7", 10);
+    const cutoff = new Date(Date.now() - days * 86400000).toISOString();
+
+    // List all analytics keys (up to 1000)
+    const { keys } = await env.CMS_DATA.list({ prefix: "analytics_" });
+    let pageViews = 0;
+    let interactions = 0;
+    const pageCounts = {};
+    const sessions = new Set();
+
+    // KV list maxes at 1000 keys per call; for small sites this is plenty
+    for (const key of keys) {
+      const raw = await env.CMS_DATA.get(key.name);
+      if (!raw) continue;
+      try {
+        const record = JSON.parse(raw);
+        if (record.timestamp && record.timestamp < cutoff) continue;
+        if (record.type === "pageview") {
+          pageViews++;
+          pageCounts[record.page || "/"] = (pageCounts[record.page || "/"] || 0) + 1;
+          if (record.sessionId) sessions.add(record.sessionId);
+        } else if (record.type === "interaction") {
+          interactions++;
+          if (record.sessionId) sessions.add(record.sessionId);
+        }
+      } catch (e) {}
+    }
+
+    const topPages = Object.entries(pageCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([page, count]) => ({ page, count }));
+
+    return jsonResponse({
+      success: true,
+      data: {
+        pageViews,
+        interactions,
+        sessions: sessions.size,
+        topPages,
+        days,
+      },
+    }, 200, corsHeaders);
   } catch (e) {
     return jsonResponse({ success: false, error: e.message }, 500, corsHeaders);
   }

@@ -820,7 +820,34 @@
             document.getElementById('aPv').textContent = '-';
             document.getElementById('aInt').textContent = '-';
             document.getElementById('aSessions').textContent = '-';
-            document.getElementById('aPages').innerHTML = '<div class="text-muted">請在 Worker 中啟用分析報告 API 以獲取完整數據。</div>';
+            document.getElementById('aPages').innerHTML = '<div class="text-muted">載入中...</div>';
+            try {
+                const res = await fetch(API_BASE_URL + '/api/analytics/report?days=7', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: currentPassword })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    document.getElementById('aPv').textContent = result.data.pageViews.toLocaleString();
+                    document.getElementById('aInt').textContent = result.data.interactions.toLocaleString();
+                    document.getElementById('aSessions').textContent = result.data.sessions.toLocaleString();
+                    if (result.data.topPages.length === 0) {
+                        document.getElementById('aPages').innerHTML = '<div class="text-muted">暫無頁面瀏覽數據</div>';
+                    } else {
+                        document.getElementById('aPages').innerHTML = result.data.topPages.map(p => `
+                            <div class="flex items-center justify-between py-2 border-b border-theme last:border-0">
+                                <span class="text-sub">${esc(p.page)}</span>
+                                <span class="font-semibold text-main">${p.count} 次</span>
+                            </div>
+                        `).join('');
+                    }
+                } else {
+                    document.getElementById('aPages').innerHTML = '<div class="text-muted">載入失敗：' + esc(result.error || '未知錯誤') + '</div>';
+                }
+            } catch (err) {
+                document.getElementById('aPages').innerHTML = '<div class="text-muted">載入失敗：' + esc(err.message) + '</div>';
+            }
         }
 
         // Deploy

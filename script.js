@@ -11,7 +11,7 @@ const API_BASE_URL = (location.hostname === 'localhost' || location.hostname ===
 const WHATSAPP_NUMBER = '85251164453';
 
 document.addEventListener('DOMContentLoaded', function() {
-    initTheme();
+    document.documentElement.setAttribute('data-theme', 'light');
     initBaseInteractions();
     fetchCMSData();
     trackPageView();
