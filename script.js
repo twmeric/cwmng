@@ -130,9 +130,6 @@ function initBaseInteractions() {
         });
     });
 
-    // Pricing Calculator
-    initCalculator();
-
     // Sticky CTA
     const stickyCta = document.getElementById('stickyCta');
     let ctaShown = false;
@@ -389,13 +386,6 @@ function renderPricing(pricing) {
         if (h2 && pricing.sectionTitle) h2.textContent = pricing.sectionTitle;
         if (sub && pricing.sectionSubtitle) sub.textContent = pricing.sectionSubtitle;
     }
-    const resultLabel = document.querySelector('.calc-result .result-label');
-    const resultPlaceholder = document.querySelector('.calc-result .result-metaphor');
-    const cta = document.querySelector('.calc-result .btn');
-    if (resultLabel && pricing.resultLabel) resultLabel.textContent = pricing.resultLabel;
-    if (resultPlaceholder && pricing.resultPlaceholder) resultPlaceholder.setAttribute('data-placeholder', pricing.resultPlaceholder);
-    if (cta && pricing.cta) cta.textContent = pricing.cta;
-
     const tbody = document.querySelector('.comparison-table tbody');
     if (tbody && pricing.comparisonRows) {
         tbody.innerHTML = pricing.comparisonRows.map(row => `
@@ -777,50 +767,6 @@ async function handleFormSubmit(e, type) {
 /* ========================================
    Calculator
    ======================================== */
-function initCalculator() {
-    const monthlyRevenue = document.getElementById('monthlyRevenue');
-    if (!monthlyRevenue) return;
-
-    monthlyRevenue.addEventListener('input', updateCalculator);
-}
-
-function updateCalculator() {
-    const monthlyRevenue = document.getElementById('monthlyRevenue');
-    const annualSavings = document.getElementById('annualSavings');
-    const savingsMetaphor = document.getElementById('savingsMetaphor');
-    const calcProgressFill = document.getElementById('calcProgressFill');
-
-    const revenue = parseFloat(monthlyRevenue?.value) || 0;
-    if (!revenue || revenue <= 0) {
-        if (annualSavings) annualSavings.textContent = '$0';
-        if (savingsMetaphor) savingsMetaphor.textContent = savingsMetaphor.getAttribute('data-placeholder') || '輸入交易額即可查看驚人差距';
-        if (calcProgressFill) calcProgressFill.style.width = '0%';
-        return;
-    }
-
-    const theirRate = 0.034;
-    const fixedFee = 2.35;
-    const monthlyTxnCount = Math.max(1, Math.round(revenue / 400));
-    const theirCost = revenue * theirRate + monthlyTxnCount * fixedFee;
-    const ourCost = revenue * 0.026;
-    const monthlySave = Math.max(0, theirCost - ourCost);
-    const annualSave = monthlySave * 12;
-
-    if (annualSavings) annualSavings.textContent = '$' + Math.round(annualSave).toLocaleString('en-HK');
-
-    let metaphor = '';
-    if (annualSave < 5000) metaphor = '這筆錢夠你請一位兼職員工一個月。';
-    else if (annualSave < 15000) metaphor = '這筆錢夠你帶全家去一趟短途旅行。';
-    else if (annualSave < 30000) metaphor = '這筆錢足夠你升級整個網店的庫存系統。';
-    else if (annualSave < 60000) metaphor = '這筆錢等於你一年免費多請一位全職員工。';
-    else metaphor = '這筆錢足以讓你的網店擴張一個全新產品線。';
-    if (savingsMetaphor) savingsMetaphor.textContent = metaphor;
-
-    const maxSave = 100000;
-    const pct = Math.min(100, Math.max(0, (annualSave / maxSave) * 100));
-    if (calcProgressFill) calcProgressFill.style.width = pct + '%';
-}
-
 /* ========================================
    Analytics Tracking
    ======================================== */
