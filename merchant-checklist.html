@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商戶申請資料清單 | 駿匯聯 C&W Management</title>
+    <meta name="description" content="駿匯聯商戶申請所需文件清單。準備好這 9 項資料，最快 1-2 個工作天完成初審。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Inter','Noto Sans TC',sans-serif;background:#F4F6F8;color:#1B2538;line-height:1.6}
+        a{text-decoration:none;color:inherit}
+        img{max-width:100%;display:block}
+        .container{width:100%;max-width:800px;margin:0 auto;padding:0 1.5rem}
+        .nav{position:fixed;top:0;left:0;width:100%;z-index:1000;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.05)}
+        .nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+        .nav img{height:36px}
+        .nav a.back{display:flex;align-items:center;gap:0.5rem;font-size:0.875rem;font-weight:500;color:#4B5563}
+        .nav a.back:hover{color:#1E3A8A}
+        header{padding:7rem 0 2.5rem;text-align:center}
+        header h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:700;margin-bottom:0.75rem}
+        header p{color:#6B7280;max-width:520px;margin:0 auto}
+        .checklist{background:#fff;border-radius:20px;padding:2rem;box-shadow:0 8px 24px rgba(0,0,0,0.04);margin-bottom:2rem}
+        .checklist-item{display:flex;align-items:flex-start;gap:1rem;padding:1.25rem 0;border-bottom:1px solid #F3F4F6}
+        .checklist-item:last-child{border-bottom:none}
+        .check-num{width:36px;height:36px;border-radius:50%;background:#EFF6FF;color:#1E3A8A;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+        .check-content{flex:1}
+        .check-title{font-weight:600;font-size:1rem;margin-bottom:0.25rem;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap}
+        .tag{font-size:0.6875rem;font-weight:600;padding:0.15rem 0.5rem;border-radius:4px;text-transform:uppercase}
+        .tag-required{background:#FEE2E2;color:#991B1B}
+        .tag-optional{background:#F3F4F6;color:#374151}
+        .check-desc{font-size:0.875rem;color:#6B7280;margin-bottom:0.5rem}
+        .check-tip{display:flex;align-items:flex-start;gap:0.35rem;font-size:0.8125rem;color:#4B5563;background:#F9FAFB;padding:0.5rem 0.75rem;border-radius:8px}
+        .check-tip i{color:#4F46E5;margin-top:0.15rem;flex-shrink:0}
+        .cta-section{text-align:center;padding:1rem 0 4rem}
+        .cta-card{background:linear-gradient(135deg,#1E3A8A,#4F46E5);color:#fff;border-radius:20px;padding:2rem}
+        .cta-card h2{font-size:1.25rem;font-weight:700;margin-bottom:0.5rem}
+        .cta-card p{font-size:0.9375rem;opacity:0.9;margin-bottom:1.25rem}
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;font-weight:600;border-radius:8px;transition:all 0.2s;cursor:pointer;border:none;font-size:1rem;padding:0.875rem 1.5rem}
+        .btn-white{background:#fff;color:#1E3A8A}
+        .btn-white:hover{background:#F3F4F6;transform:translateY(-2px)}
+        .btn-outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.5);margin-left:0.75rem}
+        .btn-outline:hover{background:rgba(255,255,255,0.08)}
+        footer{background:#fff;border-top:1px solid #E5E7EB;padding:2rem 0;text-align:center;font-size:0.8125rem;color:#9CA3AF}
+        footer a{color:#9CA3AF}
+        footer a:hover{color:#1E3A8A}
+        @media (max-width:640px){
+            .checklist{padding:1.25rem}
+            .cta-card .btn{display:block;width:100%;margin:0.5rem 0 0 0}
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a href="./index.html"><img src="images/logo.png" alt="駿匯聯"></a>
+            <a href="./index.html" class="back"><i class="ph ph-arrow-left"></i> 返回主頁</a>
+        </div>
+    </nav>
+    <header>
+        <div class="container">
+            <h1>商戶申請資料清單</h1>
+            <p>準備好以下資料，最快 1-2 個工作天完成初審。我們的專員會在收到後與你聯絡，協助補充任何缺失文件。</p>
+        </div>
+    </header>
+    <main class="container">
+        <div class="checklist">
+            <div class="checklist-item">
+                <div class="check-num">1</div>
+                <div class="check-content">
+                    <div class="check-title">公司註冊證明書（CI）<span class="tag tag-required">必需</span></div>
+                    <div class="check-desc">由香港公司註冊處發出的最新公司註冊證明書。</div>
+                    <div class="check-tip"><i class="ph ph-info"></i> 請確保證書在有效期內，並提供清晰的彩色掃描副本。</div>
+                </div>
+            </div>
+            <div class="checklist-item">
+                <div class="check-num">2</div>
+                <div class="check-content">
+                    <div class="check-title">商業登記證（BR）<span class="tag tag-required">必需</span></div>
+                    <div class="check-desc">有效的香港商業登記證，顯示業務名稱及地址。</div>
+                    <div class="check-tip"><i class="ph ph-info"></i> 如為分行，請同時提供總行的商業登記證。</div>
+                </div>
+            </div>
+            <div class="checklist-item">
+                <div class="check-num">3</div>
+                <div class="check-content">
+                    <div class="check-title">董事及股東身份證明文件<span class="tag tag-required">必需</span></div>
+                    <div class="check-desc">所有董事及持股 25% 以上受益人的香港身份證或護照副本。</div>
+                    <div class="check-tip"><i class="ph ph-info"></i> 需提供證件的正反面，確保資料清晰可辨。</div>
+                </div>
+            </div>
+            <div class="checklist-item">
+                <div class="check-num">4</div>
+                <div class="check-content">
+                    <div class="check-title">最近三個月銀行月結單<span class="tag tag-required">必需</span></div>
+                    <div class="check-desc">公司主要營運帳戶的最近三個月銀行月結單。</div>
+                    <div class="check-tip"><i class="ph ph-info"></i> 如新成立公司未滿三個月，可提供開業存款證明。</div>
+                </div>
+            </div>
+            <div class="checklist-item">
+                <div class="check-num">5</div>
+                <div class="check-content">
+                    <div class="check-title">公司網站或流動應用程式<span class="tag tag-optional">建議提供</span></div>
+                    <div class="check-desc">展示你業務的網站、網店或應用程式連結。</div>
+                    <div class="check-tip"><i class="ph ph-info"></i> 有助於加快審批，讓我們了解你的業務模式及產品類型。</div>
+                </div>
+            </div>
+            <div class="checklist-item">
+                <div class="check-num">6</div>
+                <div class="check-content">
+                    <div class="check-title">過往 3-6 個月交易紀錄<span class="tag tag-optional">建議提供</span></div>
+                    <div class="check-desc">如你目前正使用其他支付閘道，可提供過往交易報表。</div>
+                    <div class="check-tip"><i class="ph ph-info"></i> 這有助於我們為你爭取更優惠的費率方案。</div>
+                </div>
+            </div>
+            <div class="checklist-item">
+                <div class="check-num">7</div>
+                <div class="check-content">
+                    <div class="check-title">送貨/退款政策文件<span class="tag tag-optional">建議提供</span></div>
+                    <div class="check-desc">網站上公開的送貨條款、退換貨政策及私隱政策。</div>
+                    <div class="check-tip"><i class="ph ph-info"></i> 清晰的條款可增加顧客信任，亦是支付網絡的合規要求之一。</div>
+                </div>
+            </div>
+            <div class="checklist-item">
+                <div class="check-num">8</div>
+                <div class="check-content">
+                    <div class="check-title">租約或公用事業帳單<span class="tag tag-optional">建議提供</span></div>
+                    <div class="check-desc">最近三個月內的辦公室租約、水電煤或電話費帳單。</div>
+                    <div class="check-tip"><i class="ph ph-info"></i> 用作地址證明，有助加快審批流程。</div>
+                </div>
+            </div>
+            <div class="checklist-item">
+                <div class="check-num">9</div>
+                <div class="check-content">
+                    <div class="check-title">預計月交易額<span class="tag tag-optional">建議提供</span></div>
+                    <div class="check-desc">簡單說明你的預計月均交易額及平均每筆交易金額。</div>
+                    <div class="check-tip"><i class="ph ph-info"></i> 讓我們更快為你配對最適合的收款方案與費率。</div>
+                </div>
+            </div>
+        </div>
+        <section class="cta-section">
+            <div class="cta-card">
+                <h2>文件齊全了嗎？立即聯絡我們</h2>
+                <p>我們的專員會在收到你的資料後 1-2 個工作天內完成初審，並與你聯絡。</p>
+                <div>
+                    <a href="https://wa.me/85251164453?text=你好，我已準備好商戶申請文件，想提交申請。" target="_blank" class="btn btn-white"><i class="ph ph-whatsapp-logo"></i> WhatsApp 立即查詢</a>
+                    <a href="./index.html#pricing" class="btn btn-outline">查看詳細費率</a>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer style="padding-bottom: 5rem;">
+        <div class="container">
+            <p>
+                &copy; 2026 駿匯聯 C&W Management Limited.
+                <a href="./index.html">返回主頁</a>
+                <span style="margin:0 0.5rem;">|</span>
+                <a href="https://jkdcoding.com" target="_blank" style="display:inline-flex;align-items:center;gap:0.25rem;font-weight:500;">
+                    Powered by <img src="images/jkd-logo.png" alt="jkdcoding.com" style="height:18px;width:auto;display:inline-block;">
+                </a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
