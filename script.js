@@ -662,16 +662,6 @@ function ensureChecklistModal() {
         </div>
     `;
     document.body.appendChild(div);
-
-    // Bind checklist modal close
-    const modal = document.getElementById('checklistModal');
-    const closeBtn = document.getElementById('closeChecklistModal');
-    closeBtn?.addEventListener('click', () => hideChecklistModal());
-    modal?.addEventListener('click', (e) => { if (e.target === modal) hideChecklistModal(); });
-
-    // Bind checklist form submit
-    const form = document.getElementById('checklistForm');
-    form?.addEventListener('submit', (e) => handleFormSubmit(e, 'checklist'));
 }
 
 function bindModalTriggers() {
