@@ -206,6 +206,11 @@ body {
 .text-gradient-red {
     background: linear-gradient(135deg, #ff4d4f, #ff9c6e);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    animation: slowPulse 2s ease-in-out infinite;
+}
+@keyframes slowPulse {
+    0%, 100% { opacity: 1; filter: brightness(1); }
+    50% { opacity: 0.75; filter: brightness(1.15); }
 }
 
 .hero-subtitle {

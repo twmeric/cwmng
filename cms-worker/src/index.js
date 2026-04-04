@@ -397,8 +397,8 @@ function getDefaultCMSData() {
       email: "info@cwmng.com",
     },
     hero: {
-      title: "每賣出一件貨，Xtripe 就先抽走你近 <span class='text-gradient'>4%</span> 利潤——這筆隱形租金，你還要付多久？",
-      subtitle: "駿匯聯是銀聯商務香港官方代理，專門幫本地網店把收款成本壓到 2.6% 以下。從對接到上線，有真人專員 + AI 客服全程跟進，讓你不再孤軍奮戰。",
+      title: "每賣出一件貨，Xtripe 就先抽走你近 <span class='text-gradient'>4%</span> 利潤——<br><span class='text-gradient-red'>這筆隱形租金，你還要付多久？</span>",
+      subtitle: "駿匯聯 —— 銀聯商務香港官方代理，專門幫本地網店把收款成本壓到 2.6% 以下。從對接到上線，有真人專員 + AI 客服全程跟進，讓你不再孤軍奮戰。",
       ctaPrimary: "立即免費諮詢",
       ctaSecondary: "查看詳細費率",
       stats: [
