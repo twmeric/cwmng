@@ -49,6 +49,9 @@ export default {
         case "POST /api/deploy":
           return await deployWebsite(request, env, corsHeaders);
 
+        case "POST /api/auth":
+          return await verifyAuth(request, env, corsHeaders);
+
         case "GET /":
           return jsonResponse({
             service: "CWMNG CMS API",
@@ -87,6 +90,19 @@ function requireAuth(requestBody, env) {
     return { ok: false, error: "Unauthorized" };
   }
   return { ok: true };
+}
+
+async function verifyAuth(request, env, corsHeaders) {
+  try {
+    const body = await request.json();
+    const auth = requireAuth(body, env);
+    if (!auth.ok) {
+      return jsonResponse({ success: false, error: auth.error }, 401, corsHeaders);
+    }
+    return jsonResponse({ success: true, message: "Authenticated" }, 200, corsHeaders);
+  } catch (e) {
+    return jsonResponse({ success: false, error: "Invalid request" }, 400, corsHeaders);
+  }
 }
 
 // ==================== CMS Handlers ====================

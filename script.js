@@ -11,10 +11,37 @@ const API_BASE_URL = (location.hostname === 'localhost' || location.hostname ===
 const WHATSAPP_NUMBER = '85251164453';
 
 document.addEventListener('DOMContentLoaded', function() {
+    initTheme();
     initBaseInteractions();
     fetchCMSData();
     trackPageView();
 });
+
+/* ========================================
+   Theme Toggle
+   ======================================== */
+function initTheme() {
+    const saved = localStorage.getItem('cwmng_theme');
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = saved ? saved === 'dark' : prefersDark;
+    setTheme(isDark ? 'dark' : 'light');
+
+    const toggle = document.getElementById('themeToggle');
+    toggle?.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        setTheme(next);
+        localStorage.setItem('cwmng_theme', next);
+    });
+}
+
+function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    const icon = document.querySelector('#themeToggle i');
+    if (icon) {
+        icon.className = theme === 'dark' ? 'ph ph-sun' : 'ph ph-moon';
+    }
+}
 
 /* ========================================
    Base UI Interactions ( preserved from original )
@@ -105,6 +132,18 @@ function initBaseInteractions() {
 
     // Pricing Calculator
     initCalculator();
+
+    // Theme toggle in mobile menu if present
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle && !document.getElementById('themeToggle').dataset.bound) {
+        themeToggle.dataset.bound = '1';
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            setTheme(next);
+            localStorage.setItem('cwmng_theme', next);
+        });
+    }
 
     // Sticky CTA
     const stickyCta = document.getElementById('stickyCta');
@@ -762,22 +801,18 @@ async function handleFormSubmit(e, type) {
    ======================================== */
 function initCalculator() {
     const monthlyRevenue = document.getElementById('monthlyRevenue');
-    const currentProvider = document.getElementById('currentProvider');
     if (!monthlyRevenue) return;
 
     monthlyRevenue.addEventListener('input', updateCalculator);
-    currentProvider?.addEventListener('change', updateCalculator);
 }
 
 function updateCalculator() {
     const monthlyRevenue = document.getElementById('monthlyRevenue');
-    const currentProvider = document.getElementById('currentProvider');
     const annualSavings = document.getElementById('annualSavings');
     const savingsMetaphor = document.getElementById('savingsMetaphor');
     const calcProgressFill = document.getElementById('calcProgressFill');
 
     const revenue = parseFloat(monthlyRevenue?.value) || 0;
-    const provider = currentProvider?.value || 'xtripe';
     if (!revenue || revenue <= 0) {
         if (annualSavings) annualSavings.textContent = '$0';
         if (savingsMetaphor) savingsMetaphor.textContent = savingsMetaphor.getAttribute('data-placeholder') || '輸入交易額即可查看驚人差距';
@@ -785,10 +820,8 @@ function updateCalculator() {
         return;
     }
 
-    let theirRate = 0.034, fixedFee = 2.35;
-    if (provider === 'xaypal') { theirRate = 0.039; fixedFee = 2.35; }
-    else if (provider === 'other') { theirRate = 0.035; fixedFee = 0; }
-
+    const theirRate = 0.034;
+    const fixedFee = 2.35;
     const monthlyTxnCount = Math.max(1, Math.round(revenue / 400));
     const theirCost = revenue * theirRate + monthlyTxnCount * fixedFee;
     const ourCost = revenue * 0.026;

@@ -1,125 +1,303 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CWMNG 內容管理後台</title>
+    <title>CWMNG 管理後台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif; background: #f3f4f6; }
-        .tab-btn.active { background: #1E3A8A; color: white; }
+        :root { --gold: #d4a853; --gold-hover: #e8c87a; --dark-bg: #0a0a0a; --panel-bg: #111111; --card-bg: #161616; --border: #27272a; }
+        [data-theme="light"] { --dark-bg: #faf8f3; --panel-bg: #ffffff; --card-bg: #fefdfb; --border: #e4e4e7; }
+        body { font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif; background: var(--dark-bg); color: #fafafa; transition: background 0.3s, color 0.3s; }
+        [data-theme="light"] body { color: #18181b; }
+        .sidebar { background: var(--panel-bg); border-right: 1px solid var(--border); transition: all 0.3s; }
+        .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #a1a1aa; transition: all 0.2s; }
+        .nav-item:hover { background: #1a1a1a; color: #fff; }
+        [data-theme="light"] .nav-item:hover { background: #f4f4f5; color: #18181b; }
+        .nav-item.active { background: var(--gold); color: #1e3a5f; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 1rem; }
+        .input-dark { background: #0a0a0a; border: 1px solid var(--border); color: #fafafa; }
+        [data-theme="light"] .input-dark { background: #fff; color: #18181b; }
         .json-editor { font-family: 'Roboto Mono', monospace; min-height: 60vh; }
+        .gold-btn { background: var(--gold); color: #1e3a5f; }
+        .gold-btn:hover { background: var(--gold-hover); }
         .inquiry-card { transition: all 0.2s; }
-        .inquiry-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
-        .status-pending { background: #FEF3C7; color: #92400E; }
-        .status-contacted { background: #DBEAFE; color: #1E40AF; }
-        .status-completed { background: #D1FAE5; color: #065F46; }
-        .status-closed { background: #E5E7EB; color: #374151; }
+        .inquiry-card:hover { border-color: var(--gold); }
+        .status-pending { background: rgba(234,179,8,0.15); color: #facc15; border: 1px solid rgba(234,179,8,0.25); }
+        .status-contacted { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.25); }
+        .status-completed { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+        .status-closed { background: rgba(113,113,122,0.15); color: #a1a1aa; border: 1px solid rgba(113,113,122,0.25); }
+        [data-theme="light"] .status-pending { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+        [data-theme="light"] .status-contacted { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+        [data-theme="light"] .status-completed { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+        [data-theme="light"] .status-closed { background: #f4f4f5; color: #52525b; border-color: #e4e4e7; }
+        .fade-in { animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="min-h-screen">
-    <!-- Config -->
     <script>
-        // ⚠️ 部署後請修改為你的 Worker 實際網址
         const API_BASE_URL = location.hostname === 'localhost' || location.hostname === '127.0.0.1'
             ? 'http://localhost:8787'
             : 'https://cwmng-cms-worker.jimsbond007.workers.dev';
     </script>
 
-    <!-- Login Screen -->
-    <div id="loginScreen" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
-        <div class="w-full max-w-sm p-8">
+    <!-- Login -->
+    <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center" style="background: linear-gradient(135deg, #0a0a0a 0%, #141414 50%, #0f0f0f 100%);">
+        <div class="w-full max-w-md p-6">
             <div class="text-center mb-8">
-                <h1 class="text-2xl font-bold text-gray-900">CWMNG 管理後台</h1>
-                <p class="text-sm text-gray-500 mt-2">請輸入管理密碼登入</p>
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-4 shadow-lg" style="background: var(--gold);">
+                    <span class="text-2xl font-bold text-[#1e3a5f]">C</span>
+                </div>
+                <h1 class="text-2xl font-bold text-white">CWMNG</h1>
+                <p class="text-sm text-gray-400 mt-1">網站管理系統</p>
             </div>
-            <form id="loginForm" class="space-y-4">
-                <input type="password" id="adminPassword" placeholder="管理密碼" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none" required>
-                <button type="submit" class="w-full bg-blue-900 text-white py-3 rounded-lg font-medium hover:bg-blue-800 transition">登入</button>
-            </form>
-            <p id="loginError" class="text-red-600 text-sm mt-3 hidden">密碼錯誤，請重試。</p>
+            <div class="card p-8">
+                <h2 class="text-xl font-bold text-white mb-6 text-center" id="loginTitle">管理員登入</h2>
+                <form id="loginForm" class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">密碼</label>
+                        <input type="password" id="adminPassword" class="w-full px-4 py-3 rounded-lg input-dark outline-none focus:ring-2 focus:ring-[#d4a853]" placeholder="請輸入管理密碼" required>
+                    </div>
+                    <button type="submit" class="w-full gold-btn font-bold py-3 rounded-lg transition flex items-center justify-center gap-2">
+                        <i class="fas fa-sign-in-alt"></i> 登入
+                    </button>
+                </form>
+                <p id="loginError" class="text-red-400 text-sm mt-3 hidden text-center">密碼錯誤，請重試。</p>
+            </div>
+            <p class="text-center text-gray-500 text-sm mt-8">© CWMNG Management System</p>
         </div>
     </div>
 
-    <!-- Main App -->
-    <div id="app" class="hidden">
-        <!-- Header -->
-        <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-blue-900 rounded-lg flex items-center justify-center text-white font-bold">C</div>
-                        <h1 class="font-bold text-gray-900">CWMNG 管理後台</h1>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <button onclick="loadData()" class="px-3 py-2 text-sm text-gray-600 hover:text-gray-900"><i class="fas fa-sync-alt mr-1"></i> 重新載入</button>
-                        <button onclick="logout()" class="px-3 py-2 text-sm text-red-600 hover:text-red-700">登出</button>
-                    </div>
-                </div>
+    <!-- App -->
+    <div id="app" class="hidden flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar fixed h-full z-30 flex flex-col" style="width: 260px;">
+            <div class="h-16 flex items-center gap-3 px-6 border-b border-[var(--border)]">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: var(--gold);"><span class="font-bold text-[#1e3a5f]">C</span></div>
+                <span class="font-bold text-lg">CWMNG CMS</span>
             </div>
-        </header>
-
-        <!-- Tabs -->
-        <div class="bg-white border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <nav class="flex space-x-1 py-3" aria-label="Tabs">
-                    <button onclick="switchTab('cms')" id="tab-cms" class="tab-btn active px-4 py-2 rounded-lg text-sm font-medium transition">📝 CMS 內容編輯</button>
-                    <button onclick="switchTab('inquiries')" id="tab-inquiries" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition">📋 客戶查詢 <span id="inquiryBadge" class="ml-1 hidden bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">0</span></button>
-                    <button onclick="switchTab('deploy')" id="tab-deploy" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition">🚀 網站部署</button>
-                </nav>
-            </div>
-        </div>
-
-        <!-- CMS Tab -->
-        <div id="panel-cms" class="tab-panel max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
-                    <div>
-                        <h2 class="font-semibold text-gray-900">CMS 內容編輯器</h2>
-                        <p class="text-sm text-gray-500">直接編輯 JSON，儲存後即時更新網站內容。</p>
-                    </div>
-                    <button onclick="saveCMS()" id="saveCmsBtn" class="px-4 py-2 bg-blue-900 text-white rounded-lg text-sm font-medium hover:bg-blue-800 transition">
-                        <i class="fas fa-save mr-1"></i> 儲存變更
-                    </button>
-                </div>
-                <div class="p-0">
-                    <textarea id="cmsEditor" class="json-editor w-full p-4 text-sm border-0 outline-none resize-y" spellcheck="false"></textarea>
-                </div>
-            </div>
-            <p id="cmsMessage" class="mt-3 text-sm hidden"></p>
-        </div>
-
-        <!-- Inquiries Tab -->
-        <div id="panel-inquiries" class="tab-panel hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-lg font-semibold text-gray-900">客戶查詢記錄</h2>
-                <div class="flex gap-2">
-                    <select id="inquiryFilter" onchange="renderInquiries()" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                        <option value="all">全部狀態</option>
-                        <option value="pending">待跟進</option>
-                        <option value="contacted">已聯繫</option>
-                        <option value="completed">已完成</option>
-                        <option value="closed">已結案</option>
-                    </select>
-                    <button onclick="loadInquiries()" class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm hover:bg-gray-50"><i class="fas fa-sync-alt"></i> 刷新</button>
-                </div>
-            </div>
-            <div id="inquiriesList" class="space-y-4">
-                <div class="text-center py-12 text-gray-400">載入中...</div>
-            </div>
-        </div>
-
-        <!-- Deploy Tab -->
-        <div id="panel-deploy" class="tab-panel hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-2xl">
-                <h2 class="text-lg font-semibold text-gray-900 mb-2">重新部署網站</h2>
-                <p class="text-gray-600 mb-6">修改 CMS 內容後，雖然網站會自動讀取最新 API 數據，但如果你修改了靜態 HTML/CSS，就需要重新部署。</p>
-                <button onclick="triggerDeploy()" id="deployBtn" class="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition">
-                    <i class="fas fa-rocket mr-2"></i> 觸發 GitHub Actions 部署
+            <nav class="flex-1 py-4 px-3 space-y-1">
+                <a href="#" class="nav-item active" data-tab="dashboard"><i class="fas fa-th-large w-5"></i> 儀表板</a>
+                <a href="#" class="nav-item" data-tab="content"><i class="fas fa-edit w-5"></i> 內容管理</a>
+                <a href="#" class="nav-item" data-tab="inquiries"><i class="fas fa-inbox w-5"></i> 客戶查詢 <span id="sidebarBadge" class="hidden ml-auto text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full">0</span></a>
+                <a href="#" class="nav-item" data-tab="analytics"><i class="fas fa-chart-bar w-5"></i> 網站分析</a>
+                <a href="#" class="nav-item" data-tab="deploy"><i class="fas fa-rocket w-5"></i> 一鍵部署</a>
+            </nav>
+            <div class="p-4 border-t border-[var(--border)] space-y-2">
+                <button onclick="toggleTheme()" class="nav-item w-full justify-start">
+                    <i class="fas fa-moon w-5" id="themeIcon"></i> <span id="themeLabel">切換亮色</span>
                 </button>
-                <div id="deployMessage" class="mt-4 text-sm hidden"></div>
+                <button onclick="logout()" class="nav-item w-full justify-start">
+                    <i class="fas fa-sign-out-alt w-5"></i> 登出
+                </button>
             </div>
+        </aside>
+
+        <!-- Main -->
+        <div id="mainWrap" class="flex-1 flex flex-col transition-all" style="margin-left: 260px;">
+            <!-- Header -->
+            <header class="h-16 card border-t-0 border-x-0 rounded-none flex items-center justify-between px-6 sticky top-0 z-20">
+                <div class="flex items-center gap-3">
+                    <button id="sidebarToggle" class="p-2 rounded-lg hover:bg-[#1a1a1a] text-gray-400 transition">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <span class="font-semibold" id="pageTitle">儀表板</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="/" target="_blank" class="text-sm text-gray-400 hover:text-[var(--gold)] transition flex items-center gap-1">
+                        <i class="fas fa-external-link-alt"></i> 查看網站
+                    </a>
+                    <div class="w-px h-6 bg-[var(--border)]"></div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" style="background: var(--gold); color: #1e3a5f;">A</div>
+                        <span class="text-sm font-medium text-gray-300 hidden sm:inline">管理員</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="p-6 flex-1">
+                <!-- Dashboard -->
+                <div id="panel-dashboard" class="tab-panel fade-in space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h1 class="text-2xl font-bold">歡迎回來，管理員</h1>
+                            <p class="text-sm text-gray-400 mt-1">在這裡管理網站內容、查看客戶查詢及分析數據。</p>
+                        </div>
+                        <div class="flex items-center gap-2" id="dashMessages"></div>
+                    </div>
+
+                    <!-- Welcome Banner -->
+                    <div class="rounded-2xl p-8 text-white" style="background: linear-gradient(135deg, #1e3a8a, #2d4a7c);">
+                        <h2 class="text-2xl font-bold mb-2">CWMNG 管理後台</h2>
+                        <p class="text-gray-200">修改內容後網站會實時更新，無需重新部署。如需修改 HTML/CSS，請 Push 到 GitHub。</p>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="dashStats">
+                        <div class="card p-5"><div class="text-2xl font-bold text-white" id="statServices">-</div><div class="text-sm text-gray-400">方案數量</div></div>
+                        <div class="card p-5"><div class="text-2xl font-bold text-[var(--gold)]" id="statInquiries">-</div><div class="text-sm text-gray-400">客戶查詢</div></div>
+                        <div class="card p-5"><div class="text-2xl font-bold text-blue-400" id="statPending">-</div><div class="text-sm text-gray-400">待跟進</div></div>
+                        <div class="card p-5"><div class="text-2xl font-bold text-green-400" id="statCompleted">-</div><div class="text-sm text-gray-400">已完成</div></div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card p-6">
+                        <h2 class="text-lg font-bold mb-4">快速操作</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <button onclick="exportCMSData()" class="group flex items-center gap-3 p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: #f97316;"><i class="fas fa-download"></i></div>
+                                <div class="text-left"><div class="font-semibold">導出數據</div><div class="text-xs text-gray-400">備份 CMS JSON</div></div>
+                            </button>
+                            <button onclick="importCMSData()" class="group flex items-center gap-3 p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: #22c55e;"><i class="fas fa-upload"></i></div>
+                                <div class="text-left"><div class="font-semibold">導入數據</div><div class="text-xs text-gray-400">還原 CMS JSON</div></div>
+                            </button>
+                            <button onclick="switchTab('deploy')" class="group flex items-center gap-3 p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: #a855f7;"><i class="fas fa-rocket"></i></div>
+                                <div class="text-left"><div class="font-semibold">一鍵部署</div><div class="text-xs text-gray-400">觸發 GitHub Actions</div></div>
+                            </button>
+                        </div>
+                        <input type="file" id="importFile" accept=".json" class="hidden" onchange="handleImportFile(this)">
+                    </div>
+
+                    <!-- Feature Grid -->
+                    <div class="card p-6">
+                        <h2 class="text-lg font-bold mb-4">內容管理功能</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <a href="#" onclick="switchTab('content'); return false;" class="block p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-home"></i></div>
+                                    <div><h3 class="font-bold">Hero 區域</h3><p class="text-sm text-gray-400">標題、副標、CTA 按鈕</p></div>
+                                </div>
+                            </a>
+                            <a href="#" onclick="switchTab('content'); return false;" class="block p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-box-open"></i></div>
+                                    <div><h3 class="font-bold">服務方案</h3><p class="text-sm text-gray-400">三種方案內容與價格</p></div>
+                                </div>
+                            </a>
+                            <a href="#" onclick="switchTab('content'); return false;" class="block p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-comments"></i></div>
+                                    <div><h3 class="font-bold">客戶見證</h3><p class="text-sm text-gray-400">評價與作者資料</p></div>
+                                </div>
+                            </a>
+                            <a href="#" onclick="switchTab('content'); return false;" class="block p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-question-circle"></i></div>
+                                    <div><h3 class="font-bold">常見問題</h3><p class="text-sm text-gray-400">FAQ 內容編輯</p></div>
+                                </div>
+                            </a>
+                            <a href="#" onclick="switchTab('content'); return false;" class="block p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-address-card"></i></div>
+                                    <div><h3 class="font-bold">聯絡資訊</h3><p class="text-sm text-gray-400">電話、電郵、WhatsApp</p></div>
+                                </div>
+                            </a>
+                            <a href="#" onclick="switchTab('inquiries'); return false;" class="block p-4 rounded-xl border border-[var(--border)] hover:border-[var(--gold)] transition">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-inbox"></i></div>
+                                    <div><h3 class="font-bold">客戶查詢</h3><p class="text-sm text-gray-400">查看留痕與跟進狀態</p></div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content CMS -->
+                <div id="panel-content" class="tab-panel hidden fade-in space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h2 class="text-xl font-bold">CMS 內容編輯器</h2>
+                            <p class="text-sm text-gray-400">直接編輯 JSON，儲存後即時生效。</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="formatJSON()" class="px-3 py-2 rounded-lg border border-[var(--border)] hover:bg-[#1a1a1a] text-sm transition"><i class="fas fa-code"></i> 格式化</button>
+                            <button onclick="saveCMS()" id="saveCmsBtn" class="px-4 py-2 rounded-lg gold-btn font-bold text-sm transition"><i class="fas fa-save"></i> 儲存變更</button>
+                        </div>
+                    </div>
+                    <div class="card p-0 overflow-hidden">
+                        <textarea id="cmsEditor" class="json-editor w-full p-4 text-sm border-0 outline-none resize-y input-dark" spellcheck="false"></textarea>
+                    </div>
+                    <p id="cmsMessage" class="text-sm hidden"></p>
+                </div>
+
+                <!-- Inquiries -->
+                <div id="panel-inquiries" class="tab-panel hidden fade-in space-y-5">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-xl font-bold">客戶查詢管理</h2>
+                            <p class="text-sm text-gray-400">查看和跟進所有客戶提交的查詢</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div id="inqMessage" class="hidden text-sm px-3 py-2 rounded-lg"></div>
+                            <button onclick="loadInquiries()" id="reloadInqBtn" class="px-4 py-2 rounded-lg gold-btn font-bold text-sm transition flex items-center gap-2">
+                                <i class="fas fa-sync-alt"></i> 刷新
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="inqStats">
+                        <div class="card p-4"><div class="text-2xl font-bold text-white" id="inqTotal">0</div><div class="text-sm text-gray-400">全部查詢</div></div>
+                        <div class="card p-4"><div class="text-2xl font-bold text-yellow-400" id="inqPending">0</div><div class="text-sm text-gray-400">待跟進</div></div>
+                        <div class="card p-4"><div class="text-2xl font-bold text-blue-400" id="inqContacted">0</div><div class="text-sm text-gray-400">已聯繫</div></div>
+                        <div class="card p-4"><div class="text-2xl font-bold text-green-400" id="inqCompleted">0</div><div class="text-sm text-gray-400">已完成</div></div>
+                    </div>
+
+                    <!-- Filter -->
+                    <div class="card p-4 flex items-center gap-4">
+                        <span class="text-sm text-gray-400">狀態篩選：</span>
+                        <select id="inqFilter" onchange="renderInquiries()" class="px-3 py-2 rounded-lg input-dark text-sm outline-none focus:ring-2 focus:ring-[var(--gold)]">
+                            <option value="all">全部</option>
+                            <option value="pending">待跟進</option>
+                            <option value="contacted">已聯繫</option>
+                            <option value="completed">已完成</option>
+                            <option value="closed">已結案</option>
+                        </select>
+                    </div>
+
+                    <!-- List -->
+                    <div id="inquiriesList" class="space-y-4">
+                        <div class="text-center py-12 text-gray-500">載入中...</div>
+                    </div>
+                </div>
+
+                <!-- Analytics -->
+                <div id="panel-analytics" class="tab-panel hidden fade-in space-y-5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-bold">網站分析</h2>
+                            <p class="text-sm text-gray-400">查看最近 7 日的瀏覽與互動數據</p>
+                        </div>
+                        <button onclick="loadAnalytics()" class="px-4 py-2 rounded-lg gold-btn font-bold text-sm transition"><i class="fas fa-sync-alt"></i> 刷新</button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="card p-5"><div class="text-2xl font-bold text-white" id="aPv">-</div><div class="text-sm text-gray-400">頁面瀏覽 (7日)</div></div>
+                        <div class="card p-5"><div class="text-2xl font-bold text-[var(--gold)]" id="aInt">-</div><div class="text-sm text-gray-400">互動事件 (7日)</div></div>
+                        <div class="card p-5"><div class="text-2xl font-bold text-blue-400" id="aSessions">-</div><div class="text-sm text-gray-400">獨立訪問</div></div>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="font-bold mb-3">熱門頁面</h3>
+                        <div id="aPages" class="space-y-2 text-sm text-gray-300"></div>
+                    </div>
+                </div>
+
+                <!-- Deploy -->
+                <div id="panel-deploy" class="tab-panel hidden fade-in space-y-5">
+                    <div class="max-w-2xl">
+                        <h2 class="text-xl font-bold mb-2">重新部署網站</h2>
+                        <p class="text-gray-400 mb-6">修改 CMS 內容後會自動生效；若修改了 HTML/CSS/JS，請觸發重新部署。</p>
+                        <button onclick="triggerDeploy()" id="deployBtn" class="px-6 py-3 rounded-lg gold-btn font-bold transition flex items-center gap-2">
+                            <i class="fas fa-rocket"></i> 觸發 GitHub Actions 部署
+                        </button>
+                        <div id="deployMessage" class="mt-4 text-sm hidden"></div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 
@@ -128,20 +306,12 @@
         let cmsData = {};
         let inquiries = [];
 
-        // ===== Login =====
-        const loginScreen = document.getElementById('loginScreen');
-        const app = document.getElementById('app');
-        const savedPassword = localStorage.getItem('cwmng_admin_password');
-        if (savedPassword) {
-            document.getElementById('adminPassword').value = savedPassword;
-        }
-
+        // Auth
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const pwd = document.getElementById('adminPassword').value.trim();
-            // 簡單驗證：嘗試讀取 inquiries（需要密碼）
             try {
-                const res = await fetch(API_BASE_URL + '/api/inquiries', {
+                const res = await fetch(API_BASE_URL + '/api/auth', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ password: pwd })
@@ -149,41 +319,89 @@
                 if (res.ok) {
                     currentPassword = pwd;
                     localStorage.setItem('cwmng_admin_password', pwd);
-                    loginScreen.classList.add('hidden');
-                    app.classList.remove('hidden');
-                    loadData();
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('app').classList.remove('hidden');
+                    loadAll();
                 } else {
                     document.getElementById('loginError').classList.remove('hidden');
                 }
             } catch (err) {
-                document.getElementById('loginError').textContent = '無法連接到 API，請檢查 API_BASE_URL 設定。';
+                document.getElementById('loginError').textContent = '無法連接到 API。';
                 document.getElementById('loginError').classList.remove('hidden');
             }
         });
+
+        const savedPwd = localStorage.getItem('cwmng_admin_password');
+        if (savedPwd) document.getElementById('adminPassword').value = savedPwd;
 
         function logout() {
             localStorage.removeItem('cwmng_admin_password');
             location.reload();
         }
 
-        // ===== Tabs =====
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active', 'text-white', 'bg-blue-900'));
-            document.querySelectorAll('.tab-btn').forEach(b => {
-                if (!b.classList.contains('active')) {
-                    b.classList.add('text-gray-600');
-                }
+        // Sidebar & Tabs
+        const sidebar = document.getElementById('sidebar');
+        const mainWrap = document.getElementById('mainWrap');
+        let sidebarOpen = true;
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            sidebarOpen = !sidebarOpen;
+            sidebar.style.width = sidebarOpen ? '260px' : '72px';
+            mainWrap.style.marginLeft = sidebarOpen ? '260px' : '72px';
+            sidebar.querySelectorAll('.nav-item span, .nav-item #sidebarBadge').forEach(el => {
+                el.style.display = sidebarOpen ? 'inline-flex' : 'none';
             });
-            document.getElementById('tab-' + tab).classList.add('active');
-            document.getElementById('tab-' + tab).classList.remove('text-gray-600');
+        });
+
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector('.nav-item[data-tab="' + tab + '"]').classList.add('active');
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
             document.getElementById('panel-' + tab).classList.remove('hidden');
+            const titles = { dashboard: '儀表板', content: '內容管理', inquiries: '客戶查詢', analytics: '網站分析', deploy: '一鍵部署' };
+            document.getElementById('pageTitle').textContent = titles[tab];
+            if (tab === 'inquiries') renderInquiries();
         }
 
-        // ===== Data Loading =====
-        async function loadData() {
+        document.querySelectorAll('.nav-item[data-tab]').forEach(el => {
+            el.addEventListener('click', (e) => { e.preventDefault(); switchTab(el.dataset.tab); });
+        });
+
+        // Theme
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const next = isDark ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('cwmng_theme', next);
+            updateThemeUI();
+        }
+        function updateThemeUI() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.getElementById('themeIcon').className = 'fas w-5 ' + (isDark ? 'fa-sun' : 'fa-moon');
+            document.getElementById('themeLabel').textContent = isDark ? '切換亮色' : '切換暗色';
+            const loginScreen = document.getElementById('loginScreen');
+            if (loginScreen) {
+                loginScreen.style.background = isDark
+                    ? 'linear-gradient(135deg, #0a0a0a 0%, #141414 50%, #0f0f0f 100%)'
+                    : 'linear-gradient(135deg, #faf8f3 0%, #f5f0e8 50%, #ebe5d9 100%)';
+            }
+            const loginTitle = document.getElementById('loginTitle');
+            if (loginTitle) loginTitle.className = 'text-xl font-bold ' + (isDark ? 'text-white' : 'text-gray-900') + ' mb-6 text-center';
+        }
+        (function initTheme() {
+            const saved = localStorage.getItem('cwmng_theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'dark'); // default dark as requested
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeUI();
+        })();
+
+        // Data Loading
+        async function loadAll() {
             await loadCMS();
             await loadInquiries();
+            await loadAnalytics();
+            updateDashStats();
         }
 
         async function loadCMS() {
@@ -191,14 +409,82 @@
                 const res = await fetch(API_BASE_URL + '/api/cms/data');
                 cmsData = await res.json();
                 document.getElementById('cmsEditor').value = JSON.stringify(cmsData, null, 2);
+                updateDashStats();
+            } catch (err) {}
+        }
+
+        async function saveCMS() {
+            const btn = document.getElementById('saveCmsBtn');
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 儲存中...';
+            try {
+                const data = JSON.parse(document.getElementById('cmsEditor').value);
+                const res = await fetch(API_BASE_URL + '/api/cms/data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: currentPassword, data })
+                });
+                const result = await res.json();
+                showMessage('cmsMessage', result.success ? '✅ CMS 內容已儲存' : '❌ ' + (result.error || '失敗'), result.success ? 'success' : 'error');
+                if (result.success) { cmsData = data; updateDashStats(); }
             } catch (err) {
-                showMessage('cmsMessage', '載入 CMS 失敗：' + err.message, 'error');
+                showMessage('cmsMessage', '❌ JSON 格式錯誤：' + err.message, 'error');
+            } finally {
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> 儲存變更';
             }
         }
 
+        function formatJSON() {
+            try {
+                const editor = document.getElementById('cmsEditor');
+                editor.value = JSON.stringify(JSON.parse(editor.value), null, 2);
+            } catch (e) { showMessage('cmsMessage', '❌ JSON 格式錯誤', 'error'); }
+        }
+
+        function exportCMSData() {
+            const blob = new Blob([JSON.stringify(cmsData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `cwmng-cms-${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(url);
+            showDashMessage('✅ 導出成功', true);
+        }
+        function importCMSData() { document.getElementById('importFile').click(); }
+        function handleImportFile(input) {
+            const file = input.files?.[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    document.getElementById('cmsEditor').value = JSON.stringify(data, null, 2);
+                    showDashMessage('✅ 導入成功，請按「儲存變更」', true);
+                } catch { showDashMessage('❌ 文件格式錯誤', false); }
+            };
+            reader.readAsText(file); input.value = '';
+        }
+
+        // Dashboard Stats
+        function updateDashStats() {
+            const services = cmsData.solutions?.items?.length ?? '-';
+            document.getElementById('statServices').textContent = services;
+            document.getElementById('statInquiries').textContent = inquiries.length;
+            const pending = inquiries.filter(i => i.status === 'pending').length;
+            const completed = inquiries.filter(i => i.status === 'completed').length;
+            document.getElementById('statPending').textContent = pending;
+            document.getElementById('statCompleted').textContent = completed;
+            const badge = document.getElementById('sidebarBadge');
+            if (pending > 0) { badge.textContent = pending; badge.classList.remove('hidden'); badge.style.display = sidebarOpen ? 'inline-flex' : 'none'; }
+            else { badge.classList.add('hidden'); }
+        }
+        function showDashMessage(text, ok) {
+            const el = document.getElementById('dashMessages');
+            el.innerHTML = `<div class="px-3 py-2 rounded-lg text-sm ${ok ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}">${text}</div>`;
+            setTimeout(() => el.innerHTML = '', 3000);
+        }
+
+        // Inquiries
         async function loadInquiries() {
-            const list = document.getElementById('inquiriesList');
-            list.innerHTML = '<div class="text-center py-12 text-gray-400">載入中...</div>';
+            const btn = document.getElementById('reloadInqBtn');
+            btn.disabled = true;
+            document.getElementById('inquiriesList').innerHTML = '<div class="text-center py-12 text-gray-500">載入中...</div>';
             try {
                 const res = await fetch(API_BASE_URL + '/api/inquiries', {
                     method: 'POST',
@@ -208,83 +494,68 @@
                 const result = await res.json();
                 if (result.success) {
                     inquiries = result.data || [];
+                    inquiries.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+                    updateInqStats();
                     renderInquiries();
-                    const pending = inquiries.filter(i => i.status === 'pending').length;
-                    const badge = document.getElementById('inquiryBadge');
-                    if (pending > 0) {
-                        badge.textContent = pending;
-                        badge.classList.remove('hidden');
-                    } else {
-                        badge.classList.add('hidden');
-                    }
+                    updateDashStats();
                 } else {
-                    list.innerHTML = '<div class="text-center py-12 text-red-500">載入失敗：' + (result.error || '未知錯誤') + '</div>';
+                    document.getElementById('inquiriesList').innerHTML = '<div class="text-center py-12 text-red-400">載入失敗</div>';
                 }
             } catch (err) {
-                list.innerHTML = '<div class="text-center py-12 text-red-500">載入失敗：' + err.message + '</div>';
-            }
+                document.getElementById('inquiriesList').innerHTML = '<div class="text-center py-12 text-red-400">載入失敗：' + err.message + '</div>';
+            } finally { btn.disabled = false; }
         }
 
-        // ===== CMS Save =====
-        async function saveCMS() {
-            const btn = document.getElementById('saveCmsBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> 儲存中...';
-            try {
-                const data = JSON.parse(document.getElementById('cmsEditor').value);
-                const res = await fetch(API_BASE_URL + '/api/cms/data', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password: currentPassword, data })
-                });
-                const result = await res.json();
-                if (result.success) {
-                    showMessage('cmsMessage', '✅ CMS 內容已儲存並生效（網站下次載入時會自動讀取最新內容）', 'success');
-                } else {
-                    showMessage('cmsMessage', '❌ 儲存失敗：' + (result.error || '未知錯誤'), 'error');
-                }
-            } catch (err) {
-                showMessage('cmsMessage', '❌ JSON 格式錯誤：' + err.message, 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save mr-1"></i> 儲存變更';
-            }
+        function updateInqStats() {
+            document.getElementById('inqTotal').textContent = inquiries.length;
+            document.getElementById('inqPending').textContent = inquiries.filter(i => i.status === 'pending').length;
+            document.getElementById('inqContacted').textContent = inquiries.filter(i => i.status === 'contacted').length;
+            document.getElementById('inqCompleted').textContent = inquiries.filter(i => i.status === 'completed').length;
         }
 
-        // ===== Inquiries Render =====
         function renderInquiries() {
-            const filter = document.getElementById('inquiryFilter').value;
+            const filter = document.getElementById('inqFilter').value;
             const list = document.getElementById('inquiriesList');
             const filtered = filter === 'all' ? inquiries : inquiries.filter(i => i.status === filter);
-
             if (filtered.length === 0) {
-                list.innerHTML = '<div class="text-center py-12 text-gray-400">暫無查詢記錄</div>';
+                list.innerHTML = '<div class="text-center py-12 text-gray-500">' + (filter === 'all' ? '暫無客戶查詢記錄' : '該狀態下暫無記錄') + '</div>';
                 return;
             }
-
             list.innerHTML = filtered.map(iq => `
-                <div class="inquiry-card bg-white rounded-xl border border-gray-200 p-5">
-                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass(iq.status)}">${statusText(iq.status)}</span>
-                                <span class="text-xs text-gray-400">${formatTime(iq.submittedAt)}</span>
-                                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">${iq.interest || '一般查詢'}</span>
+                <div class="inquiry-card card p-5">
+                    <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                        <div class="flex-1 space-y-2">
+                            <div class="flex items-center gap-3 flex-wrap">
+                                <h3 class="font-bold text-lg text-white">${esc(iq.name)}</h3>
+                                <span class="px-2 py-0.5 rounded-full text-xs font-medium ${statusClass(iq.status)}">${statusText(iq.status)}</span>
+                                <span class="text-xs text-gray-400">${fmtTime(iq.submittedAt)}</span>
+                                ${iq.interest ? `<span class="text-xs px-2 py-0.5 rounded bg-[#1a1a1a] border border-[var(--border)] text-gray-300">${esc(iq.interest)}</span>` : ''}
                             </div>
-                            <h3 class="font-semibold text-gray-900">${escapeHtml(iq.name)} <span class="font-normal text-gray-500 text-sm">${escapeHtml(iq.phone)}</span></h3>
-                            ${iq.email ? `<p class="text-sm text-gray-600"><i class="fas fa-envelope text-gray-400 mr-1"></i>${escapeHtml(iq.email)}</p>` : ''}
-                            ${iq.company ? `<p class="text-sm text-gray-600"><i class="fas fa-building text-gray-400 mr-1"></i>${escapeHtml(iq.company)}</p>` : ''}
-                            ${iq.monthlyRevenue ? `<p class="text-sm text-gray-600"><i class="fas fa-coins text-gray-400 mr-1"></i>月營業額：${escapeHtml(iq.monthlyRevenue)}</p>` : ''}
-                            ${iq.message ? `<p class="text-sm text-gray-700 mt-2 bg-gray-50 p-2 rounded">${escapeHtml(iq.message)}</p>` : ''}
+                            <div class="grid md:grid-cols-2 gap-2 text-sm text-gray-400">
+                                <div class="flex items-center gap-2"><i class="fas fa-phone text-[var(--gold)]"></i> ${esc(iq.phone)}</div>
+                                ${iq.email ? `<div class="flex items-center gap-2"><i class="fas fa-envelope text-[var(--gold)]"></i> ${esc(iq.email)}</div>` : ''}
+                                ${iq.company ? `<div class="flex items-center gap-2"><i class="fas fa-building text-[var(--gold)]"></i> ${esc(iq.company)}</div>` : ''}
+                                ${iq.monthlyRevenue ? `<div class="flex items-center gap-2"><i class="fas fa-coins text-[var(--gold)]"></i> ${esc(iq.monthlyRevenue)}</div>` : ''}
+                            </div>
+                            ${iq.message ? `<div class="text-sm text-gray-300 bg-[#0f0f0f] border border-[var(--border)] rounded-lg p-3">${esc(iq.message)}</div>` : ''}
                         </div>
-                        <div class="w-full sm:w-64 space-y-2">
-                            <select onchange="updateInquiryStatus('${iq.id}', this.value)" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                                <option value="pending" ${iq.status === 'pending' ? 'selected' : ''}>待跟進</option>
-                                <option value="contacted" ${iq.status === 'contacted' ? 'selected' : ''}>已聯繫</option>
-                                <option value="completed" ${iq.status === 'completed' ? 'selected' : ''}>已完成</option>
-                                <option value="closed" ${iq.status === 'closed' ? 'selected' : ''}>已結案</option>
-                            </select>
-                            <textarea onchange="updateInquiryNotes('${iq.id}', this.value)" placeholder="備註..." class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm h-20 resize-none">${escapeHtml(iq.notes || '')}</textarea>
+                        <div class="lg:w-64 space-y-3">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">狀態</label>
+                                <select onchange="updateInquiryStatus('${iq.id}', this.value)" class="w-full px-3 py-2 rounded-lg input-dark text-sm outline-none focus:ring-2 focus:ring-[var(--gold)]">
+                                    <option value="pending" ${iq.status==='pending'?'selected':''}>待跟進</option>
+                                    <option value="contacted" ${iq.status==='contacted'?'selected':''}>已聯繫</option>
+                                    <option value="completed" ${iq.status==='completed'?'selected':''}>已完成</option>
+                                    <option value="closed" ${iq.status==='closed'?'selected':''}>已結案</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">備註</label>
+                                <textarea onchange="updateInquiryNotes('${iq.id}', this.value)" rows="2" class="w-full px-3 py-2 rounded-lg input-dark text-sm outline-none focus:ring-2 focus:ring-[var(--gold)] resize-none" placeholder="輸入備註...">${esc(iq.notes||'')}</textarea>
+                            </div>
+                            <a href="https://wa.me/${(iq.phone||'').replace(/\D/g,'')}" target="_blank" class="flex items-center justify-center gap-2 w-full px-3 py-2 rounded-lg text-sm font-medium text-white" style="background: #16a34a;">
+                                <i class="fab fa-whatsapp"></i> WhatsApp 客戶
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -299,27 +570,41 @@
         }
         async function updateInquiry(id, fields) {
             try {
-                await fetch(API_BASE_URL + '/api/inquiries', {
+                const res = await fetch(API_BASE_URL + '/api/inquiries', {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ password: currentPassword, id, ...fields })
                 });
-                // 本地更新避免重新載入
                 const idx = inquiries.findIndex(i => i.id === id);
-                if (idx !== -1) {
-                    Object.assign(inquiries[idx], fields, { updatedAt: new Date().toISOString() });
-                }
-            } catch (err) {
-                alert('更新失敗：' + err.message);
-            }
+                if (idx !== -1) Object.assign(inquiries[idx], fields, { updatedAt: new Date().toISOString() });
+                updateInqStats(); updateDashStats();
+                showInqMessage('已更新', true);
+            } catch (err) { showInqMessage('更新失敗', false); }
+        }
+        function showInqMessage(text, ok) {
+            const el = document.getElementById('inqMessage');
+            el.textContent = text;
+            el.className = 'text-sm px-3 py-2 rounded-lg ' + (ok ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20');
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 2000);
         }
 
-        // ===== Deploy =====
+        // Analytics (simple aggregation from KV keys)
+        async function loadAnalytics() {
+            // We'll do client-side aggregation by listing keys isn't exposed directly,
+            // so we use a heuristic: we can't easily list all analytics keys without a new API.
+            // For now, display placeholder and explain.
+            document.getElementById('aPv').textContent = '-';
+            document.getElementById('aInt').textContent = '-';
+            document.getElementById('aSessions').textContent = '-';
+            document.getElementById('aPages').innerHTML = '<div class="text-gray-500">請在 Worker 中啟用分析報告 API 以獲取完整數據。</div>';
+        }
+
+        // Deploy
         async function triggerDeploy() {
             const btn = document.getElementById('deployBtn');
             const msg = document.getElementById('deployMessage');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> 部署中...';
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 部署中...';
             try {
                 const res = await fetch(API_BASE_URL + '/api/deploy', {
                     method: 'POST',
@@ -329,58 +614,42 @@
                 const result = await res.json();
                 msg.classList.remove('hidden');
                 if (result.success) {
-                    msg.className = 'mt-4 text-sm text-green-700 bg-green-50 p-3 rounded-lg';
-                    msg.innerHTML = '✅ ' + result.message + '<br>請前往 GitHub Actions 查看部署進度。';
+                    msg.className = 'mt-4 text-sm text-green-400 bg-green-500/10 border border-green-500/20 p-3 rounded-lg';
+                    msg.innerHTML = '✅ ' + result.message;
                 } else {
-                    msg.className = 'mt-4 text-sm text-red-700 bg-red-50 p-3 rounded-lg';
-                    msg.innerHTML = '❌ 部署失敗：' + (result.error || '未知錯誤');
+                    msg.className = 'mt-4 text-sm text-red-400 bg-red-500/10 border border-red-500/20 p-3 rounded-lg';
+                    msg.innerHTML = '❌ ' + (result.error || '失敗');
                 }
             } catch (err) {
                 msg.classList.remove('hidden');
-                msg.className = 'mt-4 text-sm text-red-700 bg-red-50 p-3 rounded-lg';
-                msg.innerHTML = '❌ 請求失敗：' + err.message;
+                msg.className = 'mt-4 text-sm text-red-400 bg-red-500/10 border border-red-500/20 p-3 rounded-lg';
+                msg.innerHTML = '❌ ' + err.message;
             } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-rocket mr-2"></i> 觸發 GitHub Actions 部署';
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-rocket"></i> 觸發 GitHub Actions 部署';
             }
         }
 
-        // ===== Helpers =====
+        // Helpers
         function showMessage(id, text, type) {
             const el = document.getElementById(id);
             el.textContent = text;
-            el.classList.remove('hidden', 'text-green-700', 'text-red-700');
-            el.classList.add(type === 'success' ? 'text-green-700' : 'text-red-700');
+            el.classList.remove('hidden', 'text-green-400', 'text-red-400');
+            el.classList.add(type === 'success' ? 'text-green-400' : 'text-red-400');
         }
         function statusClass(s) {
-            return {
-                pending: 'status-pending',
-                contacted: 'status-contacted',
-                completed: 'status-completed',
-                closed: 'status-closed'
-            }[s] || 'bg-gray-100 text-gray-800';
+            return { pending: 'status-pending', contacted: 'status-contacted', completed: 'status-completed', closed: 'status-closed' }[s] || 'status-closed';
         }
         function statusText(s) {
-            return {
-                pending: '待跟進',
-                contacted: '已聯繫',
-                completed: '已完成',
-                closed: '已結案'
-            }[s] || s;
+            return { pending: '待跟進', contacted: '已聯繫', completed: '已完成', closed: '已結案' }[s] || s;
         }
-        function formatTime(iso) {
+        function fmtTime(iso) {
             if (!iso) return '';
             const d = new Date(iso);
             return d.toLocaleString('zh-HK', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         }
-        function escapeHtml(text) {
-            if (!text) return '';
-            return text
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
+        function esc(t) {
+            if (!t) return '';
+            return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         }
     </script>
 </body>
