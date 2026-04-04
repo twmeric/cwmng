@@ -86,7 +86,7 @@
     <section class="quick-links">
         <div class="container">
             <div class="quick-links-grid reveal">
-                <a href="https://wa.me/85251164453?text=你好，我想索取商戶申請文件清單。" target="_blank" class="quick-link-card">
+                <a href="#checklist" class="quick-link-card open-checklist">
                     <i class="ph ph-whatsapp-logo"></i>
                     <span>WhatsApp 索取申請清單</span>
                     <i class="ph ph-arrow-right"></i>
@@ -119,8 +119,8 @@
                         <img src="images/textless/190514290.png" alt="利潤被層層費用壓垮" class="card-illustration">
                     </div>
                     <div class="problem-icon">💸</div>
-                    <h3>你的利潤，正在被手續費默默蠶食</h3>
-                    <p>每賣出 $1000，Xtripe / XayPal 先抽走 $35。月營業額 $10 萬，手續費就吞掉 $3500——這筆錢本來可以用來請人、入貨，或者直接放進你的口袋。</p>
+                    <h3>每筆交易的手續費，月尾就疊成一座山，把你的利潤壓到見底</h3>
+                    <p>賣出 $1000，Xtripe / XayPal 先抽走 $35。營業額 $10 萬，手續費單就厚厚一疊，像這堆鞋盒一樣重——這筆錢本來可以用來請人、入貨，或者直接放進你的口袋。</p>
                     <div class="problem-solution">
                         <i class="ph ph-check-circle text-success"></i>
                         <span>我們的解決：統一 <strong>2.6%</strong>，無隱藏費用</span>
@@ -435,7 +435,7 @@
                 <div class="download-content">
                     <h3>準備開戶？先下載申請資料清單</h3>
                     <p>我們為你整理了一份完整的商戶申請文件清單，讓你一次備齊，加快審批流程。</p>
-                    <a href="https://wa.me/85251164453?text=你好，我想索取商戶申請文件清單。" target="_blank" class="btn btn-primary">
+                    <a href="#checklist" class="btn btn-primary open-checklist">
                         <i class="ph ph-whatsapp-logo"></i> WhatsApp 免費索取清單
                     </a>
                 </div>
@@ -569,7 +569,7 @@
                 <div class="footer-col">
                     <h4>支援中心</h4>
                     <ul>
-                        <li><a href="https://wa.me/85251164453?text=你好，我想索取商戶申請文件清單。" target="_blank">WhatsApp 索取申請清單</a></li>
+                        <li><a href="#checklist" class="open-checklist">WhatsApp 索取申請清單</a></li>
                         <li><a href="#">API 文檔</a></li>
                         <li><a href="#contact">聯絡我們</a></li>
                     </ul>
@@ -609,7 +609,7 @@
         <div class="modal-content">
             <button class="modal-close" id="closeModal" aria-label="Close">&times;</button>
             <h3>獲取專屬優惠報價</h3>
-            <p>留下電話，我們的支付顧問會在 5 分鐘內透過 WhatsApp 聯絡你。</p>
+            <p>留下資料，我們的支付顧問會在 5 分鐘內透過 WhatsApp 聯絡你。</p>
             <form id="leadForm">
                 <div class="input-group">
                     <input type="text" name="name" placeholder="稱呼（例如：陳先生）" required>
@@ -617,9 +617,51 @@
                 <div class="input-group">
                     <input type="tel" name="phone" placeholder="WhatsApp 電話號碼" required>
                 </div>
+                <div class="input-group">
+                    <input type="email" name="email" placeholder="電郵地址">
+                </div>
+                <div class="input-group">
+                    <input type="text" name="company" placeholder="公司名稱（選填）">
+                </div>
+                <div class="input-group">
+                    <select name="monthlyRevenue">
+                        <option value="">每月交易額（選填）</option>
+                        <option value="少於 $50,000">少於 $50,000</option>
+                        <option value="$50,000 - $200,000">$50,000 - $200,000</option>
+                        <option value="$200,000 - $500,000">$200,000 - $500,000</option>
+                        <option value="$500,000 以上">$500,000 以上</option>
+                    </select>
+                </div>
+                <input type="hidden" name="interest" value="一般查詢">
                 <button type="submit" class="btn btn-primary btn-block">開始對話</button>
             </form>
             <p class="modal-note">無需綁約，隨時可取消。</p>
+        </div>
+    </div>
+
+    <!-- Checklist Modal -->
+    <div class="modal-overlay" id="checklistModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeChecklistModal" aria-label="Close">&times;</button>
+            <h3>免費索取《商戶申請文件清單》</h3>
+            <p>請留下 WhatsApp 號碼，我們會立即將文件清單傳送給你，並解答任何開戶疑問。</p>
+            <form id="checklistForm">
+                <div class="input-group">
+                    <input type="text" name="name" placeholder="稱呼（例如：陳先生）" required>
+                </div>
+                <div class="input-group">
+                    <input type="tel" name="phone" placeholder="WhatsApp 電話號碼" required>
+                </div>
+                <div class="input-group">
+                    <input type="email" name="email" placeholder="電郵地址（選填）">
+                </div>
+                <div class="input-group">
+                    <input type="text" name="company" placeholder="公司名稱（選填）">
+                </div>
+                <input type="hidden" name="interest" value="申請清單">
+                <button type="submit" class="btn btn-primary btn-block"><i class="ph ph-whatsapp-logo"></i> 免費索取清單</button>
+            </form>
+            <p class="modal-note">資料只會用於發送清單及跟進，絕不外洩。</p>
         </div>
     </div>
 

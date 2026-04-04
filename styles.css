@@ -605,11 +605,11 @@ img { max-width: 100%; display: block; }
 .modal-close:hover { background: #E5E7EB; color: #1a1f2e; }
 .modal-content h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
 .modal-content p { font-size: 0.9375rem; color: #6B7280; margin-bottom: 1.5rem; }
-.modal-content .input-group input {
+.modal-content .input-group input, .modal-content .input-group select {
     width: 100%; padding: 0.875rem 1rem; border: 1px solid #E2E4E9; border-radius: 12px; font-size: 1rem;
-    margin-bottom: 0.875rem; transition: border-color 0.25s, box-shadow 0.25s;
+    margin-bottom: 0.875rem; transition: border-color 0.25s, box-shadow 0.25s; background: #fff;
 }
-.modal-content .input-group input:focus { outline: none; border-color: #1E3A8A; box-shadow: 0 0 0 3px rgba(30,58,138,0.08); }
+.modal-content .input-group input:focus, .modal-content .input-group select:focus { outline: none; border-color: #1E3A8A; box-shadow: 0 0 0 3px rgba(30,58,138,0.08); }
 .modal-note { font-size: 0.75rem; color: #9CA3AF; text-align: center; margin-top: 1rem; margin-bottom: 0 !important; }
 
 /* Reveal Animations */
@@ -634,7 +634,9 @@ img { max-width: 100%; display: block; }
     .problem-grid { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; }
     .testimonials { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; }
     .trust-badges { grid-template-columns: repeat(2, 1fr); }
-    .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-grid { grid-template-columns: repeat(2, 1fr); text-align: center; }
+    .footer-brand { display: flex; flex-direction: column; align-items: center; }
+    .footer-col { text-align: center; }
     .process-grid { grid-template-columns: 1fr; }
     .process-arrow { transform: rotate(90deg); margin: 0.5rem 0; }
     .download-card { grid-template-columns: 1fr; text-align: center; }
@@ -655,7 +657,9 @@ img { max-width: 100%; display: block; }
     .comparison-table th, .comparison-table td { padding: 0.875rem 0.5rem; }
     .cta-buttons { flex-direction: column; align-items: center; }
     .cta-buttons .btn { width: 100%; max-width: 320px; }
-    .footer-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+    .footer-grid { grid-template-columns: 1fr; gap: 1.5rem; text-align: center; }
+    .footer-brand { display: flex; flex-direction: column; align-items: center; }
+    .footer-col { text-align: center; }
     .footer-bottom { flex-direction: column; text-align: center; }
     .trust-badges { grid-template-columns: 1fr; }
     .sticky-cta-inner { font-size: 0.875rem; }

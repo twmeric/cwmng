@@ -21,6 +21,7 @@ yarn.lock
 # Build artifacts
 dist/
 build/
+.wrangler/
 
 # Temporary files
 *.tmp

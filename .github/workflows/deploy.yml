@@ -1,4 +1,4 @@
-name: Deploy to Cloudflare Pages
+name: Deploy CWMNG (Pages + Worker)
 
 on:
   push:
@@ -6,12 +6,28 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  deploy-worker:
     runs-on: ubuntu-latest
+    name: Deploy CMS Worker
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy Worker to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: cms-worker
+          command: deploy
+
+  deploy-pages:
+    runs-on: ubuntu-latest
+    name: Deploy to Cloudflare Pages
+    needs: deploy-worker
     permissions:
       contents: read
       deployments: write
-    name: Deploy to Cloudflare Pages
     steps:
       - name: Checkout
         uses: actions/checkout@v4

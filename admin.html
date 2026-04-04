@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CWMNG 內容管理後台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', 'Noto Sans TC', system-ui, sans-serif; background: #f3f4f6; }
+        .tab-btn.active { background: #1E3A8A; color: white; }
+        .json-editor { font-family: 'Roboto Mono', monospace; min-height: 60vh; }
+        .inquiry-card { transition: all 0.2s; }
+        .inquiry-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
+        .status-pending { background: #FEF3C7; color: #92400E; }
+        .status-contacted { background: #DBEAFE; color: #1E40AF; }
+        .status-completed { background: #D1FAE5; color: #065F46; }
+        .status-closed { background: #E5E7EB; color: #374151; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Config -->
+    <script>
+        // ⚠️ 部署後請修改為你的 Worker 實際網址
+        const API_BASE_URL = location.hostname === 'localhost' || location.hostname === '127.0.0.1'
+            ? 'http://localhost:8787'
+            : 'https://cwmng-cms-worker.jimsbond007.workers.dev';
+    </script>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+        <div class="w-full max-w-sm p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-gray-900">CWMNG 管理後台</h1>
+                <p class="text-sm text-gray-500 mt-2">請輸入管理密碼登入</p>
+            </div>
+            <form id="loginForm" class="space-y-4">
+                <input type="password" id="adminPassword" placeholder="管理密碼" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-blue-900 outline-none" required>
+                <button type="submit" class="w-full bg-blue-900 text-white py-3 rounded-lg font-medium hover:bg-blue-800 transition">登入</button>
+            </form>
+            <p id="loginError" class="text-red-600 text-sm mt-3 hidden">密碼錯誤，請重試。</p>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app" class="hidden">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-blue-900 rounded-lg flex items-center justify-center text-white font-bold">C</div>
+                        <h1 class="font-bold text-gray-900">CWMNG 管理後台</h1>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="loadData()" class="px-3 py-2 text-sm text-gray-600 hover:text-gray-900"><i class="fas fa-sync-alt mr-1"></i> 重新載入</button>
+                        <button onclick="logout()" class="px-3 py-2 text-sm text-red-600 hover:text-red-700">登出</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tabs -->
+        <div class="bg-white border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <nav class="flex space-x-1 py-3" aria-label="Tabs">
+                    <button onclick="switchTab('cms')" id="tab-cms" class="tab-btn active px-4 py-2 rounded-lg text-sm font-medium transition">📝 CMS 內容編輯</button>
+                    <button onclick="switchTab('inquiries')" id="tab-inquiries" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition">📋 客戶查詢 <span id="inquiryBadge" class="ml-1 hidden bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full">0</span></button>
+                    <button onclick="switchTab('deploy')" id="tab-deploy" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition">🚀 網站部署</button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- CMS Tab -->
+        <div id="panel-cms" class="tab-panel max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                    <div>
+                        <h2 class="font-semibold text-gray-900">CMS 內容編輯器</h2>
+                        <p class="text-sm text-gray-500">直接編輯 JSON，儲存後即時更新網站內容。</p>
+                    </div>
+                    <button onclick="saveCMS()" id="saveCmsBtn" class="px-4 py-2 bg-blue-900 text-white rounded-lg text-sm font-medium hover:bg-blue-800 transition">
+                        <i class="fas fa-save mr-1"></i> 儲存變更
+                    </button>
+                </div>
+                <div class="p-0">
+                    <textarea id="cmsEditor" class="json-editor w-full p-4 text-sm border-0 outline-none resize-y" spellcheck="false"></textarea>
+                </div>
+            </div>
+            <p id="cmsMessage" class="mt-3 text-sm hidden"></p>
+        </div>
+
+        <!-- Inquiries Tab -->
+        <div id="panel-inquiries" class="tab-panel hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-semibold text-gray-900">客戶查詢記錄</h2>
+                <div class="flex gap-2">
+                    <select id="inquiryFilter" onchange="renderInquiries()" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                        <option value="all">全部狀態</option>
+                        <option value="pending">待跟進</option>
+                        <option value="contacted">已聯繫</option>
+                        <option value="completed">已完成</option>
+                        <option value="closed">已結案</option>
+                    </select>
+                    <button onclick="loadInquiries()" class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm hover:bg-gray-50"><i class="fas fa-sync-alt"></i> 刷新</button>
+                </div>
+            </div>
+            <div id="inquiriesList" class="space-y-4">
+                <div class="text-center py-12 text-gray-400">載入中...</div>
+            </div>
+        </div>
+
+        <!-- Deploy Tab -->
+        <div id="panel-deploy" class="tab-panel hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-2xl">
+                <h2 class="text-lg font-semibold text-gray-900 mb-2">重新部署網站</h2>
+                <p class="text-gray-600 mb-6">修改 CMS 內容後，雖然網站會自動讀取最新 API 數據，但如果你修改了靜態 HTML/CSS，就需要重新部署。</p>
+                <button onclick="triggerDeploy()" id="deployBtn" class="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition">
+                    <i class="fas fa-rocket mr-2"></i> 觸發 GitHub Actions 部署
+                </button>
+                <div id="deployMessage" class="mt-4 text-sm hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPassword = '';
+        let cmsData = {};
+        let inquiries = [];
+
+        // ===== Login =====
+        const loginScreen = document.getElementById('loginScreen');
+        const app = document.getElementById('app');
+        const savedPassword = localStorage.getItem('cwmng_admin_password');
+        if (savedPassword) {
+            document.getElementById('adminPassword').value = savedPassword;
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const pwd = document.getElementById('adminPassword').value.trim();
+            // 簡單驗證：嘗試讀取 inquiries（需要密碼）
+            try {
+                const res = await fetch(API_BASE_URL + '/api/inquiries', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: pwd })
+                });
+                if (res.ok) {
+                    currentPassword = pwd;
+                    localStorage.setItem('cwmng_admin_password', pwd);
+                    loginScreen.classList.add('hidden');
+                    app.classList.remove('hidden');
+                    loadData();
+                } else {
+                    document.getElementById('loginError').classList.remove('hidden');
+                }
+            } catch (err) {
+                document.getElementById('loginError').textContent = '無法連接到 API，請檢查 API_BASE_URL 設定。';
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('cwmng_admin_password');
+            location.reload();
+        }
+
+        // ===== Tabs =====
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active', 'text-white', 'bg-blue-900'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                if (!b.classList.contains('active')) {
+                    b.classList.add('text-gray-600');
+                }
+            });
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.getElementById('tab-' + tab).classList.remove('text-gray-600');
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            document.getElementById('panel-' + tab).classList.remove('hidden');
+        }
+
+        // ===== Data Loading =====
+        async function loadData() {
+            await loadCMS();
+            await loadInquiries();
+        }
+
+        async function loadCMS() {
+            try {
+                const res = await fetch(API_BASE_URL + '/api/cms/data');
+                cmsData = await res.json();
+                document.getElementById('cmsEditor').value = JSON.stringify(cmsData, null, 2);
+            } catch (err) {
+                showMessage('cmsMessage', '載入 CMS 失敗：' + err.message, 'error');
+            }
+        }
+
+        async function loadInquiries() {
+            const list = document.getElementById('inquiriesList');
+            list.innerHTML = '<div class="text-center py-12 text-gray-400">載入中...</div>';
+            try {
+                const res = await fetch(API_BASE_URL + '/api/inquiries', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: currentPassword })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    inquiries = result.data || [];
+                    renderInquiries();
+                    const pending = inquiries.filter(i => i.status === 'pending').length;
+                    const badge = document.getElementById('inquiryBadge');
+                    if (pending > 0) {
+                        badge.textContent = pending;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                } else {
+                    list.innerHTML = '<div class="text-center py-12 text-red-500">載入失敗：' + (result.error || '未知錯誤') + '</div>';
+                }
+            } catch (err) {
+                list.innerHTML = '<div class="text-center py-12 text-red-500">載入失敗：' + err.message + '</div>';
+            }
+        }
+
+        // ===== CMS Save =====
+        async function saveCMS() {
+            const btn = document.getElementById('saveCmsBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> 儲存中...';
+            try {
+                const data = JSON.parse(document.getElementById('cmsEditor').value);
+                const res = await fetch(API_BASE_URL + '/api/cms/data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: currentPassword, data })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showMessage('cmsMessage', '✅ CMS 內容已儲存並生效（網站下次載入時會自動讀取最新內容）', 'success');
+                } else {
+                    showMessage('cmsMessage', '❌ 儲存失敗：' + (result.error || '未知錯誤'), 'error');
+                }
+            } catch (err) {
+                showMessage('cmsMessage', '❌ JSON 格式錯誤：' + err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save mr-1"></i> 儲存變更';
+            }
+        }
+
+        // ===== Inquiries Render =====
+        function renderInquiries() {
+            const filter = document.getElementById('inquiryFilter').value;
+            const list = document.getElementById('inquiriesList');
+            const filtered = filter === 'all' ? inquiries : inquiries.filter(i => i.status === filter);
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="text-center py-12 text-gray-400">暫無查詢記錄</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(iq => `
+                <div class="inquiry-card bg-white rounded-xl border border-gray-200 p-5">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass(iq.status)}">${statusText(iq.status)}</span>
+                                <span class="text-xs text-gray-400">${formatTime(iq.submittedAt)}</span>
+                                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">${iq.interest || '一般查詢'}</span>
+                            </div>
+                            <h3 class="font-semibold text-gray-900">${escapeHtml(iq.name)} <span class="font-normal text-gray-500 text-sm">${escapeHtml(iq.phone)}</span></h3>
+                            ${iq.email ? `<p class="text-sm text-gray-600"><i class="fas fa-envelope text-gray-400 mr-1"></i>${escapeHtml(iq.email)}</p>` : ''}
+                            ${iq.company ? `<p class="text-sm text-gray-600"><i class="fas fa-building text-gray-400 mr-1"></i>${escapeHtml(iq.company)}</p>` : ''}
+                            ${iq.monthlyRevenue ? `<p class="text-sm text-gray-600"><i class="fas fa-coins text-gray-400 mr-1"></i>月營業額：${escapeHtml(iq.monthlyRevenue)}</p>` : ''}
+                            ${iq.message ? `<p class="text-sm text-gray-700 mt-2 bg-gray-50 p-2 rounded">${escapeHtml(iq.message)}</p>` : ''}
+                        </div>
+                        <div class="w-full sm:w-64 space-y-2">
+                            <select onchange="updateInquiryStatus('${iq.id}', this.value)" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                <option value="pending" ${iq.status === 'pending' ? 'selected' : ''}>待跟進</option>
+                                <option value="contacted" ${iq.status === 'contacted' ? 'selected' : ''}>已聯繫</option>
+                                <option value="completed" ${iq.status === 'completed' ? 'selected' : ''}>已完成</option>
+                                <option value="closed" ${iq.status === 'closed' ? 'selected' : ''}>已結案</option>
+                            </select>
+                            <textarea onchange="updateInquiryNotes('${iq.id}', this.value)" placeholder="備註..." class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm h-20 resize-none">${escapeHtml(iq.notes || '')}</textarea>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function updateInquiryStatus(id, status) {
+            await updateInquiry(id, { status });
+        }
+        async function updateInquiryNotes(id, notes) {
+            await updateInquiry(id, { notes });
+        }
+        async function updateInquiry(id, fields) {
+            try {
+                await fetch(API_BASE_URL + '/api/inquiries', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: currentPassword, id, ...fields })
+                });
+                // 本地更新避免重新載入
+                const idx = inquiries.findIndex(i => i.id === id);
+                if (idx !== -1) {
+                    Object.assign(inquiries[idx], fields, { updatedAt: new Date().toISOString() });
+                }
+            } catch (err) {
+                alert('更新失敗：' + err.message);
+            }
+        }
+
+        // ===== Deploy =====
+        async function triggerDeploy() {
+            const btn = document.getElementById('deployBtn');
+            const msg = document.getElementById('deployMessage');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> 部署中...';
+            try {
+                const res = await fetch(API_BASE_URL + '/api/deploy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: currentPassword })
+                });
+                const result = await res.json();
+                msg.classList.remove('hidden');
+                if (result.success) {
+                    msg.className = 'mt-4 text-sm text-green-700 bg-green-50 p-3 rounded-lg';
+                    msg.innerHTML = '✅ ' + result.message + '<br>請前往 GitHub Actions 查看部署進度。';
+                } else {
+                    msg.className = 'mt-4 text-sm text-red-700 bg-red-50 p-3 rounded-lg';
+                    msg.innerHTML = '❌ 部署失敗：' + (result.error || '未知錯誤');
+                }
+            } catch (err) {
+                msg.classList.remove('hidden');
+                msg.className = 'mt-4 text-sm text-red-700 bg-red-50 p-3 rounded-lg';
+                msg.innerHTML = '❌ 請求失敗：' + err.message;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-rocket mr-2"></i> 觸發 GitHub Actions 部署';
+            }
+        }
+
+        // ===== Helpers =====
+        function showMessage(id, text, type) {
+            const el = document.getElementById(id);
+            el.textContent = text;
+            el.classList.remove('hidden', 'text-green-700', 'text-red-700');
+            el.classList.add(type === 'success' ? 'text-green-700' : 'text-red-700');
+        }
+        function statusClass(s) {
+            return {
+                pending: 'status-pending',
+                contacted: 'status-contacted',
+                completed: 'status-completed',
+                closed: 'status-closed'
+            }[s] || 'bg-gray-100 text-gray-800';
+        }
+        function statusText(s) {
+            return {
+                pending: '待跟進',
+                contacted: '已聯繫',
+                completed: '已完成',
+                closed: '已結案'
+            }[s] || s;
+        }
+        function formatTime(iso) {
+            if (!iso) return '';
+            const d = new Date(iso);
+            return d.toLocaleString('zh-HK', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+    </script>
+</body>
+</html>

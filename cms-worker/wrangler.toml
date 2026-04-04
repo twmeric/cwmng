@@ -1,0 +1,7 @@
+name = "cwmng-cms-worker"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+[[kv_namespaces]]
+binding = "CMS_DATA"
+id = "2494ec74390a4baabe68f0de374d822b"
