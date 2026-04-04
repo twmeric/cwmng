@@ -338,7 +338,7 @@ body {
 
 /* Marquee */
 .marquee-section {
-    background: var(--bg-section); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);
+    background: #F37021; border-top: none; border-bottom: none;
     padding: 1.25rem 0; overflow: hidden;
 }
 .marquee-track { display: flex; width: max-content; animation: marquee 28s linear infinite; }
@@ -346,9 +346,9 @@ body {
 .marquee-content { display: flex; gap: 3.5rem; align-items: center; }
 .marquee-content span {
     display: flex; align-items: center; gap: 0.5rem;
-    font-size: 0.9375rem; font-weight: 500; color: var(--text-muted); white-space: nowrap;
+    font-size: 0.9375rem; font-weight: 500; color: #ffffff; white-space: nowrap;
 }
-.marquee-content span i { font-size: 1.25rem; color: var(--accent-gold); }
+.marquee-content span i { font-size: 1.25rem; color: #ffffff; }
 
 /* Solution Cards */
 .solutions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.75rem; }

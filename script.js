@@ -751,9 +751,9 @@ async function handleFormSubmit(e, type) {
     // 2. Open WhatsApp
     let msg = '';
     if (type === 'checklist') {
-        msg = `你好，我是${data.name}。\n電話：${data.phone}${data.email ? '\n電郵：' + data.email : ''}${data.company ? '\n公司：' + data.company : ''}\n\n我想索取商戶申請文件清單，謝謝。`;
+        msg = `你好，我是 ${data.name}。\n電話： ${data.phone}${data.email ? '\n電郵： ' + data.email : ''}${data.company ? '\n公司： ' + data.company : ''}\n\n我想索取商戶申請文件清單，謝謝。`;
     } else {
-        msg = `你好，我是${data.name}。\n電話：${data.phone}${data.email ? '\n電郵：' + data.email : ''}${data.company ? '\n公司：' + data.company : ''}${data.monthlyRevenue ? '\n月營業額約：' + data.monthlyRevenue : ''}\n\n我有興趣了解駿匯聯的收款方案，請聯絡我，謝謝。`;
+        msg = `你好，我是 ${data.name}。\n電話： ${data.phone}${data.email ? '\n電郵： ' + data.email : ''}${data.company ? '\n公司： ' + data.company : ''}${data.monthlyRevenue ? '\n月營業額約： ' + data.monthlyRevenue : ''}\n\n我有興趣了解駿匯聯的收款方案，請聯絡我，謝謝。`;
     }
     const url = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg);
     window.open(url, '_blank');
