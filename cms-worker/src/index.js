@@ -624,7 +624,7 @@ function getDefaultCMSData() {
         },
       ],
       copyright: `© ${new Date().getFullYear()} 駿匯聯 C&W Management Limited. All rights reserved.`,
-      poweredBy: "Powered by JKDCoding",
+      poweredBy: "Powered by <img src='images/jkd-logo.png' alt='jkdcoding.com' style='height:18px;width:auto;display:inline-block;vertical-align:middle;'>",
     },
   };
 }
