@@ -584,6 +584,11 @@ function renderFooter(footer) {
         const left = copyright.querySelector('p:first-child');
         if (left) left.textContent = footer.copyright;
     }
+
+    const powered = document.querySelector('.footer-bottom .powered-by');
+    if (powered && footer.poweredBy) {
+        powered.innerHTML = footer.poweredBy;
+    }
 }
 
 /* ========================================

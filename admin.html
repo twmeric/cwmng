@@ -244,6 +244,7 @@
                         <button onclick="setContentTab('testimonials')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="testimonials">客戶見證</button>
                         <button onclick="setContentTab('faq')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="faq">常見問題</button>
                         <button onclick="setContentTab('cta')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="cta">CTA 區域</button>
+                        <button onclick="setContentTab('footer')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="footer">頁尾 Footer</button>
                         <button onclick="setContentTab('json')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="json">原始 JSON</button>
                     </div>
 
@@ -461,6 +462,7 @@
                 testimonials: renderTestimonialsForm,
                 faq: renderFaqForm,
                 cta: renderCtaForm,
+                footer: renderFooterForm,
                 json: renderJsonForm,
             };
             container.innerHTML = (renderers[currentContentTab] || renderSiteForm)();
@@ -621,6 +623,49 @@
                 <div class="flex justify-end pt-2">
                     <button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
                 </div>
+            `;
+        }
+
+        function renderFooterForm() {
+            const cols = cmsData.footer?.columns || [];
+            const c0 = cols[0] || {}; const l0 = c0.links || [{},{},{}];
+            const c1 = cols[1] || {}; const l1 = c1.links || [{},{},{}];
+            const c2 = cols[2] || {}; const cl = c2.contactLines || [{},{},{}];
+            return `
+                <h3 class="text-lg font-bold text-main mb-4">頁尾 Footer</h3>
+                ${inputRow('品牌描述 (可含 HTML)', 'footer.brandText', 'textarea')}
+                ${inputRow('版權聲明', 'footer.copyright')}
+                ${inputRow('Powered By (可含 HTML)', 'footer.poweredBy', 'textarea')}
+                <div class="grid md:grid-cols-3 gap-4 mt-4">
+                    <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4">
+                        <div class="font-bold text-main mb-3">產品服務</div>
+                        ${inputRow('欄目標題', 'footer.columns.0.title')}
+                        <div class="space-y-2">
+                            <div class="grid grid-cols-2 gap-2"><input data-path="footer.columns.0.links.0.text" value="${esc(l0[0]?.text||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="文字"><input data-path="footer.columns.0.links.0.href" value="${esc(l0[0]?.href||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="連結"></div>
+                            <div class="grid grid-cols-2 gap-2"><input data-path="footer.columns.0.links.1.text" value="${esc(l0[1]?.text||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="文字"><input data-path="footer.columns.0.links.1.href" value="${esc(l0[1]?.href||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="連結"></div>
+                            <div class="grid grid-cols-2 gap-2"><input data-path="footer.columns.0.links.2.text" value="${esc(l0[2]?.text||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="文字"><input data-path="footer.columns.0.links.2.href" value="${esc(l0[2]?.href||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="連結"></div>
+                        </div>
+                    </div>
+                    <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4">
+                        <div class="font-bold text-main mb-3">支援中心</div>
+                        ${inputRow('欄目標題', 'footer.columns.1.title')}
+                        <div class="space-y-2">
+                            <div class="grid grid-cols-2 gap-2"><input data-path="footer.columns.1.links.0.text" value="${esc(l1[0]?.text||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="文字"><input data-path="footer.columns.1.links.0.href" value="${esc(l1[0]?.href||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="連結"></div>
+                            <div class="grid grid-cols-2 gap-2"><input data-path="footer.columns.1.links.1.text" value="${esc(l1[1]?.text||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="文字"><input data-path="footer.columns.1.links.1.href" value="${esc(l1[1]?.href||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="連結"></div>
+                            <div class="grid grid-cols-2 gap-2"><input data-path="footer.columns.1.links.2.text" value="${esc(l1[2]?.text||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="文字"><input data-path="footer.columns.1.links.2.href" value="${esc(l1[2]?.href||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="連結"></div>
+                        </div>
+                    </div>
+                    <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4">
+                        <div class="font-bold text-main mb-3">聯絡方式</div>
+                        ${inputRow('欄目標題', 'footer.columns.2.title')}
+                        <div class="space-y-2">
+                            <div class="grid grid-cols-2 gap-2"><input data-path="footer.columns.2.contactLines.0.icon" value="${esc(cl[0]?.icon||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="圖示 class"><input data-path="footer.columns.2.contactLines.0.text" value="${esc(cl[0]?.text||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="內容"></div>
+                            <div class="grid grid-cols-2 gap-2"><input data-path="footer.columns.2.contactLines.1.icon" value="${esc(cl[1]?.icon||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="圖示 class"><input data-path="footer.columns.2.contactLines.1.text" value="${esc(cl[1]?.text||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="內容"></div>
+                            <div class="grid grid-cols-2 gap-2"><input data-path="footer.columns.2.contactLines.2.icon" value="${esc(cl[2]?.icon||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="圖示 class"><input data-path="footer.columns.2.contactLines.2.text" value="${esc(cl[2]?.text||'')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="內容"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end pt-2 mt-4"><button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button></div>
             `;
         }
 
