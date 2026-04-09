@@ -643,11 +643,13 @@ function renderFooter(footer) {
             if (col.contactLines) {
                 linksHtml = '<ul>' + col.contactLines.map(c => {
                     let inner = c.text;
-                    const phoneMatch = c.text.match(/^(\+?\d[\d\s-]+)$/);
-                    const emailMatch = c.text.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
-                    if (c.icon === 'ph-phone' || phoneMatch) {
+                    if (c.icon === 'ph-phone') {
                         inner = `<a href="tel:${c.text.replace(/\s/g,'')}">${c.text}</a>`;
-                    } else if (c.icon === 'ph-envelope' || emailMatch) {
+                    } else if (c.icon === 'ph-whatsapp-logo') {
+                        const waNumber = c.text.replace(/\s/g, '').replace(/^\+/, '');
+                        const fullWa = waNumber.startsWith('852') ? waNumber : '852' + waNumber;
+                        inner = `<a href="https://wa.me/${fullWa}" target="_blank">${c.text}</a>`;
+                    } else if (c.icon === 'ph-envelope') {
                         inner = `<a href="mailto:${c.text}">${c.text}</a>`;
                     } else if (c.icon === 'ph-map-pin') {
                         inner = `<a href="https://maps.google.com/?q=${encodeURIComponent(c.text)}" target="_blank">${c.text}</a>`;
