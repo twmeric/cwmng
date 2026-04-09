@@ -392,9 +392,9 @@ function getDefaultCMSData() {
     site: {
       title: "香港支付閘道 | 駿匯聯 C&W Management | 銀聯商務官方代理",
       description: "駿匯聯 C&W Management 是銀聯商務香港官方代理，提供比 Xtripe / XayPal 更優惠的線上支付閘道。本地信用卡費率低至 2.6%，AI 智能客服 7x24 待命，支援銀聯卡、微信支付、支付寶及 FPS 轉數快。",
-      whatsappNumber: "85251164453",
-      phoneDisplay: "+852 5116 4453",
-      email: "info@cwmng.com",
+      whatsappNumber: "85239871078",
+      phoneDisplay: "+852 3987 1078",
+      email: "info@cwmanagement.com.hk",
     },
     hero: {
       title: "每賣出一件貨，Xtripe 就先抽走你近 <span class='text-gradient'>4%</span> 利潤——<br><span class='text-gradient-red'>這筆隱形租金，你還要付多久？</span>",
@@ -618,12 +618,13 @@ function getDefaultCMSData() {
         {
           title: "聯絡方式",
           contactLines: [
-            { icon: "ph-whatsapp-logo", text: "WhatsApp: +852 5116 4453" },
-            { icon: "ph-envelope", text: "Email: info@cwmng.com" },
+            { icon: "ph-phone", text: "+852 3987 1078" },
+            { icon: "ph-envelope", text: "info@cwmanagement.com.hk" },
+            { icon: "ph-map-pin", text: "香港新界荃灣青山公路264-298號南豐中心19樓1922室" },
           ],
         },
       ],
-      copyright: `© ${new Date().getFullYear()} 駿匯聯 C&W Management Limited. All rights reserved.`,
+      copyright: `© ${new Date().getFullYear()} 駿匯聯有限公司 C&W Management Limited. All rights reserved.`,
       poweredBy: "Powered by <img src='images/jkd-logo.png' alt='jkdcoding.com' style='height:18px;width:auto;display:inline-block;vertical-align:middle;'>",
     },
   };

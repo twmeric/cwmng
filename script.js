@@ -8,7 +8,7 @@ const API_BASE_URL = (location.hostname === 'localhost' || location.hostname ===
     ? 'http://localhost:8787'
     : 'https://cwmng-cms-worker.jimsbond007.workers.dev';
 
-const WHATSAPP_NUMBER = '85251164453';
+const WHATSAPP_NUMBER = '85239871078';
 
 document.addEventListener('DOMContentLoaded', function() {
     document.documentElement.setAttribute('data-theme', 'light');
