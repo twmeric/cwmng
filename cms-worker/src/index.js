@@ -124,14 +124,18 @@ async function getCMSData(env, corsHeaders) {
 function deepMerge(defaults, stored) {
   if (Array.isArray(defaults)) {
     if (Array.isArray(stored)) {
-      return stored.map((item, i) => {
-        if (typeof item === 'object' && item !== null && typeof defaults[i] === 'object' && defaults[i] !== null) {
-          return deepMerge(defaults[i], item);
+      // 以 defaults 的長度為基準，補全 stored 中缺少的陣列元素
+      return defaults.map((defItem, i) => {
+        if (i in stored) {
+          if (typeof defItem === 'object' && defItem !== null && typeof stored[i] === 'object' && stored[i] !== null) {
+            return deepMerge(defItem, stored[i]);
+          }
+          return stored[i];
         }
-        return item;
+        return defItem;
       });
     }
-    return stored;
+    return defaults;
   }
   if (typeof defaults === 'object' && defaults !== null && typeof stored === 'object' && stored !== null) {
     const result = {};
