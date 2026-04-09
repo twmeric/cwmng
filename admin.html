@@ -103,6 +103,7 @@
             <nav class="flex-1 py-4 px-3 space-y-1">
                 <a href="#" class="nav-item active" data-tab="dashboard"><i class="fas fa-th-large w-5"></i> <span>儀表板</span></a>
                 <a href="#" class="nav-item" data-tab="content"><i class="fas fa-edit w-5"></i> <span>內容管理</span></a>
+                <a href="#" class="nav-item" data-tab="media"><i class="fas fa-images w-5"></i> <span>媒體庫</span></a>
                 <a href="#" class="nav-item" data-tab="inquiries"><i class="fas fa-inbox w-5"></i> <span>客戶查詢</span> <span id="sidebarBadge" class="hidden ml-auto text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full">0</span></a>
                 <a href="#" class="nav-item" data-tab="analytics"><i class="fas fa-chart-bar w-5"></i> <span>網站分析</span></a>
                 <a href="#" class="nav-item" data-tab="deploy"><i class="fas fa-rocket w-5"></i> <span>一鍵部署</span></a>
@@ -245,12 +246,25 @@
                         <button onclick="setContentTab('faq')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="faq">常見問題</button>
                         <button onclick="setContentTab('cta')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="cta">CTA 區域</button>
                         <button onclick="setContentTab('footer')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="footer">頁尾 Footer</button>
-                        <button onclick="setContentTab('media')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="media">媒體庫</button>
                         <button onclick="setContentTab('json')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="json">原始 JSON</button>
                     </div>
 
                     <!-- Content Forms -->
                     <div id="contentForms" class="bg-card border border-theme rounded-xl p-6">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Media Library -->
+                <div id="panel-media" class="tab-panel hidden fade-in space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h2 class="text-xl font-bold text-main">媒體庫</h2>
+                            <p class="text-sm text-sub">管理網站上使用的圖片與影片。</p>
+                        </div>
+                        <div id="mediaSaveMsg" class="hidden text-sm px-3 py-1 rounded-lg"></div>
+                    </div>
+                    <div id="mediaLibraryPanel" class="space-y-4">
                         <!-- Injected by JS -->
                     </div>
                 </div>
@@ -384,10 +398,11 @@
             document.querySelector('.nav-item[data-tab="' + tab + '"]').classList.add('active');
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
             document.getElementById('panel-' + tab).classList.remove('hidden');
-            const titles = { dashboard: '儀表板', content: '內容管理', inquiries: '客戶查詢', analytics: '網站分析', deploy: '一鍵部署' };
+            const titles = { dashboard: '儀表板', content: '內容管理', media: '媒體庫', inquiries: '客戶查詢', analytics: '網站分析', deploy: '一鍵部署' };
             document.getElementById('pageTitle').textContent = titles[tab];
             if (tab === 'inquiries') renderInquiries();
             if (tab === 'content') renderContentForms();
+            if (tab === 'media') renderMediaLibraryPanel();
         }
         document.querySelectorAll('.nav-item[data-tab]').forEach(el => {
             el.addEventListener('click', (e) => { e.preventDefault(); switchTab(el.dataset.tab); });
@@ -464,7 +479,6 @@
                 faq: renderFaqForm,
                 cta: renderCtaForm,
                 footer: renderFooterForm,
-                media: renderMediaLibraryForm,
                 json: renderJsonForm,
             };
             container.innerHTML = (renderers[currentContentTab] || renderSiteForm)();
@@ -671,7 +685,26 @@
             `;
         }
 
-        function renderMediaLibraryForm() {
+        function getUsedMedia(obj, path, result) {
+            if (!obj) return;
+            if (typeof obj === 'string') {
+                if (/\.(png|jpe?g|gif|webp|svg|ico|mp4|webm|mov)(\?.*)?$/i.test(obj)) {
+                    result.push({ url: obj, path: path || 'root' });
+                }
+                return;
+            }
+            if (Array.isArray(obj)) {
+                obj.forEach((item, i) => getUsedMedia(item, path + '[' + i + ']', result));
+                return;
+            }
+            if (typeof obj === 'object') {
+                for (const key of Object.keys(obj)) {
+                    getUsedMedia(obj[key], (path ? path + '.' : '') + key, result);
+                }
+            }
+        }
+
+        function renderMediaLibraryPanel() {
             const items = cmsData.mediaLibrary || [];
             let itemsHtml = '';
             if (items.length === 0) {
@@ -693,10 +726,36 @@
                     </div>
                 `).join('') + '</div>';
             }
-            return `
-                <h3 class="text-lg font-bold text-main mb-4">媒體庫</h3>
-                <p class="text-sm text-sub mb-4">所有圖片/影片需先透過 Git 推送到 <code class="px-1 py-0.5 rounded bg-[var(--bg-hover)] border border-theme text-xs">images/</code> 或 <code class="px-1 py-0.5 rounded bg-[var(--bg-hover)] border border-theme text-xs">videos/</code> 資料夾，再在此登記使用。點擊「複製 URL」後可貼到 Hero / Footer 等表單的圖片欄位。</p>
-                <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-5">
+
+            // 掃描 CMS 中正在使用的媒體
+            const used = [];
+            getUsedMedia(cmsData, '', used);
+            const uniqueUsed = [];
+            const seen = new Set();
+            used.forEach(u => {
+                if (!seen.has(u.url)) { seen.add(u.url); uniqueUsed.push(u); }
+            });
+            let usedHtml = '';
+            if (uniqueUsed.length === 0) {
+                usedHtml = '<div class="text-sm text-muted">暫未在 CMS 資料中發現已使用的媒體 URL。</div>';
+            } else {
+                usedHtml = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">' + uniqueUsed.map(u => `
+                    <div class="flex items-center gap-3 bg-[var(--bg-hover)] border border-theme rounded-lg p-3">
+                        <div class="w-12 h-12 rounded bg-black/20 flex items-center justify-center flex-shrink-0">
+                            <img src="${esc(u.url)}" class="w-full h-full object-contain" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\\'fas fa-image text-muted\\'></i>'">
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-sm text-main truncate" title="${esc(u.url)}">${esc(u.url)}</div>
+                            <div class="text-xs text-muted truncate">位置: ${esc(u.path)}</div>
+                        </div>
+                        <button onclick="copyMediaUrl('${esc(u.url)}')" class="px-2 py-1 rounded gold-btn text-xs font-bold transition"><i class="fas fa-copy"></i></button>
+                    </div>
+                `).join('') + '</div>';
+            }
+
+            document.getElementById('mediaLibraryPanel').innerHTML = `
+                <p class="text-sm text-sub">所有圖片/影片需先透過 Git 推送到 <code class="px-1 py-0.5 rounded bg-[var(--bg-hover)] border border-theme text-xs">images/</code> 或 <code class="px-1 py-0.5 rounded bg-[var(--bg-hover)] border border-theme text-xs">videos/</code> 資料夾，再在此登記使用。點擊「複製 URL」後可貼到 Hero / Footer 等表單的圖片欄位。</p>
+                <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4">
                     <div class="grid md:grid-cols-4 gap-3">
                         <div class="md:col-span-1"><input id="newMediaName" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="名稱（例如：Logo）"></div>
                         <div class="md:col-span-2"><input id="newMediaUrl" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="路徑（例如：images/logo.png）"></div>
@@ -710,8 +769,16 @@
                         <div class="md:col-span-1"><button onclick="addMediaItem()" class="w-full px-3 py-2 rounded-lg gold-btn font-bold text-sm transition"><i class="fas fa-plus"></i> 新增媒體</button></div>
                     </div>
                 </div>
-                ${itemsHtml}
-                <div class="flex justify-end pt-4"><button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button></div>
+                <div class="bg-card border border-theme rounded-xl p-5">
+                    <h3 class="text-lg font-bold text-main mb-4">已登記媒體</h3>
+                    ${itemsHtml}
+                </div>
+                <div class="bg-card border border-theme rounded-xl p-5">
+                    <h3 class="text-lg font-bold text-main mb-4">目前 CMS 正在使用的媒體</h3>
+                    <p class="text-sm text-sub mb-3">以下為從目前 CMS 資料中自動掃描出來的圖片/影片 URL。若發現遺漏，請點擊「複製 URL」後到上方「新增媒體」補充。</p>
+                    ${usedHtml}
+                </div>
+                <div class="flex justify-end pt-2"><button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button></div>
             `;
         }
 
@@ -783,7 +850,8 @@
             }
         }
         function showContentMsg(text, ok) {
-            const el = document.getElementById('contentSaveMsg');
+            const isMedia = !document.getElementById('panel-media').classList.contains('hidden');
+            const el = document.getElementById(isMedia ? 'mediaSaveMsg' : 'contentSaveMsg');
             el.textContent = text;
             el.className = 'text-sm px-3 py-1 rounded-lg ' + (ok ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20');
             el.classList.remove('hidden');
