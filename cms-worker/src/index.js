@@ -705,6 +705,7 @@ function getDefaultCMSData() {
           title: "聯絡方式",
           contactLines: [
             { icon: "ph-phone", text: "+852 3987 1078" },
+            { icon: "ph-whatsapp-logo", text: "+852 5116 4453" },
             { icon: "ph-envelope", text: "info@cwmanagement.com.hk" },
             { icon: "ph-map-pin", text: "香港新界荃灣青山公路264-298號南豐中心19樓1922室" },
           ],
