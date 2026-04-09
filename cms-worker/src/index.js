@@ -392,7 +392,7 @@ function getDefaultCMSData() {
     site: {
       title: "香港支付閘道 | 駿匯聯 C&W Management | 銀聯商務官方代理",
       description: "駿匯聯 C&W Management 是銀聯商務香港官方代理，提供比 Xtripe / XayPal 更優惠的線上支付閘道。本地信用卡費率低至 2.6%，AI 智能客服 7x24 待命，支援銀聯卡、微信支付、支付寶及 FPS 轉數快。",
-      whatsappNumber: "85239871078",
+      whatsappNumber: "85251164453",
       phoneDisplay: "+852 3987 1078",
       email: "info@cwmanagement.com.hk",
     },
