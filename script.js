@@ -13,6 +13,7 @@ const WHATSAPP_NUMBER = '85251164453';
 document.addEventListener('DOMContentLoaded', function() {
     document.documentElement.setAttribute('data-theme', 'light');
     initBaseInteractions();
+    initHeroSlider();
     fetchCMSData();
     trackPageView();
 });
@@ -41,6 +42,20 @@ function setTheme(theme) {
     if (icon) {
         icon.className = theme === 'dark' ? 'ph ph-sun' : 'ph ph-moon';
     }
+}
+
+/* ========================================
+   Hero Slider
+   ======================================== */
+function initHeroSlider() {
+    const slides = document.querySelectorAll('.hero-slide');
+    if (slides.length < 2) return;
+    let current = 0;
+    setInterval(() => {
+        slides[current].classList.remove('active');
+        current = (current + 1) % slides.length;
+        slides[current].classList.add('active');
+    }, 4000);
 }
 
 /* ========================================
