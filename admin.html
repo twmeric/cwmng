@@ -245,6 +245,7 @@
                         <button onclick="setContentTab('faq')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="faq">常見問題</button>
                         <button onclick="setContentTab('cta')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="cta">CTA 區域</button>
                         <button onclick="setContentTab('footer')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="footer">頁尾 Footer</button>
+                        <button onclick="setContentTab('media')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="media">媒體庫</button>
                         <button onclick="setContentTab('json')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="json">原始 JSON</button>
                     </div>
 
@@ -463,6 +464,7 @@
                 faq: renderFaqForm,
                 cta: renderCtaForm,
                 footer: renderFooterForm,
+                media: renderMediaLibraryForm,
                 json: renderJsonForm,
             };
             container.innerHTML = (renderers[currentContentTab] || renderSiteForm)();
@@ -667,6 +669,74 @@
                 </div>
                 <div class="flex justify-end pt-2 mt-4"><button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button></div>
             `;
+        }
+
+        function renderMediaLibraryForm() {
+            const items = cmsData.mediaLibrary || [];
+            let itemsHtml = '';
+            if (items.length === 0) {
+                itemsHtml = '<div class="text-center py-10 text-muted">暫無媒體項目。請點擊「新增媒體」添加。</div>';
+            } else {
+                itemsHtml = '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">' + items.map((m, i) => `
+                    <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 flex flex-col gap-3">
+                        <div class="aspect-video rounded-lg overflow-hidden bg-black/20 flex items-center justify-center">
+                            ${m.type === 'video' 
+                                ? '<div class="text-4xl text-muted"><i class="fas fa-video"></i></div>' 
+                                : `<img src="${esc(m.url)}" alt="${esc(m.alt || '')}" class="w-full h-full object-contain" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'text-4xl text-muted\\'><i class=\\'fas fa-image\\'></i></div>'">`}
+                        </div>
+                        <div class="text-sm font-semibold text-main truncate" title="${esc(m.name || '')}">${esc(m.name || '未命名')}</div>
+                        <div class="text-xs text-muted truncate" title="${esc(m.url || '')}">${esc(m.url || '')}</div>
+                        <div class="flex gap-2 mt-auto">
+                            <button onclick="copyMediaUrl('${esc(m.url || '')}')" class="flex-1 px-3 py-2 rounded-lg gold-btn text-xs font-bold transition"><i class="fas fa-copy"></i> 複製 URL</button>
+                            <button onclick="deleteMediaItem(${i})" class="px-3 py-2 rounded-lg border border-theme hover-theme text-xs font-medium transition text-red-400"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `).join('') + '</div>';
+            }
+            return `
+                <h3 class="text-lg font-bold text-main mb-4">媒體庫</h3>
+                <p class="text-sm text-sub mb-4">所有圖片/影片需先透過 Git 推送到 <code class="px-1 py-0.5 rounded bg-[var(--bg-hover)] border border-theme text-xs">images/</code> 或 <code class="px-1 py-0.5 rounded bg-[var(--bg-hover)] border border-theme text-xs">videos/</code> 資料夾，再在此登記使用。點擊「複製 URL」後可貼到 Hero / Footer 等表單的圖片欄位。</p>
+                <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-5">
+                    <div class="grid md:grid-cols-4 gap-3">
+                        <div class="md:col-span-1"><input id="newMediaName" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="名稱（例如：Logo）"></div>
+                        <div class="md:col-span-2"><input id="newMediaUrl" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="路徑（例如：images/logo.png）"></div>
+                        <div class="md:col-span-1">
+                            <select id="newMediaType" class="w-full px-3 py-2 rounded-lg input-theme text-sm">
+                                <option value="image">圖片</option>
+                                <option value="video">影片</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-3"><input id="newMediaAlt" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="Alt 文字 / 描述（選填）"></div>
+                        <div class="md:col-span-1"><button onclick="addMediaItem()" class="w-full px-3 py-2 rounded-lg gold-btn font-bold text-sm transition"><i class="fas fa-plus"></i> 新增媒體</button></div>
+                    </div>
+                </div>
+                ${itemsHtml}
+                <div class="flex justify-end pt-4"><button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button></div>
+            `;
+        }
+
+        function addMediaItem() {
+            const name = document.getElementById('newMediaName').value.trim();
+            const url = document.getElementById('newMediaUrl').value.trim();
+            const type = document.getElementById('newMediaType').value;
+            const alt = document.getElementById('newMediaAlt').value.trim();
+            if (!name || !url) { alert('請填寫名稱和路徑。'); return; }
+            if (!cmsData.mediaLibrary) cmsData.mediaLibrary = [];
+            cmsData.mediaLibrary.push({ id: 'media_' + Date.now(), name, url, type, alt });
+            renderContentForms();
+        }
+        function deleteMediaItem(index) {
+            if (!confirm('確定刪除此媒體記錄？')) return;
+            cmsData.mediaLibrary.splice(index, 1);
+            renderContentForms();
+        }
+        function copyMediaUrl(url) {
+            if (!url) return;
+            navigator.clipboard.writeText(url).then(() => {
+                showContentMsg('✅ URL 已複製：' + url, true);
+            }).catch(() => {
+                alert('URL：' + url);
+            });
         }
 
         function renderJsonForm() {

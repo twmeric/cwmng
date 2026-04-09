@@ -627,5 +627,11 @@ function getDefaultCMSData() {
       copyright: `© ${new Date().getFullYear()} 駿匯聯有限公司 C&W Management Limited. All rights reserved.`,
       poweredBy: "Powered by <img src='images/jkd-logo.png' alt='jkdcoding.com' style='height:18px;width:auto;display:inline-block;vertical-align:middle;'>",
     },
+    mediaLibrary: [
+      { id: "media_1", name: "駿匯聯 Logo", url: "images/logo.png", type: "image", alt: "駿匯聯 C&W Management Logo" },
+      { id: "media_2", name: "吉祥物 A - 邊行都啱", url: "images/textless/216808905A.png", type: "image", alt: "邊行都啱" },
+      { id: "media_3", name: "吉祥物 B - 收咁貴", url: "images/textless/216808905B.png", type: "image", alt: "收咁貴" },
+      { id: "media_4", name: "吉祥物 C - 你仲諗咩", url: "images/textless/216808905C.png", type: "image", alt: "你仲諗咩" },
+    ],
   };
 }
