@@ -649,6 +649,8 @@ function renderFooter(footer) {
                         inner = `<a href="tel:${c.text.replace(/\s/g,'')}">${c.text}</a>`;
                     } else if (c.icon === 'ph-envelope' || emailMatch) {
                         inner = `<a href="mailto:${c.text}">${c.text}</a>`;
+                    } else if (c.icon === 'ph-map-pin') {
+                        inner = `<a href="https://maps.google.com/?q=${encodeURIComponent(c.text)}" target="_blank">${c.text}</a>`;
                     }
                     return `<li><i class="ph ${c.icon}"></i> ${inner}</li>`;
                 }).join('') + '</ul>';
