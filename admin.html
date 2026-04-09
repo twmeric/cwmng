@@ -222,6 +222,24 @@
                                     <div><h3 class="font-bold text-main">客戶查詢</h3><p class="text-sm text-sub">查看留痕與跟進狀態</p></div>
                                 </div>
                             </a>
+                            <a href="#" onclick="switchTab('content'); setContentTab('nav'); return false;" class="block p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-bars"></i></div>
+                                    <div><h3 class="font-bold text-main">導航列</h3><p class="text-sm text-sub">Navbar 連結與 CTA</p></div>
+                                </div>
+                            </a>
+                            <a href="#" onclick="switchTab('content'); setContentTab('stickyCta'); return false;" class="block p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-thumbtack"></i></div>
+                                    <div><h3 class="font-bold text-main">Sticky CTA</h3><p class="text-sm text-sub">底部浮動條文案</p></div>
+                                </div>
+                            </a>
+                            <a href="#" onclick="switchTab('content'); setContentTab('modals'); return false;" class="block p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-window-restore"></i></div>
+                                    <div><h3 class="font-bold text-main">彈窗 Modal</h3><p class="text-sm text-sub">諮詢與清單表單內容</p></div>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -239,12 +257,15 @@
                     <!-- Content Tabs -->
                     <div class="bg-card border border-theme rounded-xl p-2 flex flex-wrap gap-2">
                         <button onclick="setContentTab('site')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="site">網站資訊</button>
+                        <button onclick="setContentTab('nav')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="nav">導航列</button>
                         <button onclick="setContentTab('hero')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="hero">首頁 Hero</button>
                         <button onclick="setContentTab('solutions')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="solutions">服務方案</button>
                         <button onclick="setContentTab('pricing')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="pricing">定價比較</button>
                         <button onclick="setContentTab('testimonials')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="testimonials">客戶見證</button>
                         <button onclick="setContentTab('faq')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="faq">常見問題</button>
                         <button onclick="setContentTab('cta')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="cta">CTA 區域</button>
+                        <button onclick="setContentTab('stickyCta')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="stickyCta">Sticky CTA</button>
+                        <button onclick="setContentTab('modals')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="modals">彈窗 Modal</button>
                         <button onclick="setContentTab('footer')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="footer">頁尾 Footer</button>
                         <button onclick="setContentTab('json')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="json">原始 JSON</button>
                     </div>
@@ -472,12 +493,15 @@
             const container = document.getElementById('contentForms');
             const renderers = {
                 site: renderSiteForm,
+                nav: renderNavForm,
                 hero: renderHeroForm,
                 solutions: renderSolutionsForm,
                 pricing: renderPricingForm,
                 testimonials: renderTestimonialsForm,
                 faq: renderFaqForm,
                 cta: renderCtaForm,
+                stickyCta: renderStickyCtaForm,
+                modals: renderModalsForm,
                 footer: renderFooterForm,
                 json: renderJsonForm,
             };
@@ -543,6 +567,25 @@
                     ${inputRow('CTA 副按鈕', 'hero.ctaSecondary')}
                 </div>
                 ${inputRow('副標題', 'hero.subtitle', 'textarea')}
+                <div class="flex justify-end pt-2">
+                    <button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
+                </div>
+            `;
+        }
+
+        function renderNavForm() {
+            const items = cmsData.nav?.items || [];
+            return `
+                <h3 class="text-lg font-bold text-main mb-4">導航列 Navbar</h3>
+                <div class="space-y-3 mb-4">
+                    ${items.map((item, i) => `
+                        <div class="grid grid-cols-2 gap-3">
+                            <input data-path="nav.items.${i}.text" value="${esc(item.text || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="文字">
+                            <input data-path="nav.items.${i}.href" value="${esc(item.href || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="連結 (#solutions)">
+                        </div>
+                    `).join('')}
+                </div>
+                ${inputRow('CTA 按鈕文字', 'nav.cta')}
                 <div class="flex justify-end pt-2">
                     <button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
                 </div>
@@ -636,6 +679,55 @@
                     ${inputRow('副按鈕文字', 'cta.ctaSecondary')}
                 </div>
                 ${inputRow('底部說明 (可含 HTML)', 'cta.note', 'textarea')}
+                <div class="flex justify-end pt-2">
+                    <button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
+                </div>
+            `;
+        }
+
+        function renderStickyCtaForm() {
+            return `
+                <h3 class="text-lg font-bold text-main mb-4">Sticky CTA 浮動條</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    ${inputRow('左側文字', 'stickyCta.text')}
+                    ${inputRow('按鈕文字', 'stickyCta.button')}
+                </div>
+                <div class="flex justify-end pt-2">
+                    <button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
+                </div>
+            `;
+        }
+
+        function renderModalsForm() {
+            return `
+                <h3 class="text-lg font-bold text-main mb-4">彈窗 Modal 內容</h3>
+                <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
+                    <div class="font-bold text-main mb-3">一般諮詢 Modal</div>
+                    ${inputRow('標題', 'modals.lead.title')}
+                    ${inputRow('描述', 'modals.lead.description', 'textarea')}
+                    ${inputRow('提交按鈕', 'modals.lead.submitButton')}
+                    ${inputRow('底部備註', 'modals.lead.note')}
+                    <div class="grid md:grid-cols-2 gap-3 mt-2">
+                        ${inputRow('姓名 placeholder', 'modals.lead.placeholders.name')}
+                        ${inputRow('電話 placeholder', 'modals.lead.placeholders.phone')}
+                        ${inputRow('電郵 placeholder', 'modals.lead.placeholders.email')}
+                        ${inputRow('公司 placeholder', 'modals.lead.placeholders.company')}
+                        ${inputRow('交易額 placeholder', 'modals.lead.placeholders.monthlyRevenue')}
+                    </div>
+                </div>
+                <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4">
+                    <div class="font-bold text-main mb-3">申請清單 Modal</div>
+                    ${inputRow('標題', 'modals.checklist.title')}
+                    ${inputRow('描述', 'modals.checklist.description', 'textarea')}
+                    ${inputRow('提交按鈕', 'modals.checklist.submitButton')}
+                    ${inputRow('底部備註', 'modals.checklist.note')}
+                    <div class="grid md:grid-cols-2 gap-3 mt-2">
+                        ${inputRow('姓名 placeholder', 'modals.checklist.placeholders.name')}
+                        ${inputRow('電話 placeholder', 'modals.checklist.placeholders.phone')}
+                        ${inputRow('電郵 placeholder', 'modals.checklist.placeholders.email')}
+                        ${inputRow('公司 placeholder', 'modals.checklist.placeholders.company')}
+                    </div>
+                </div>
                 <div class="flex justify-end pt-2">
                     <button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
                 </div>

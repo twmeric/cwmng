@@ -114,7 +114,42 @@ async function verifyAuth(request, env, corsHeaders) {
 
 async function getCMSData(env, corsHeaders) {
   const data = await env.CMS_DATA.get("cms_data", "json");
-  return jsonResponse(data || getDefaultCMSData(), 200, corsHeaders);
+  const defaults = getDefaultCMSData();
+  if (!data) return jsonResponse(defaults, 200, corsHeaders);
+  // 防止舊 KV 資料缺少新欄位導致「閃一下又消失」
+  const merged = deepMerge(defaults, data);
+  return jsonResponse(merged, 200, corsHeaders);
+}
+
+function deepMerge(defaults, stored) {
+  if (Array.isArray(defaults)) {
+    if (Array.isArray(stored)) {
+      return stored.map((item, i) => {
+        if (typeof item === 'object' && item !== null && typeof defaults[i] === 'object' && defaults[i] !== null) {
+          return deepMerge(defaults[i], item);
+        }
+        return item;
+      });
+    }
+    return stored;
+  }
+  if (typeof defaults === 'object' && defaults !== null && typeof stored === 'object' && stored !== null) {
+    const result = {};
+    for (const key of Object.keys(defaults)) {
+      if (key in stored) {
+        result[key] = deepMerge(defaults[key], stored[key]);
+      } else {
+        result[key] = defaults[key];
+      }
+    }
+    for (const key of Object.keys(stored)) {
+      if (!(key in result)) {
+        result[key] = stored[key];
+      }
+    }
+    return result;
+  }
+  return stored;
 }
 
 async function saveCMSData(request, env, corsHeaders) {
@@ -395,6 +430,53 @@ function getDefaultCMSData() {
       whatsappNumber: "85251164453",
       phoneDisplay: "+852 3987 1078",
       email: "info@cwmanagement.com.hk",
+    },
+    nav: {
+      items: [
+        { text: "服務方案", href: "#solutions" },
+        { text: "價格對比", href: "#pricing" },
+        { text: "客戶見證", href: "#trust" },
+        { text: "常見問題", href: "#faq" },
+      ],
+      cta: "立即諮詢",
+    },
+    stickyCta: {
+      text: "立即諮詢，獲取專屬優惠報價",
+      button: "立即諮詢",
+    },
+    modals: {
+      lead: {
+        title: "獲取專屬優惠報價",
+        description: "留下資料，我們的支付顧問會在 5 分鐘內透過 WhatsApp 聯絡你。",
+        submitButton: "開始對話",
+        note: "無需綁約，隨時可取消。",
+        placeholders: {
+          name: "稱呼（例如：陳先生）",
+          phone: "WhatsApp 電話號碼",
+          email: "電郵地址",
+          company: "公司名稱（選填）",
+          monthlyRevenue: "每月交易額（選填）",
+        },
+        revenueOptions: [
+          { value: "", label: "每月交易額（選填）" },
+          { value: "少於 $50,000", label: "少於 $50,000" },
+          { value: "$50,000 - $200,000", label: "$50,000 - $200,000" },
+          { value: "$200,000 - $500,000", label: "$200,000 - $500,000" },
+          { value: "$500,000 以上", label: "$500,000 以上" },
+        ],
+      },
+      checklist: {
+        title: "免費索取《商戶申請文件清單》",
+        description: "請留下 WhatsApp 號碼，我們會立即將文件清單傳送給你，並解答任何開戶疑問。",
+        submitButton: "免費索取清單",
+        note: "資料只會用於發送清單及跟進，絕不外洩。",
+        placeholders: {
+          name: "稱呼（例如：陳先生）",
+          phone: "WhatsApp 電話號碼",
+          email: "電郵地址（選填）",
+          company: "公司名稱（選填）",
+        },
+      },
     },
     hero: {
       title: "每賣出一件貨，Xtripe 就先抽走你近 <span class='text-gradient'>4%</span> 利潤——<br><span class='text-gradient-red'>這筆隱形租金，你還要付多久？</span>",

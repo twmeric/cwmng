@@ -188,6 +188,7 @@ async function fetchCMSData() {
 function renderCMS(data) {
     if (!data) return;
     renderSiteMeta(data.site);
+    renderNav(data.nav);
     renderHero(data.hero);
     renderQuickLinks(data.quickLinks);
     renderProblems(data.problems);
@@ -201,6 +202,8 @@ function renderCMS(data) {
     renderFAQ(data.faq);
     renderCTA(data.cta);
     renderFooter(data.footer);
+    renderStickyCta(data.stickyCta);
+    renderModals(data.modals);
 }
 
 function renderSiteMeta(site) {
@@ -208,6 +211,75 @@ function renderSiteMeta(site) {
     if (site.title) document.title = site.title;
     const desc = document.querySelector('meta[name="description"]');
     if (desc && site.description) desc.setAttribute('content', site.description);
+}
+
+function renderNav(nav) {
+    if (!nav) return;
+    const navLinks = document.getElementById('navLinks');
+    if (navLinks && nav.items) {
+        const ctaLi = navLinks.querySelector('li:last-child');
+        navLinks.innerHTML = nav.items.map(item => `<li><a href="${item.href || '#'}">${item.text}</a></li>`).join('') + (ctaLi ? ctaLi.outerHTML : '');
+        if (nav.cta) {
+            const newCtaA = navLinks.querySelector('li:last-child a');
+            if (newCtaA) newCtaA.textContent = nav.cta;
+        }
+    }
+}
+
+function renderStickyCta(sticky) {
+    if (!sticky) return;
+    const container = document.querySelector('.sticky-cta-inner');
+    if (container) {
+        const span = container.querySelector('span');
+        const btn = container.querySelector('a');
+        if (span && sticky.text) span.textContent = sticky.text;
+        if (btn && sticky.button) btn.textContent = sticky.button;
+    }
+}
+
+function renderModals(modals) {
+    if (!modals) return;
+    // Re-render lead modal content if exists
+    const leadModal = document.getElementById('leadModal');
+    if (leadModal && modals.lead) {
+        const h3 = leadModal.querySelector('h3');
+        const desc = leadModal.querySelector('p');
+        const btn = leadModal.querySelector('form button[type="submit"]');
+        const note = leadModal.querySelector('.modal-note');
+        if (h3) h3.textContent = modals.lead.title;
+        if (desc) desc.textContent = modals.lead.description;
+        if (btn) btn.textContent = modals.lead.submitButton;
+        if (note) note.textContent = modals.lead.note;
+        const inputs = leadModal.querySelectorAll('input, select');
+        inputs.forEach(el => {
+            const ph = modals.lead.placeholders && modals.lead.placeholders[el.name];
+            if (ph) el.setAttribute('placeholder', ph);
+        });
+        const select = leadModal.querySelector('select[name="monthlyRevenue"]');
+        if (select && modals.lead.revenueOptions) {
+            select.innerHTML = modals.lead.revenueOptions.map(opt => `<option value="${opt.value}">${opt.label}</option>`).join('');
+        }
+    }
+    // Re-render checklist modal content if exists
+    const checklistModal = document.getElementById('checklistModal');
+    if (checklistModal && modals.checklist) {
+        const h3 = checklistModal.querySelector('h3');
+        const desc = checklistModal.querySelector('p');
+        const btn = checklistModal.querySelector('form button[type="submit"]');
+        const note = checklistModal.querySelector('.modal-note');
+        if (h3) h3.textContent = modals.checklist.title;
+        if (desc) desc.textContent = modals.checklist.description;
+        if (btn) {
+            const hasIcon = modals.checklist.submitButton && modals.checklist.submitButton.includes('WhatsApp');
+            btn.innerHTML = hasIcon ? `<i class="ph ph-whatsapp-logo"></i> ${modals.checklist.submitButton}` : modals.checklist.submitButton;
+        }
+        if (note) note.textContent = modals.checklist.note;
+        const inputs = checklistModal.querySelectorAll('input');
+        inputs.forEach(el => {
+            const ph = modals.checklist.placeholders && modals.checklist.placeholders[el.name];
+            if (ph) el.setAttribute('placeholder', ph);
+        });
+    }
 }
 
 function renderHero(hero) {
@@ -569,9 +641,17 @@ function renderFooter(footer) {
                 }).join('') + '</ul>';
             }
             if (col.contactLines) {
-                linksHtml = '<ul>' + col.contactLines.map(c =>
-                    `<li><i class="ph ${c.icon}"></i> ${c.text}</li>`
-                ).join('') + '</ul>';
+                linksHtml = '<ul>' + col.contactLines.map(c => {
+                    let inner = c.text;
+                    const phoneMatch = c.text.match(/^(\+?\d[\d\s-]+)$/);
+                    const emailMatch = c.text.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+                    if (c.icon === 'ph-phone' || phoneMatch) {
+                        inner = `<a href="tel:${c.text.replace(/\s/g,'')}">${c.text}</a>`;
+                    } else if (c.icon === 'ph-envelope' || emailMatch) {
+                        inner = `<a href="mailto:${c.text}">${c.text}</a>`;
+                    }
+                    return `<li><i class="ph ${c.icon}"></i> ${inner}</li>`;
+                }).join('') + '</ul>';
             }
             div.innerHTML = `<h4>${col.title}</h4>` + linksHtml;
             grid.appendChild(div);
@@ -619,32 +699,35 @@ function initModals() {
 
 function ensureLeadModal() {
     if (document.getElementById('leadModal')) return;
+    const m = cmsCache?.modals?.lead || {};
     const div = document.createElement('div');
     div.id = 'leadModal';
     div.className = 'modal-overlay';
     div.innerHTML = `
         <div class="modal-content">
             <button class="modal-close" id="closeModal" aria-label="Close">&times;</button>
-            <h3>獲取專屬優惠報價</h3>
-            <p>留下資料，我們的支付顧問會在 5 分鐘內透過 WhatsApp 聯絡你。</p>
+            <h3>${m.title || '獲取專屬優惠報價'}</h3>
+            <p>${m.description || '留下資料，我們的支付顧問會在 5 分鐘內透過 WhatsApp 聯絡你。'}</p>
             <form id="leadForm">
-                <div class="input-group"><input type="text" name="name" placeholder="稱呼（例如：陳先生）" required></div>
-                <div class="input-group"><input type="tel" name="phone" placeholder="WhatsApp 電話號碼" required></div>
-                <div class="input-group"><input type="email" name="email" placeholder="電郵地址"></div>
-                <div class="input-group"><input type="text" name="company" placeholder="公司名稱（選填）"></div>
+                <div class="input-group"><input type="text" name="name" placeholder="${m.placeholders?.name || '稱呼（例如：陳先生）'}" required></div>
+                <div class="input-group"><input type="tel" name="phone" placeholder="${m.placeholders?.phone || 'WhatsApp 電話號碼'}" required></div>
+                <div class="input-group"><input type="email" name="email" placeholder="${m.placeholders?.email || '電郵地址'}"></div>
+                <div class="input-group"><input type="text" name="company" placeholder="${m.placeholders?.company || '公司名稱（選填）'}"></div>
                 <div class="input-group">
                     <select name="monthlyRevenue">
-                        <option value="">每月交易額（選填）</option>
-                        <option value="少於 $50,000">少於 $50,000</option>
-                        <option value="$50,000 - $200,000">$50,000 - $200,000</option>
-                        <option value="$200,000 - $500,000">$200,000 - $500,000</option>
-                        <option value="$500,000 以上">$500,000 以上</option>
+                        ${(m.revenueOptions || [
+                            { value: '', label: '每月交易額（選填）' },
+                            { value: '少於 $50,000', label: '少於 $50,000' },
+                            { value: '$50,000 - $200,000', label: '$50,000 - $200,000' },
+                            { value: '$200,000 - $500,000', label: '$200,000 - $500,000' },
+                            { value: '$500,000 以上', label: '$500,000 以上' }
+                        ]).map(opt => `<option value="${opt.value}">${opt.label}</option>`).join('')}
                     </select>
                 </div>
                 <input type="hidden" name="interest" value="一般查詢">
-                <button type="submit" class="btn btn-primary btn-block">開始對話</button>
+                <button type="submit" class="btn btn-primary btn-block">${m.submitButton || '開始對話'}</button>
             </form>
-            <p class="modal-note">無需綁約，隨時可取消。</p>
+            <p class="modal-note">${m.note || '無需綁約，隨時可取消。'}</p>
         </div>
     `;
     document.body.appendChild(div);
@@ -652,23 +735,25 @@ function ensureLeadModal() {
 
 function ensureChecklistModal() {
     if (document.getElementById('checklistModal')) return;
+    const m = cmsCache?.modals?.checklist || {};
+    const btnText = m.submitButton || '免費索取清單';
     const div = document.createElement('div');
     div.id = 'checklistModal';
     div.className = 'modal-overlay';
     div.innerHTML = `
         <div class="modal-content">
             <button class="modal-close" id="closeChecklistModal" aria-label="Close">&times;</button>
-            <h3>免費索取《商戶申請文件清單》</h3>
-            <p>請留下 WhatsApp 號碼，我們會立即將文件清單傳送給你，並解答任何開戶疑問。</p>
+            <h3>${m.title || '免費索取《商戶申請文件清單》'}</h3>
+            <p>${m.description || '請留下 WhatsApp 號碼，我們會立即將文件清單傳送給你，並解答任何開戶疑問。'}</p>
             <form id="checklistForm">
-                <div class="input-group"><input type="text" name="name" placeholder="稱呼（例如：陳先生）" required></div>
-                <div class="input-group"><input type="tel" name="phone" placeholder="WhatsApp 電話號碼" required></div>
-                <div class="input-group"><input type="email" name="email" placeholder="電郵地址（選填）"></div>
-                <div class="input-group"><input type="text" name="company" placeholder="公司名稱（選填）"></div>
+                <div class="input-group"><input type="text" name="name" placeholder="${m.placeholders?.name || '稱呼（例如：陳先生）'}" required></div>
+                <div class="input-group"><input type="tel" name="phone" placeholder="${m.placeholders?.phone || 'WhatsApp 電話號碼'}" required></div>
+                <div class="input-group"><input type="email" name="email" placeholder="${m.placeholders?.email || '電郵地址（選填）'}"></div>
+                <div class="input-group"><input type="text" name="company" placeholder="${m.placeholders?.company || '公司名稱（選填）'}"></div>
                 <input type="hidden" name="interest" value="申請清單">
-                <button type="submit" class="btn btn-primary btn-block"><i class="ph ph-whatsapp-logo"></i> 免費索取清單</button>
+                <button type="submit" class="btn btn-primary btn-block"><i class="ph ph-whatsapp-logo"></i> ${btnText}</button>
             </form>
-            <p class="modal-note">資料只會用於發送清單及跟進，絕不外洩。</p>
+            <p class="modal-note">${m.note || '資料只會用於發送清單及跟進，絕不外洩。'}</p>
         </div>
     `;
     document.body.appendChild(div);
