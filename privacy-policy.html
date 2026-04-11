@@ -8,6 +8,14 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="stylesheet" href="styles.css?v=21">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        (function() {
+            const saved = localStorage.getItem('cwmng_theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = saved ? saved === 'dark' : prefersDark;
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        })();
+    </script>
 </head>
 <body>
     <nav class="navbar" id="navbar">

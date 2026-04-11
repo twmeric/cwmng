@@ -8,6 +8,14 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="stylesheet" href="styles.css?v=21">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        (function() {
+            const saved = localStorage.getItem('cwmng_theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = saved ? saved === 'dark' : prefersDark;
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        })();
+    </script>
 </head>
 <body>
     <nav class="navbar" id="navbar">
@@ -32,7 +40,7 @@
 
             <section>
                 <h2>1. 服務說明</h2>
-                <p>駿匯聯有限公司（「本公司」、「我們」）為銀聯商務香港官方代理，專門為香港本地網店及商戶提供線上支付閘道、跨境支付方案及相關技術對接服務。本網站（<a href="https://cwmng.jkdcoding.com">cwmng.jkdcoding.com</a>）用於展示服務資訊、收集客戶查詢及協助商戶申請開戶。</p>
+                <p>駿匯聯有限公司（「本公司」、「我們」）為銀聯商務香港官方代理，專門為香港本地網店及商戶提供線上支付閘道、跨境支付方案及相關技術對接服務。本網站（<a href="https://cwmanagement.com.hk">cwmanagement.com.hk</a>）用於展示服務資訊、收集客戶查詢及協助商戶申請開戶。</p>
             </section>
 
             <section>
