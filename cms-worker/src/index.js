@@ -508,7 +508,7 @@ function getDefaultCMSData() {
       items: [
         {
           icon: "💸",
-          image: "images/textless/190514290.png",
+          image: "images/textless/190514290-stroke.png",
           alt: "利潤被層層費用壓垮",
           title: "每筆交易的手續費，月尾就疊成一座山，把你的利潤壓到見底",
           description: "賣出 $1000，Xtripe / XayPal 先抽走 $35。營業額 $10 萬，手續費單就厚厚一疊，像這堆鞋盒一樣重——這筆錢本來可以用來請人、入貨，或者直接放進你的口袋。",
@@ -516,7 +516,7 @@ function getDefaultCMSData() {
         },
         {
           icon: "⏰",
-          image: "images/textless/230569377.png",
+          image: "images/textless/230569377-stroke.png",
           alt: "交易出問題，腦子一片空白，無計可施",
           title: "交易出問題時，你只能夠一個人望天打掛",
           description: "突然之間被關閉，你急如熱鍋上的螞蟻，但客服永遠只有自動回覆。腦子一片空白，除了望天打卦，你什麼都做不了——訂單就這樣流失，信譽也跟著下滑。",
@@ -524,7 +524,7 @@ function getDefaultCMSData() {
         },
         {
           icon: "🚫",
-          image: "images/textless/242460541.png",
+          image: "images/textless/242460541-stroke.png",
           alt: "內地市場遙遠如月球，缺一艘火箭",
           title: "內地客戶想買卻付不了錢，市場就像月球一樣遙遠",
           description: "內地遊客或跨境買家打開你的網站，卻發現沒有銀聯、沒有微信支付。購物車就這樣被遺棄，而你明知道這是一塊巨大的市場，卻像望著月球一樣——看得到，到不了。",
@@ -583,7 +583,7 @@ function getDefaultCMSData() {
     },
     process: {
       sectionTitle: "3 步開通，今天正規申請，往後安心收款",
-      image: "images/textless/242354730.png",
+      image: "images/textless/242354730-stroke.png",
       steps: [
         { num: "1", title: "提交文件", desc: "CI、BR 及銀行月結單，專員 1-2 天完成初審。" },
         { num: "2", title: "技術對接", desc: "提供 Shopify / WooCommerce 外掛或 API，最快 1 小時上線。" },
@@ -607,7 +607,7 @@ function getDefaultCMSData() {
       ],
     },
     downloadPromo: {
-      image: "images/textless/134950753.png",
+      image: "images/textless/134950753-stroke.png",
       alt: "申請文件清單",
       title: "準備開戶？先下載申請資料清單",
       subtitle: "我們為你整理了一份完整的商戶申請文件清單，讓你一次備齊，加快審批流程。",
@@ -678,7 +678,7 @@ function getDefaultCMSData() {
       ],
     },
     cta: {
-      image: "images/textless/156545017.png",
+      image: "images/textless/156545017-stroke.png",
       alt: "滿意客戶",
       title: "本月限定：免費獲得價值 $3,000 的 API 對接收費",
       subtitle: "名額所剩無幾，額滿即恢復標準收費。立即鎖定你的專屬優惠，零風險開始：",
