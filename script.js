@@ -8,7 +8,9 @@ const API_BASE_URL = (location.hostname === 'localhost' || location.hostname ===
     ? 'http://localhost:8787'
     : 'https://cwmng-cms-worker.jimsbond007.workers.dev';
 
-const WHATSAPP_NUMBER = '85251164453';
+function getWhatsAppNumber() {
+    return cmsCache?.site?.whatsappNumber || '85251164453';
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     document.documentElement.setAttribute('data-theme', 'light');
@@ -78,7 +80,7 @@ function initBaseInteractions() {
         else navbar?.classList.remove('scrolled');
     }, { passive: true });
 
-    // Mobile menu
+    // Mobile menu (event delegation for dynamically rendered nav)
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const navLinks = document.getElementById('navLinks');
     mobileMenuBtn?.addEventListener('click', () => {
@@ -89,8 +91,9 @@ function initBaseInteractions() {
             icon.classList.toggle('ph-x');
         }
     });
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', () => navLinks?.classList.remove('open'));
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('.nav-links a');
+        if (link && navLinks) navLinks.classList.remove('open');
     });
 
     // Reveal on scroll
@@ -155,17 +158,17 @@ function initBaseInteractions() {
         }
     }, { passive: true });
 
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            const href = this.getAttribute('href');
-            if (href === '#') return;
-            const target = document.querySelector(href);
-            if (target) {
-                e.preventDefault();
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
+    // Smooth scroll for anchor links (event delegation for dynamically rendered content)
+    document.addEventListener('click', (e) => {
+        const anchor = e.target.closest('a[href^="#"]');
+        if (!anchor) return;
+        const href = anchor.getAttribute('href');
+        if (href === '#') return;
+        const target = document.querySelector(href);
+        if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     });
 }
 
@@ -864,7 +867,7 @@ async function handleFormSubmit(e, type) {
     } else {
         msg = `你好，我是 ${data.name}。\n電話： ${data.phone}${data.email ? '\n電郵： ' + data.email : ''}${data.company ? '\n公司： ' + data.company : ''}${data.monthlyRevenue ? '\n月營業額約： ' + data.monthlyRevenue : ''}\n\n我有興趣了解駿匯聯的收款方案，請聯絡我，謝謝。`;
     }
-    const url = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg);
+    const url = 'https://wa.me/' + getWhatsAppNumber() + '?text=' + encodeURIComponent(msg);
     window.open(url, '_blank');
 
     // 3. Close modal & reset
