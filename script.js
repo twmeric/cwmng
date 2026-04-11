@@ -13,7 +13,7 @@ function getWhatsAppNumber() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    document.documentElement.setAttribute('data-theme', 'light');
+    initTheme();
     initBaseInteractions();
     initHeroSlider();
     initPricingCalculator();
@@ -44,6 +44,10 @@ function setTheme(theme) {
     const icon = document.querySelector('#themeToggle i');
     if (icon) {
         icon.className = theme === 'dark' ? 'ph ph-sun' : 'ph ph-moon';
+    }
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    if (themeColor) {
+        themeColor.setAttribute('content', theme === 'dark' ? '#0a0a0a' : '#1E3A8A');
     }
 }
 

@@ -803,3 +803,57 @@ body { padding-bottom: 4rem; }
     .process-grid { flex-direction: column; }
     .process-arrow { transform: rotate(90deg); margin: 0.5rem 0; }
 }
+
+/* Dark Mode Enhancements for new components & images */
+[data-theme="dark"] .hero-slide,
+[data-theme="dark"] .card-illustration,
+[data-theme="dark"] .process-img,
+[data-theme="dark"] .download-img,
+[data-theme="dark"] .cta-img {
+    filter: drop-shadow(0 0 18px rgba(255,255,255,0.08));
+}
+
+[data-theme="dark"] .tc-arrow {
+    background: var(--bg-card);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+[data-theme="dark"] .tc-dots button { background: var(--border-color); }
+[data-theme="dark"] .tc-dots button.active { background: var(--accent-blue-light); }
+
+[data-theme="dark"] .toast {
+    background: var(--bg-card);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .calculator-input {
+    background: var(--bg-input);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+[data-theme="dark"] .calculator-slider { accent-color: var(--accent-gold); }
+
+[data-theme="dark"] .quick-link-card {
+    background: var(--bg-card);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .trust-stat {
+    background: var(--bg-card);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .modal-content .input-group input,
+[data-theme="dark"] .modal-content .input-group select {
+    background: var(--bg-input);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .theme-toggle {
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+[data-theme="dark"] .theme-toggle:hover { background: var(--bg-hover); color: var(--accent-gold); }

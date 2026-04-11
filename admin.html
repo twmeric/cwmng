@@ -543,7 +543,11 @@
             container.querySelectorAll('input[data-path], textarea[data-path], select[data-path]').forEach(el => {
                 const handler = () => {
                     const path = el.dataset.path;
-                    const value = el.type === 'checkbox' ? el.checked : (el.type === 'number' ? Number(el.value) : el.value);
+                    let value = el.value;
+                    if (el.type === 'checkbox') value = el.checked;
+                    else if (el.type === 'number') {
+                        value = el.value === '' ? '' : Number(el.value);
+                    }
                     setDeepValue(cmsData, path, value);
                 };
                 el.addEventListener('input', handler);
@@ -563,7 +567,8 @@
         }
 
         function inputRow(label, path, type='text', extra='') {
-            const val = getDeepValue(cmsData, path) || '';
+            const raw = getDeepValue(cmsData, path);
+            const val = raw !== undefined && raw !== null ? raw : '';
             if (type === 'textarea') {
                 return `<div class="mb-4"><label class="block text-sm font-medium text-sub mb-2">${label}</label><textarea data-path="${path}" rows="3" class="w-full px-4 py-2 rounded-lg input-theme">${esc(val)}</textarea>${extra}</div>`;
             }
@@ -938,7 +943,7 @@
                     <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
                         <div class="font-bold text-main mb-2">數據 ${i + 1}</div>
                         <div class="grid md:grid-cols-4 gap-4">
-                            <div class="mb-2"><label class="block text-xs text-sub mb-1">數值</label><input data-path="trust.stats.${i}.value" value="${esc(stat.value !== undefined ? stat.value : '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">數值</label><input type="number" step="any" data-path="trust.stats.${i}.value" value="${esc(stat.value !== undefined ? stat.value : '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
                             <div class="mb-2"><label class="block text-xs text-sub mb-1">前綴</label><input data-path="trust.stats.${i}.prefix" value="${esc(stat.prefix || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
                             <div class="mb-2"><label class="block text-xs text-sub mb-1">後綴</label><input data-path="trust.stats.${i}.suffix" value="${esc(stat.suffix || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
                             <div class="mb-2"><label class="block text-xs text-sub mb-1">標籤</label><input data-path="trust.stats.${i}.label" value="${esc(stat.label || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
@@ -1405,8 +1410,8 @@
             return d.toLocaleString('zh-HK', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         }
         function esc(t) {
-            if (!t) return '';
-            return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+            if (t == null || t === '') return '';
+            return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         }
     </script>
 </body>
