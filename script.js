@@ -531,6 +531,8 @@ function renderPricing(pricing) {
     }
     const resultLabel = document.querySelector('#calculatorResult .result-label');
     if (resultLabel && pricing.resultLabel) resultLabel.textContent = pricing.resultLabel;
+    const note = document.getElementById('calculatorNote');
+    if (note && pricing.calculatorNote) note.textContent = pricing.calculatorNote;
     const ctaBtn = document.getElementById('calculatorCta');
     if (ctaBtn && pricing.cta) ctaBtn.textContent = pricing.cta;
     const input = document.getElementById('revenueInput');
@@ -861,9 +863,9 @@ function initPricingCalculator() {
             if (bar) bar.classList.remove('visible');
             return;
         }
-        // simplified calculation: us 2.6% vs xtripe 3.4% + $2.35 per txn (avg $300)
+        // Conservative calculation: pure rate difference only (Stripe 3.4% vs us 2.6%)
         const usFee = v * 0.026;
-        const xtripeFee = v * 0.034 + (v / 300) * 2.35;
+        const xtripeFee = v * 0.034;
         const yearlySavings = (xtripeFee - usFee) * 12;
         resultAmount.textContent = formatMoney(yearlySavings);
         resultAmount.classList.remove('pop');
@@ -872,8 +874,7 @@ function initPricingCalculator() {
         setTimeout(() => resultAmount.classList.remove('pop'), 300);
         if (bar && barUs && barXtripe) {
             bar.classList.add('visible');
-            const total = usFee + xtripeFee;
-            const usPct = (usFee / total) * 100;
+            const usPct = (0.026 / 0.034) * 100;
             barUs.style.width = usPct + '%';
             barXtripe.style.width = (100 - usPct) + '%';
         }

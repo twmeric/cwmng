@@ -596,6 +596,7 @@ function getDefaultCMSData() {
       sectionSubtitle: "超過 90% 輸入資料的店主發現，自己每年至少多付了 $30,000 手續費。看看你是不是其中之一。",
       resultLabel: "使用我們的服務，你每年可節省：",
       resultPlaceholder: "輸入交易額即可查看驚人差距",
+      calculatorNote: "*按 Stripe 標準本地卡費率 3.4% 計算，實際金額視交易筆數及客單價而定",
       cta: "獲取這筆省下的費用 → 免費諮詢",
       comparisonRows: [
         { feature: "本地信用卡費率", us: "<strong>2.6%</strong>", xtripe: "3.4% + $2.35", xaypal: "3.9% + 固定費" },
