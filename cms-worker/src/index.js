@@ -503,7 +503,7 @@ function getDefaultCMSData() {
       { icon: "ph-whatsapp-logo", text: "WhatsApp 直接查詢", href: "#contact" },
     ],
     problems: {
-      sectionTitle: "大多數香港網店老闆沒發現：自己的利潤正在這三個地方漏水",
+      sectionTitle: "大多數香港網店老闆沒發現：<br>自己的利潤正在這三個地方漏水",
       sectionSubtitle: "根據 2025 年香港電商調查，73% 網店認為手續費是最大營運壓力",
       items: [
         {
@@ -519,7 +519,7 @@ function getDefaultCMSData() {
           image: "images/textless/230569377.png",
           alt: "交易出問題，腦子一片空白，無計可施",
           title: "交易出問題時，你只能夠一個人望天打掛",
-          description: "顧客付款失敗，你急如熱鍋上的螞蟻，但客服永遠只有自動回覆。腦子一片空白，除了望天，你什麼都做不了——訂單就這樣流失，信譽也跟著下滑。",
+          description: "突然之間被關閉，你急如熱鍋上的螞蟻，但客服永遠只有自動回覆。腦子一片空白，除了望天打卦，你什麼都做不了——訂單就這樣流失，信譽也跟著下滑。",
           solution: "我們的解決：AI 智能客服即時回應 + 真人專員跟進",
         },
         {
@@ -541,9 +541,9 @@ function getDefaultCMSData() {
           for: "適合：Shopify / WooCommerce / 自有網站",
           icon: "ph-shopping-bag",
           features: [
-            "一鍵結帳體驗，顯著減少顧客放棄購物車的比例",
-            "Shopify / WooCommerce 即裝即用，對接後今晚就能開賣",
-            "專人跟進上線",
+            { icon: "ph-shopping-cart", text: "一鍵結帳體驗，顯著減少顧客放棄購物車的比例" },
+            { icon: "ph-rocket-launch", text: "Shopify / WooCommerce 即裝即用，對接後今晚就能開賣" },
+            { icon: "ph-headset", text: "專人跟進上線" },
           ],
           priceNumber: "2.6",
           priceUnit: "% / 每筆",
@@ -556,9 +556,9 @@ function getDefaultCMSData() {
           icon: "ph-arrows-clockwise",
           featured: true,
           features: [
-            "自動扣款 + 智能重試，不再因付款失敗而無故流失會員",
-            "減少流失率，提升 LTV",
-            "自動提醒續費通知",
+            { icon: "ph-arrows-clockwise", text: "自動扣款 + 智能重試，不再因付款失敗而無故流失會員" },
+            { icon: "ph-chart-line-up", text: "減少流失率，提升 LTV" },
+            { icon: "ph-bell", text: "自動提醒續費通知" },
           ],
           priceNumber: "2.2",
           priceUnit: "% / 每筆",
@@ -571,9 +571,9 @@ function getDefaultCMSData() {
           for: "適合：面向內地 / 海外客戶",
           icon: "ph-globe-hemisphere-west",
           features: [
-            "內地客戶用銀聯 / 微信 / 支付寶秒速付款，不再錯過跨境商機",
-            "銀聯官方通道，資金合規安全",
-            "覆蓋內地遊客 + 本地用戶",
+            { icon: "ph-currency-circle-dollar", text: "內地客戶用銀聯 / 微信 / 支付寶秒速付款，不再錯過跨境商機" },
+            { icon: "ph-shield-check", text: "銀聯官方通道，資金合規安全" },
+            { icon: "ph-globe-hemisphere-west", text: "覆蓋內地遊客 + 本地用戶" },
           ],
           priceNumber: "1.8",
           priceUnit: "% + 優惠匯率",
@@ -624,7 +624,7 @@ function getDefaultCMSData() {
       ],
     },
     testimonials: {
-      sectionTitle: "與一眾香港網店同行，選擇銀聯級的安全與信任",
+      sectionTitle: "與一眾香港網店同行，<br>選擇銀聯級的安全與信任",
       items: [
         { stars: 5, text: "轉用後第一個月就省了 $5,000 手續費。最難得的是，我終於不用為了一個技術問題，等 Xtripe 等兩天。", author: "陳先生", role: "3C 數碼網店店主" },
         { stars: 5, text: "加了銀聯和微信支付後，內地客戶的成交率提升了接近三成——這部分原本是完全流失掉的生意。", author: "林小姐", role: "美妝代購平台" },
@@ -647,7 +647,9 @@ function getDefaultCMSData() {
           question: "開戶需要什麼文件？",
           answer: "一般只需提供香港公司註冊證（CI）、商業登記證（BR）及最近三個月的銀行月結單即可。我們的專員會在收到文件後 1-2 個工作天內完成初審。",
           ctaText: "文件齊全，立即免費開戶 →",
-          ctaLink: "#contact",
+          ctaLink: "#checklist",
+          ctaText2: "或 WhatsApp 直接查詢",
+          ctaLink2: "https://wa.me/85251164453?text=你好，我想預約15分鐘諮詢。",
         },
         {
           question: "資金多久到帳？",
@@ -711,8 +713,8 @@ function getDefaultCMSData() {
           ],
         },
       ],
-      copyright: `© ${new Date().getFullYear()} 駿匯聯有限公司 C&W Management Limited. All rights reserved.`,
-      poweredBy: "Powered by <img src='images/jkd-logo.png' alt='jkdcoding.com' style='height:18px;width:auto;display:inline-block;vertical-align:middle;'>",
+      copyright: `© ${new Date().getFullYear()} 駿匯聯有限公司 C&W Management Limited. 銀聯商務香港官方代理.`,
+      poweredBy: "Powered by <a href='https://jkdcoding.com' target='_blank'><img src='images/jkd-logo.png' alt='jkdcoding.com' style='height:18px;width:auto;display:inline-block;vertical-align:middle;'></a>",
     },
     mediaLibrary: [
       { id: "media_1", name: "駿匯聯 Logo", url: "images/logo.png", type: "image", alt: "駿匯聯 C&W Management Logo" },

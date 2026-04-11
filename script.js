@@ -567,8 +567,11 @@ function renderFAQ(faq) {
     const list = document.querySelector('.faq-list');
     if (list && faq.items) {
         list.innerHTML = faq.items.map((item, i) => {
-            const cta = item.ctaText
-                ? `<p style="margin-top:0.75rem;"><a href="${item.ctaLink || '#contact'}" class="text-accent open-modal" style="font-weight:600;">${item.ctaText}</a></p>`
+            const cta1 = item.ctaText
+                ? `<p style="margin-top:0.75rem;"><a href="${item.ctaLink || '#contact'}" class="text-accent ${item.ctaLink === '#checklist' ? 'open-checklist' : 'open-modal'}" style="font-weight:600;">${item.ctaText}</a></p>`
+                : '';
+            const cta2 = item.ctaText2
+                ? `<p style="margin-top:0.5rem;"><a href="${item.ctaLink2 || '#contact'}" class="text-accent" style="font-weight:600;" target="_blank">${item.ctaText2}</a></p>`
                 : '';
             return `
                 <div class="faq-item">
@@ -578,7 +581,7 @@ function renderFAQ(faq) {
                     </button>
                     <div class="faq-answer">
                         <p>${item.answer}</p>
-                        ${cta}
+                        ${cta1}${cta2}
                     </div>
                 </div>
             `;

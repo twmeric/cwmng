@@ -228,6 +228,24 @@
                                     <div><h3 class="font-bold text-main">導航列</h3><p class="text-sm text-sub">Navbar 連結與 CTA</p></div>
                                 </div>
                             </a>
+                            <a href="#" onclick="switchTab('content'); setContentTab('quickLinks'); return false;" class="block p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-bolt"></i></div>
+                                    <div><h3 class="font-bold text-main">快捷入口</h3><p class="text-sm text-sub">Quick Links</p></div>
+                                </div>
+                            </a>
+                            <a href="#" onclick="switchTab('content'); setContentTab('problems'); return false;" class="block p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-exclamation-triangle"></i></div>
+                                    <div><h3 class="font-bold text-main">三大痛點</h3><p class="text-sm text-sub">Problems 區塊</p></div>
+                                </div>
+                            </a>
+                            <a href="#" onclick="switchTab('content'); setContentTab('process'); return false;" class="block p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-stream"></i></div>
+                                    <div><h3 class="font-bold text-main">開通流程</h3><p class="text-sm text-sub">Process 步驟</p></div>
+                                </div>
+                            </a>
                             <a href="#" onclick="switchTab('content'); setContentTab('stickyCta'); return false;" class="block p-4 rounded-xl border border-theme hover:border-[var(--gold)] transition">
                                 <div class="flex items-start gap-3">
                                     <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white" style="background: var(--gold);"><i class="fas fa-thumbtack"></i></div>
@@ -259,11 +277,17 @@
                         <button onclick="setContentTab('site')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="site">網站資訊</button>
                         <button onclick="setContentTab('nav')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="nav">導航列</button>
                         <button onclick="setContentTab('hero')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="hero">首頁 Hero</button>
+                        <button onclick="setContentTab('quickLinks')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="quickLinks">快捷入口</button>
+                        <button onclick="setContentTab('problems')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="problems">三大痛點</button>
                         <button onclick="setContentTab('solutions')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="solutions">服務方案</button>
+                        <button onclick="setContentTab('process')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="process">開通流程</button>
                         <button onclick="setContentTab('pricing')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="pricing">定價比較</button>
+                        <button onclick="setContentTab('downloadPromo')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="downloadPromo">清單推廣</button>
+                        <button onclick="setContentTab('trust')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="trust">信任背書</button>
                         <button onclick="setContentTab('testimonials')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="testimonials">客戶見證</button>
                         <button onclick="setContentTab('faq')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="faq">常見問題</button>
                         <button onclick="setContentTab('cta')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="cta">CTA 區域</button>
+                        <button onclick="setContentTab('marquee')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="marquee">跑馬燈</button>
                         <button onclick="setContentTab('stickyCta')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="stickyCta">Sticky CTA</button>
                         <button onclick="setContentTab('modals')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="modals">彈窗 Modal</button>
                         <button onclick="setContentTab('footer')" class="content-tab-btn px-4 py-2 rounded-lg font-medium transition text-sm" data-ctab="footer">頁尾 Footer</button>
@@ -495,11 +519,17 @@
                 site: renderSiteForm,
                 nav: renderNavForm,
                 hero: renderHeroForm,
+                quickLinks: renderQuickLinksForm,
+                problems: renderProblemsForm,
                 solutions: renderSolutionsForm,
+                process: renderProcessForm,
                 pricing: renderPricingForm,
+                downloadPromo: renderDownloadPromoForm,
+                trust: renderTrustForm,
                 testimonials: renderTestimonialsForm,
                 faq: renderFaqForm,
                 cta: renderCtaForm,
+                marquee: renderMarqueeForm,
                 stickyCta: renderStickyCtaForm,
                 modals: renderModalsForm,
                 footer: renderFooterForm,
@@ -511,11 +541,13 @@
 
         function attachFormListeners(container) {
             container.querySelectorAll('input[data-path], textarea[data-path], select[data-path]').forEach(el => {
-                el.addEventListener('input', () => {
+                const handler = () => {
                     const path = el.dataset.path;
-                    const value = el.value;
+                    const value = el.type === 'checkbox' ? el.checked : (el.type === 'number' ? Number(el.value) : el.value);
                     setDeepValue(cmsData, path, value);
-                });
+                };
+                el.addEventListener('input', handler);
+                el.addEventListener('change', handler);
             });
         }
 
@@ -559,6 +591,8 @@
         }
 
         function renderHeroForm() {
+            const stats = cmsData.hero?.stats || [];
+            const badges = cmsData.hero?.trustBadges || [];
             return `
                 <h3 class="text-lg font-bold text-main mb-4">首頁 Hero 內容</h3>
                 <div class="grid md:grid-cols-2 gap-4">
@@ -567,6 +601,25 @@
                     ${inputRow('CTA 副按鈕', 'hero.ctaSecondary')}
                 </div>
                 ${inputRow('副標題', 'hero.subtitle', 'textarea')}
+                <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
+                    <div class="font-bold text-main mb-3">統計數字</div>
+                    ${stats.map((s, i) => `
+                        <div class="grid grid-cols-3 gap-2 mb-2">
+                            <input data-path="hero.stats.${i}.number" value="${esc(s.number !== undefined ? s.number : '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="數字">
+                            <input data-path="hero.stats.${i}.suffix" value="${esc(s.suffix || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="後綴 (%)">
+                            <input data-path="hero.stats.${i}.label" value="${esc(s.label || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="標籤">
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
+                    <div class="font-bold text-main mb-3">信任徽章</div>
+                    ${badges.map((b, i) => `
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            <input data-path="hero.trustBadges.${i}.icon" value="${esc(b.icon || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="圖示 class">
+                            <input data-path="hero.trustBadges.${i}.text" value="${esc(b.text || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="文字">
+                        </div>
+                    `).join('')}
+                </div>
                 <div class="flex justify-end pt-2">
                     <button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
                 </div>
@@ -596,6 +649,7 @@
             let html = `<h3 class="text-lg font-bold text-main mb-4">服務方案</h3><div class="mb-4">${inputRow('區塊標題', 'solutions.sectionTitle')}</div>`;
             const items = cmsData.solutions?.items || [];
             items.forEach((item, i) => {
+                const features = item.features || ['','',''];
                 html += `
                     <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
                         <div class="flex items-center justify-between mb-3">
@@ -606,9 +660,16 @@
                             <div class="mb-2"><label class="block text-xs text-sub mb-1">標題</label><input data-path="solutions.items.${i}.title" value="${esc(item.title || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
                             <div class="mb-2"><label class="block text-xs text-sub mb-1">標籤</label><input data-path="solutions.items.${i}.tag" value="${esc(item.tag || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
                             <div class="mb-2"><label class="block text-xs text-sub mb-1">適合對象</label><input data-path="solutions.items.${i}.for" value="${esc(item.for || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">圖示 class</label><input data-path="solutions.items.${i}.icon" value="${esc(item.icon || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
                             <div class="mb-2"><label class="block text-xs text-sub mb-1">價格數字</label><input data-path="solutions.items.${i}.priceNumber" value="${esc(item.priceNumber || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
                             <div class="mb-2"><label class="block text-xs text-sub mb-1">價格單位</label><input data-path="solutions.items.${i}.priceUnit" value="${esc(item.priceUnit || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">價格備註</label><input data-path="solutions.items.${i}.priceNote" value="${esc(item.priceNote || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="量大再議"></div>
                             <div class="mb-2"><label class="block text-xs text-sub mb-1">按鈕文字</label><input data-path="solutions.items.${i}.cta" value="${esc(item.cta || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2 flex items-center gap-2"><input type="checkbox" ${item.featured ? 'checked' : ''} onchange="setDeepValue(cmsData, 'solutions.items.${i}.featured', this.checked);" class="rounded"><label class="text-xs text-sub">標記為最熱門</label></div>
+                        </div>
+                        <div class="mt-2">
+                            <div class="text-xs text-sub mb-1">賣點列表</div>
+                            ${features.map((f, fi) => `<input data-path="solutions.items.${i}.features.${fi}" value="${esc(f || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm mb-2" placeholder="賣點 ${fi + 1}">`).join('')}
                         </div>
                     </div>
                 `;
@@ -618,16 +679,29 @@
         }
 
         function renderPricingForm() {
-            return `
+            let html = `
                 <h3 class="text-lg font-bold text-main mb-4">定價與比較</h3>
                 ${inputRow('區塊標題', 'pricing.sectionTitle')}
                 ${inputRow('區塊副標題', 'pricing.sectionSubtitle', 'textarea')}
-                ${inputRow('計算機 CTA 文字', 'pricing.cta')}
+                ${inputRow('計算機結果標籤', 'pricing.resultLabel')}
                 ${inputRow('計算機預設文字', 'pricing.resultPlaceholder')}
-                <div class="flex justify-end pt-2">
-                    <button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
-                </div>
+                ${inputRow('計算機 CTA 文字', 'pricing.cta')}
             `;
+            const rows = cmsData.pricing?.comparisonRows || [];
+            html += `<div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4"><div class="font-bold text-main mb-3">對比表格</div>`;
+            rows.forEach((row, i) => {
+                html += `
+                    <div class="grid grid-cols-4 gap-2 mb-2">
+                        <input data-path="pricing.comparisonRows.${i}.feature" value="${esc(row.feature || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="項目">
+                        <input data-path="pricing.comparisonRows.${i}.us" value="${esc(row.us || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="我們">
+                        <input data-path="pricing.comparisonRows.${i}.xtripe" value="${esc(row.xtripe || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="Xtripe">
+                        <input data-path="pricing.comparisonRows.${i}.xaypal" value="${esc(row.xaypal || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="XayPal">
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            html += `<div class="flex justify-end pt-2"><button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button></div>`;
+            return html;
         }
 
         function renderTestimonialsForm() {
@@ -637,9 +711,10 @@
                 html += `
                     <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
                         <div class="font-bold text-main mb-2">見證 ${i + 1}</div>
-                        <div class="grid md:grid-cols-2 gap-4">
+                        <div class="grid md:grid-cols-3 gap-4">
                             <div class="mb-2"><label class="block text-xs text-sub mb-1">作者</label><input data-path="testimonials.items.${i}.author" value="${esc(item.author || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
                             <div class="mb-2"><label class="block text-xs text-sub mb-1">身份</label><input data-path="testimonials.items.${i}.role" value="${esc(item.role || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">評分 (1-5)</label><input type="number" min="1" max="5" data-path="testimonials.items.${i}.stars" value="${esc(item.stars !== undefined ? item.stars : 5)}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
                         </div>
                         <div class="mb-2"><label class="block text-xs text-sub mb-1">內容</label><textarea data-path="testimonials.items.${i}.text" rows="2" class="w-full px-3 py-2 rounded-lg input-theme text-sm">${esc(item.text || '')}</textarea></div>
                     </div>
@@ -662,6 +737,10 @@
                             <div><label class="block text-xs text-sub mb-1">CTA 文字（選填）</label><input data-path="faq.items.${i}.ctaText" value="${esc(item.ctaText || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
                             <div><label class="block text-xs text-sub mb-1">CTA 連結（選填）</label><input data-path="faq.items.${i}.ctaLink" value="${esc(item.ctaLink || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
                         </div>
+                        <div class="grid md:grid-cols-2 gap-4 mt-2">
+                            <div><label class="block text-xs text-sub mb-1">CTA 2 文字（選填）</label><input data-path="faq.items.${i}.ctaText2" value="${esc(item.ctaText2 || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div><label class="block text-xs text-sub mb-1">CTA 2 連結（選填）</label><input data-path="faq.items.${i}.ctaLink2" value="${esc(item.ctaLink2 || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                        </div>
                     </div>
                 `;
             });
@@ -670,13 +749,22 @@
         }
 
         function renderCtaForm() {
+            const benefits = cmsData.cta?.benefits || ['',''];
             return `
                 <h3 class="text-lg font-bold text-main mb-4">CTA 區域</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    ${inputRow('圖片 URL', 'cta.image')}
+                    ${inputRow('圖片 Alt', 'cta.alt')}
+                </div>
                 ${inputRow('標題', 'cta.title')}
                 ${inputRow('副標題', 'cta.subtitle', 'textarea')}
                 <div class="grid md:grid-cols-2 gap-4">
                     ${inputRow('主按鈕文字', 'cta.ctaPrimary')}
                     ${inputRow('副按鈕文字', 'cta.ctaSecondary')}
+                </div>
+                <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
+                    <div class="font-bold text-main mb-2">優勢列表</div>
+                    ${benefits.map((b, i) => `<input data-path="cta.benefits.${i}" value="${esc(b || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm mb-2" placeholder="優勢 ${i + 1}">`).join('')}
                 </div>
                 ${inputRow('底部說明 (可含 HTML)', 'cta.note', 'textarea')}
                 <div class="flex justify-end pt-2">
@@ -699,6 +787,17 @@
         }
 
         function renderModalsForm() {
+            const revOpts = cmsData.modals?.lead?.revenueOptions || [];
+            let revHtml = `<div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4"><div class="font-bold text-main mb-2">交易額選項</div>`;
+            revOpts.forEach((opt, i) => {
+                revHtml += `
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <input data-path="modals.lead.revenueOptions.${i}.value" value="${esc(opt.value !== undefined ? opt.value : '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="值">
+                        <input data-path="modals.lead.revenueOptions.${i}.label" value="${esc(opt.label || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="顯示文字">
+                    </div>
+                `;
+            });
+            revHtml += `</div>`;
             return `
                 <h3 class="text-lg font-bold text-main mb-4">彈窗 Modal 內容</h3>
                 <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
@@ -714,6 +813,7 @@
                         ${inputRow('公司 placeholder', 'modals.lead.placeholders.company')}
                         ${inputRow('交易額 placeholder', 'modals.lead.placeholders.monthlyRevenue')}
                     </div>
+                    ${revHtml}
                 </div>
                 <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4">
                     <div class="font-bold text-main mb-3">申請清單 Modal</div>
@@ -732,6 +832,125 @@
                     <button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
                 </div>
             `;
+        }
+
+        function renderQuickLinksForm() {
+            const items = cmsData.quickLinks || [];
+            let html = `<h3 class="text-lg font-bold text-main mb-4">快捷入口 Quick Links</h3>`;
+            items.forEach((item, i) => {
+                html += `
+                    <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
+                        <div class="font-bold text-main mb-2">入口 ${i + 1}</div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">文字</label><input data-path="quickLinks.${i}.text" value="${esc(item.text || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">連結</label><input data-path="quickLinks.${i}.href" value="${esc(item.href || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">圖示 class</label><input data-path="quickLinks.${i}.icon" value="${esc(item.icon || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">類型（選填）</label><input data-path="quickLinks.${i}.type" value="${esc(item.type || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm" placeholder="modal_checklist"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `<div class="flex justify-end pt-2"><button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button></div>`;
+            return html;
+        }
+
+        function renderProblemsForm() {
+            let html = `<h3 class="text-lg font-bold text-main mb-4">三大痛點</h3>`;
+            html += `<div class="mb-4">${inputRow('區塊標題', 'problems.sectionTitle')}</div>`;
+            html += `<div class="mb-4">${inputRow('區塊副標題', 'problems.sectionSubtitle', 'textarea')}</div>`;
+            const items = cmsData.problems?.items || [];
+            items.forEach((item, i) => {
+                html += `
+                    <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
+                        <div class="font-bold text-main mb-2">痛點 ${i + 1}</div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">圖示 emoji</label><input data-path="problems.items.${i}.icon" value="${esc(item.icon || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">圖片 URL</label><input data-path="problems.items.${i}.image" value="${esc(item.image || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">圖片 Alt</label><input data-path="problems.items.${i}.alt" value="${esc(item.alt || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">標題</label><input data-path="problems.items.${i}.title" value="${esc(item.title || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                        </div>
+                        <div class="mb-2"><label class="block text-xs text-sub mb-1">描述</label><textarea data-path="problems.items.${i}.description" rows="2" class="w-full px-3 py-2 rounded-lg input-theme text-sm">${esc(item.description || '')}</textarea></div>
+                        <div class="mb-2"><label class="block text-xs text-sub mb-1">解決方案（可含 HTML）</label><input data-path="problems.items.${i}.solution" value="${esc(item.solution || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                    </div>
+                `;
+            });
+            html += `<div class="flex justify-end pt-2"><button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button></div>`;
+            return html;
+        }
+
+        function renderProcessForm() {
+            let html = `<h3 class="text-lg font-bold text-main mb-4">開通流程</h3>`;
+            html += `<div class="mb-4">${inputRow('區塊標題', 'process.sectionTitle')}</div>`;
+            html += `<div class="mb-4 grid md:grid-cols-2 gap-4"><div>${inputRow('流程圖片 URL', 'process.image')}</div><div></div></div>`;
+            const steps = cmsData.process?.steps || [];
+            steps.forEach((step, i) => {
+                html += `
+                    <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
+                        <div class="font-bold text-main mb-2">步驟 ${step.num || (i + 1)}</div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">編號</label><input data-path="process.steps.${i}.num" value="${esc(step.num || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">標題</label><input data-path="process.steps.${i}.title" value="${esc(step.title || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                        </div>
+                        <div class="mb-2"><label class="block text-xs text-sub mb-1">描述</label><textarea data-path="process.steps.${i}.desc" rows="2" class="w-full px-3 py-2 rounded-lg input-theme text-sm">${esc(step.desc || '')}</textarea></div>
+                    </div>
+                `;
+            });
+            html += `<div class="flex justify-end pt-2"><button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button></div>`;
+            return html;
+        }
+
+        function renderDownloadPromoForm() {
+            return `
+                <h3 class="text-lg font-bold text-main mb-4">清單推廣區塊</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    ${inputRow('圖片 URL', 'downloadPromo.image')}
+                    ${inputRow('圖片 Alt', 'downloadPromo.alt')}
+                </div>
+                ${inputRow('標題', 'downloadPromo.title')}
+                ${inputRow('副標題', 'downloadPromo.subtitle', 'textarea')}
+                ${inputRow('CTA 按鈕', 'downloadPromo.cta')}
+                <div class="flex justify-end pt-2">
+                    <button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
+                </div>
+            `;
+        }
+
+        function renderTrustForm() {
+            let html = `<h3 class="text-lg font-bold text-main mb-4">信任背書</h3>`;
+            html += `<div class="mb-4">${inputRow('區塊標題', 'trust.sectionTitle')}</div>`;
+            html += `<div class="mb-4">${inputRow('區塊副標題', 'trust.sectionSubtitle', 'textarea')}</div>`;
+            const badges = cmsData.trust?.badges || [];
+            badges.forEach((badge, i) => {
+                html += `
+                    <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
+                        <div class="font-bold text-main mb-2">徽章 ${i + 1}</div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">圖示 class</label><input data-path="trust.badges.${i}.icon" value="${esc(badge.icon || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">文字（可含 &lt;br&gt;）</label><input data-path="trust.badges.${i}.text" value="${esc(badge.text || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `<div class="flex justify-end pt-2"><button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button></div>`;
+            return html;
+        }
+
+        function renderMarqueeForm() {
+            let html = `<h3 class="text-lg font-bold text-main mb-4">支付方式跑馬燈</h3>`;
+            const items = cmsData.marquee || [];
+            items.forEach((item, i) => {
+                html += `
+                    <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
+                        <div class="font-bold text-main mb-2">項目 ${i + 1}</div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">圖示 class</label><input data-path="marquee.${i}.icon" value="${esc(item.icon || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">文字</label><input data-path="marquee.${i}.text" value="${esc(item.text || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `<div class="flex justify-end pt-2"><button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button></div>`;
+            return html;
         }
 
         function renderFooterForm() {
