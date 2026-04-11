@@ -622,6 +622,12 @@ function getDefaultCMSData() {
         { icon: "ph-bank", text: "香港金融管理局<br>合規" },
         { icon: "ph-shield-slash", text: "256 位<br>SSL 加密" },
       ],
+      stats: [
+        { value: 5000, suffix: "+", label: "已完成交易商戶" },
+        { value: 99.9, suffix: "%", label: "系統穩定運行" },
+        { value: 24, suffix: "hr", label: "專員即時回覆" },
+        { value: 0, suffix: "", prefix: "$", label: "月費開通成本" },
+      ],
     },
     testimonials: {
       sectionTitle: "與一眾香港網店同行，<br>選擇銀聯級的安全與信任",

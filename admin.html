@@ -931,6 +931,21 @@
                     </div>
                 `;
             });
+            const stats = cmsData.trust?.stats || [];
+            html += `<div class="font-bold text-main mb-2 mt-6">數據統計</div>`;
+            stats.forEach((stat, i) => {
+                html += `
+                    <div class="bg-[var(--bg-hover)] border border-theme rounded-xl p-4 mb-4">
+                        <div class="font-bold text-main mb-2">數據 ${i + 1}</div>
+                        <div class="grid md:grid-cols-4 gap-4">
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">數值</label><input data-path="trust.stats.${i}.value" value="${esc(stat.value !== undefined ? stat.value : '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">前綴</label><input data-path="trust.stats.${i}.prefix" value="${esc(stat.prefix || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">後綴</label><input data-path="trust.stats.${i}.suffix" value="${esc(stat.suffix || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2"><label class="block text-xs text-sub mb-1">標籤</label><input data-path="trust.stats.${i}.label" value="${esc(stat.label || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                        </div>
+                    </div>
+                `;
+            });
             html += `<div class="flex justify-end pt-2"><button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button></div>`;
             return html;
         }

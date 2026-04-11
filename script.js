@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.documentElement.setAttribute('data-theme', 'light');
     initBaseInteractions();
     initHeroSlider();
+    initPricingCalculator();
     fetchCMSData();
     trackPageView();
 });
@@ -518,6 +519,12 @@ function renderPricing(pricing) {
             </tr>
         `).join('');
     }
+    const resultLabel = document.querySelector('#calculatorResult .result-label');
+    if (resultLabel && pricing.resultLabel) resultLabel.textContent = pricing.resultLabel;
+    const ctaBtn = document.getElementById('calculatorCta');
+    if (ctaBtn && pricing.cta) ctaBtn.textContent = pricing.cta;
+    const input = document.getElementById('revenueInput');
+    if (input && pricing.resultPlaceholder) input.placeholder = pricing.resultPlaceholder;
 }
 
 function renderDownloadPromo(promo) {
@@ -553,6 +560,49 @@ function renderTrust(trust) {
             </div>
         `).join('');
     }
+    const statsGrid = document.querySelector('.trust-stats');
+    if (statsGrid && trust.stats) {
+        statsGrid.innerHTML = trust.stats.map(s => `
+            <div class="trust-stat">
+                <div class="trust-stat-number" data-target="${s.value}" data-prefix="${escHtml(s.prefix || '')}" data-suffix="${escHtml(s.suffix || '')}">${s.prefix || ''}${s.value}${s.suffix || ''}</div>
+                <div class="trust-stat-label">${s.label}</div>
+            </div>
+        `).join('');
+        initCountUp(statsGrid);
+    }
+}
+
+function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function initCountUp(container) {
+    if (!container) return;
+    const nodes = container.querySelectorAll('.trust-stat-number');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                nodes.forEach(node => {
+                    const target = parseFloat(node.dataset.target) || 0;
+                    const prefix = node.dataset.prefix || '';
+                    const suffix = node.dataset.suffix || '';
+                    const decimals = (String(target).split('.')[1] || '').length;
+                    const duration = 1500;
+                    const startTime = performance.now();
+                    function step(now) {
+                        const p = Math.min((now - startTime) / duration, 1);
+                        const ease = 1 - Math.pow(1 - p, 3);
+                        const val = target * ease;
+                        node.textContent = prefix + val.toFixed(decimals) + suffix;
+                        if (p < 1) requestAnimationFrame(step);
+                    }
+                    requestAnimationFrame(step);
+                });
+                observer.disconnect();
+            }
+        });
+    }, { threshold: 0.3 });
+    observer.observe(container);
 }
 
 function renderTestimonials(testimonials) {
@@ -560,25 +610,65 @@ function renderTestimonials(testimonials) {
     const h2 = document.querySelector('#testimonials .section-header h2');
     if (h2 && testimonials.sectionTitle) h2.innerHTML = testimonials.sectionTitle;
 
-    const container = document.querySelector('.testimonials');
+    const container = document.getElementById('testimonialsCarousel');
     if (container && testimonials.items) {
-        container.innerHTML = testimonials.items.map((t, i) => `
-            <div class="testimonial-card reveal delay-${i + 1}">
-                <div class="testimonial-stars">${'★'.repeat(t.stars || 5)}</div>
-                <p>「${t.text}」</p>
-                <div class="testimonial-author">
-                    <strong>${t.author}</strong>
-                    <span>${t.role}</span>
+        const track = container.querySelector('.tc-track');
+        if (track) {
+            track.innerHTML = testimonials.items.map((t, i) => `
+                <div class="testimonial-card" data-index="${i}">
+                    <div class="testimonial-stars">${'★'.repeat(t.stars || 5)}</div>
+                    <p>「${t.text}」</p>
+                    <div class="testimonial-author">
+                        <strong>${t.author}</strong>
+                        <span>${t.role}</span>
+                    </div>
                 </div>
-            </div>
-        `).join('');
-        container.querySelectorAll('.reveal').forEach(el => {
-            const obs = new IntersectionObserver((entries) => {
-                entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-            obs.observe(el);
-        });
+            `).join('');
+        }
+        const dots = container.querySelector('.tc-dots');
+        if (dots) {
+            dots.innerHTML = testimonials.items.map((_, i) => `
+                <button data-index="${i}" ${i === 0 ? 'class="active"' : ''} aria-label="Slide ${i + 1}"></button>
+            `).join('');
+        }
+        initTestimonialsCarousel(testimonials.items.length);
     }
+}
+
+function initTestimonialsCarousel(itemCount) {
+    const container = document.getElementById('testimonialsCarousel');
+    if (!container || itemCount <= 0) return;
+    const track = container.querySelector('.tc-track');
+    if (!track) return;
+    const dots = container.querySelectorAll('.tc-dots button');
+    const prev = container.querySelector('.tc-prev');
+    const next = container.querySelector('.tc-next');
+    let current = 0;
+
+    function slidesPerView() {
+        if (window.innerWidth <= 768) return 1;
+        if (window.innerWidth <= 1100) return 2;
+        return 3;
+    }
+
+    function maxIndex() {
+        return Math.max(0, itemCount - slidesPerView());
+    }
+
+    function goTo(index) {
+        current = Math.max(0, Math.min(index, maxIndex()));
+        const card = track.querySelector('.testimonial-card');
+        const gap = 24; // 1.5rem default; will be overridden by JS computed style if needed
+        const cardWidth = card ? card.offsetWidth + 24 : (track.offsetWidth / slidesPerView());
+        track.style.transform = `translateX(-${current * cardWidth}px)`;
+        dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    }
+
+    prev?.addEventListener('click', () => goTo(current - 1));
+    next?.addEventListener('click', () => goTo(current + 1));
+    dots.forEach(d => d.addEventListener('click', () => goTo(Number(d.dataset.index))));
+    window.addEventListener('resize', () => goTo(current));
+    goTo(0);
 }
 
 function renderMarquee(items) {
@@ -629,8 +719,10 @@ function renderFAQ(faq) {
                         <i class="ph ph-caret-down faq-icon"></i>
                     </button>
                     <div class="faq-answer">
-                        <p>${item.answer}</p>
-                        ${cta1}${cta2}
+                        <div class="faq-answer-inner">
+                            <p>${item.answer}</p>
+                            ${cta1}${cta2}
+                        </div>
                     </div>
                 </div>
             `;
@@ -728,6 +820,53 @@ function renderFooter(footer) {
     if (powered && footer.poweredBy) {
         powered.innerHTML = footer.poweredBy;
     }
+}
+
+/* ========================================
+   Pricing Calculator
+   ======================================== */
+function initPricingCalculator() {
+    const input = document.getElementById('revenueInput');
+    const slider = document.getElementById('revenueSlider');
+    const resultAmount = document.getElementById('resultAmount');
+    const bar = document.querySelector('.calculator-bar');
+    const barUs = document.getElementById('barUs');
+    const barXtripe = document.getElementById('barXtripe');
+    if (!input || !slider || !resultAmount) return;
+
+    function formatMoney(n) {
+        return '$' + Math.round(n).toLocaleString('zh-HK');
+    }
+
+    function update(val) {
+        const v = Math.max(0, Number(val) || 0);
+        input.value = v || '';
+        slider.value = v;
+        if (!v) {
+            resultAmount.textContent = input.placeholder || '輸入交易額即可查看驚人差距';
+            if (bar) bar.classList.remove('visible');
+            return;
+        }
+        // simplified calculation: us 2.6% vs xtripe 3.4% + $2.35 per txn (avg $300)
+        const usFee = v * 0.026;
+        const xtripeFee = v * 0.034 + (v / 300) * 2.35;
+        const yearlySavings = (xtripeFee - usFee) * 12;
+        resultAmount.textContent = formatMoney(yearlySavings);
+        resultAmount.classList.remove('pop');
+        void resultAmount.offsetWidth; // force reflow
+        resultAmount.classList.add('pop');
+        setTimeout(() => resultAmount.classList.remove('pop'), 300);
+        if (bar && barUs && barXtripe) {
+            bar.classList.add('visible');
+            const total = usFee + xtripeFee;
+            const usPct = (usFee / total) * 100;
+            barUs.style.width = usPct + '%';
+            barXtripe.style.width = (100 - usPct) + '%';
+        }
+    }
+
+    input.addEventListener('input', () => update(input.value));
+    slider.addEventListener('input', () => update(slider.value));
 }
 
 /* ========================================
@@ -877,6 +1016,27 @@ function escapeKeyHandler(e) {
     }
 }
 
+function showToast(message, type = 'success') {
+    let toast = document.getElementById('app-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'app-toast';
+        toast.className = 'toast';
+        toast.innerHTML = `<span class="toast-icon"></span><span class="toast-message"></span>`;
+        document.body.appendChild(toast);
+    }
+    toast.className = 'toast ' + type;
+    toast.querySelector('.toast-icon').textContent = type === 'success' ? '✓' : '✕';
+    toast.querySelector('.toast-message').textContent = message;
+    requestAnimationFrame(() => toast.classList.add('show'));
+    setTimeout(() => toast.classList.remove('show'), 3200);
+}
+
+function validatePhone(phone) {
+    const digits = phone.replace(/\D/g, '');
+    return digits.length >= 8;
+}
+
 async function handleFormSubmit(e, type) {
     e.preventDefault();
     const form = e.target;
@@ -893,13 +1053,17 @@ async function handleFormSubmit(e, type) {
     };
 
     if (!data.name || !data.phone) {
-        alert('請填寫稱呼和電話號碼。');
+        showToast('請填寫稱呼和電話號碼。', 'error');
+        return;
+    }
+    if (!validatePhone(data.phone)) {
+        showToast('請輸入有效的電話號碼（至少 8 位數字）。', 'error');
         return;
     }
 
     trackEvent('lead_submit', { label: data.source });
 
-    // 1. Save to backend (async, non-blocking but awaited for UX)
+    // 1. Save to backend
     let saved = false;
     try {
         const res = await fetch(API_BASE_URL + '/api/inquiries', {
@@ -912,7 +1076,9 @@ async function handleFormSubmit(e, type) {
         console.error('[Inquiry Save]', err);
     }
 
-    // 2. Open WhatsApp
+    // 2. Show success toast, then redirect
+    showToast('資料已送出，即將為你轉到 WhatsApp…', 'success');
+
     let msg = '';
     if (type === 'checklist') {
         msg = `你好，我是 ${data.name}。\n電話： ${data.phone}${data.email ? '\n電郵： ' + data.email : ''}${data.company ? '\n公司： ' + data.company : ''}\n\n我想索取商戶申請文件清單，謝謝。`;
@@ -920,12 +1086,14 @@ async function handleFormSubmit(e, type) {
         msg = `你好，我是 ${data.name}。\n電話： ${data.phone}${data.email ? '\n電郵： ' + data.email : ''}${data.company ? '\n公司： ' + data.company : ''}${data.monthlyRevenue ? '\n月營業額約： ' + data.monthlyRevenue : ''}\n\n我有興趣了解駿匯聯的收款方案，請聯絡我，謝謝。`;
     }
     const url = 'https://wa.me/' + getWhatsAppNumber() + '?text=' + encodeURIComponent(msg);
-    window.open(url, '_blank');
 
-    // 3. Close modal & reset
-    if (type === 'checklist') hideChecklistModal();
-    else hideLeadModal();
-    form.reset();
+    setTimeout(() => {
+        window.open(url, '_blank');
+        // 3. Close modal & reset
+        if (type === 'checklist') hideChecklistModal();
+        else hideLeadModal();
+        form.reset();
+    }, 1200);
 }
 
 /* ========================================
