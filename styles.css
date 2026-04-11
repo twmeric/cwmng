@@ -628,6 +628,12 @@ body {
 .cta-container { text-align: center; max-width: 800px; margin: 0 auto; }
 .cta-art { margin-bottom: 1.5rem; }
 .cta-art img { max-width: 200px; height: auto; }
+.img-backdrop {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--bg-hover); border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg); padding: 1rem 1.25rem;
+}
+.card-art.img-backdrop { width: auto; aspect-ratio: auto; }
 .cta h2 { font-size: clamp(1.75rem, 3vw, 2.25rem); font-weight: 700; margin-bottom: 1rem; }
 .cta-subtitle { font-size: 1.0625rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
 .cta-benefits { list-style: none; display: inline-flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem; text-align: left; }

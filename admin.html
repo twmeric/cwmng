@@ -761,6 +761,7 @@
                     ${inputRow('圖片 URL', 'cta.image')}
                     ${inputRow('圖片 Alt', 'cta.alt')}
                 </div>
+                <div class="mb-4 flex items-center gap-2"><input type="checkbox" id="cta_backdrop" data-path="cta.backdrop" ${cmsData.cta?.backdrop ? 'checked' : ''} class="w-4 h-4 rounded border-gray-300 text-[var(--gold)] focus:ring-[var(--gold)]"><label for="cta_backdrop" class="text-sm text-sub">圖片加圓角底托</label></div>
                 ${inputRow('標題', 'cta.title')}
                 ${inputRow('副標題', 'cta.subtitle', 'textarea')}
                 <div class="grid md:grid-cols-2 gap-4">
@@ -872,6 +873,7 @@
                             <div class="mb-2"><label class="block text-xs text-sub mb-1">圖示 emoji</label><input data-path="problems.items.${i}.icon" value="${esc(item.icon || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
                             <div class="mb-2"><label class="block text-xs text-sub mb-1">圖片 URL</label><input data-path="problems.items.${i}.image" value="${esc(item.image || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
                             <div class="mb-2"><label class="block text-xs text-sub mb-1">圖片 Alt</label><input data-path="problems.items.${i}.alt" value="${esc(item.alt || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
+                            <div class="mb-2 flex items-center gap-2 pt-5"><input type="checkbox" id="prob_back_${i}" data-path="problems.items.${i}.backdrop" ${item.backdrop ? 'checked' : ''} class="w-4 h-4 rounded border-gray-300 text-[var(--gold)] focus:ring-[var(--gold)]"><label for="prob_back_${i}" class="text-xs text-sub">圖片加圓角底托</label></div>
                             <div class="mb-2"><label class="block text-xs text-sub mb-1">標題</label><input data-path="problems.items.${i}.title" value="${esc(item.title || '')}" class="w-full px-3 py-2 rounded-lg input-theme text-sm"></div>
                         </div>
                         <div class="mb-2"><label class="block text-xs text-sub mb-1">描述</label><textarea data-path="problems.items.${i}.description" rows="2" class="w-full px-3 py-2 rounded-lg input-theme text-sm">${esc(item.description || '')}</textarea></div>

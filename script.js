@@ -406,7 +406,7 @@ function renderProblems(problems) {
     if (grid && problems.items) {
         grid.innerHTML = problems.items.map((item, i) => `
             <div class="problem-card reveal delay-${i + 1}">
-                <div class="card-art">
+                <div class="card-art${item.backdrop ? ' img-backdrop' : ''}">
                     <img src="${item.image}" alt="${item.alt}" class="card-illustration">
                 </div>
                 <div class="problem-icon">${item.icon}</div>
@@ -746,10 +746,14 @@ function renderFAQ(faq) {
 
 function renderCTA(cta) {
     if (!cta) return;
-    const img = document.querySelector('.cta-art img');
+    const art = document.querySelector('.cta-art');
+    const img = art?.querySelector('img');
     if (img) {
         if (cta.image) img.src = cta.image;
         if (cta.alt) img.alt = cta.alt;
+    }
+    if (art) {
+        art.classList.toggle('img-backdrop', !!cta.backdrop);
     }
     const h2 = document.querySelector('.cta h2');
     const sub = document.querySelector('.cta-subtitle');
