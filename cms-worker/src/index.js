@@ -521,7 +521,6 @@ function getDefaultCMSData() {
           title: "交易出問題時，你只能夠一個人望天打掛",
           description: "突然之間被關閉，你急如熱鍋上的螞蟻，但客服永遠只有自動回覆。腦子一片空白，除了望天打卦，你什麼都做不了——訂單就這樣流失，信譽也跟著下滑。",
           solution: "我們的解決：AI 智能客服即時回應 + 真人專員跟進",
-          backdrop: true,
         },
         {
           icon: "🚫",
@@ -682,7 +681,6 @@ function getDefaultCMSData() {
     cta: {
       image: "images/textless/156545017-stroke.png",
       alt: "滿意客戶",
-      backdrop: true,
       title: "本月限定：免費獲得價值 $3,000 的 API 對接收費",
       subtitle: "名額所剩無幾，額滿即恢復標準收費。立即鎖定你的專屬優惠，零風險開始：",
       benefits: [
