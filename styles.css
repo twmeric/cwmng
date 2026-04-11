@@ -805,12 +805,31 @@ body { padding-bottom: 4rem; }
 }
 
 /* Dark Mode Enhancements for new components & images */
-[data-theme="dark"] .hero-slide,
-[data-theme="dark"] .card-illustration,
-[data-theme="dark"] .process-img,
-[data-theme="dark"] .download-img,
+/* Force a light backing behind illustrations so black text stays readable */
+[data-theme="dark"] .hero-slider {
+    background: rgba(255,255,255,0.92);
+    border-radius: 50%;
+    padding: 1.25rem;
+}
+[data-theme="dark"] .card-art {
+    background: rgba(255,255,255,0.92);
+    border-radius: var(--radius-lg);
+    padding: 0.75rem;
+}
+[data-theme="dark"] .process-img {
+    background: rgba(255,255,255,0.92);
+    border-radius: var(--radius-lg);
+    padding: 0.5rem;
+}
+[data-theme="dark"] .download-art {
+    background: rgba(255,255,255,0.92);
+    border-radius: var(--radius-lg);
+    padding: 0.75rem;
+}
 [data-theme="dark"] .cta-img {
-    filter: drop-shadow(0 0 18px rgba(255,255,255,0.08));
+    background: rgba(255,255,255,0.92);
+    border-radius: var(--radius-xl);
+    padding: 0.75rem;
 }
 
 [data-theme="dark"] .tc-arrow {
