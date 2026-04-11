@@ -51,13 +51,34 @@ function setTheme(theme) {
    ======================================== */
 function initHeroSlider() {
     const slides = document.querySelectorAll('.hero-slide');
+    const dots = document.querySelectorAll('#heroDots button');
+    const slider = document.querySelector('.hero-slider');
     if (slides.length < 2) return;
     let current = 0;
-    setInterval(() => {
+    let timer = null;
+
+    function showSlide(index) {
         slides[current].classList.remove('active');
-        current = (current + 1) % slides.length;
+        dots[current]?.classList.remove('active');
+        current = (index + slides.length) % slides.length;
         slides[current].classList.add('active');
-    }, 4000);
+        dots[current]?.classList.add('active');
+    }
+
+    function nextSlide() { showSlide(current + 1); }
+    function startAuto() { timer = setInterval(nextSlide, 4000); }
+    function stopAuto() { if (timer) clearInterval(timer); }
+
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => { stopAuto(); showSlide(i); startAuto(); });
+    });
+
+    if (slider) {
+        slider.addEventListener('mouseenter', stopAuto);
+        slider.addEventListener('mouseleave', startAuto);
+    }
+
+    startAuto();
 }
 
 /* ========================================
@@ -211,9 +232,19 @@ function renderCMS(data) {
 
 function renderSiteMeta(site) {
     if (!site) return;
-    if (site.title) document.title = site.title;
+    if (site.title) {
+        document.title = site.title;
+        const ogTitle = document.querySelector('meta[property="og:title"]');
+        if (ogTitle) ogTitle.setAttribute('content', site.title);
+        const twTitle = document.querySelector('meta[name="twitter:title"]');
+        if (twTitle) twTitle.setAttribute('content', site.title);
+    }
     const desc = document.querySelector('meta[name="description"]');
     if (desc && site.description) desc.setAttribute('content', site.description);
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc && site.description) ogDesc.setAttribute('content', site.description);
+    const twDesc = document.querySelector('meta[name="twitter:description"]');
+    if (twDesc && site.description) twDesc.setAttribute('content', site.description);
 }
 
 function renderNav(nav) {
@@ -563,6 +594,24 @@ function renderFAQ(faq) {
     if (!faq) return;
     const h2 = document.querySelector('#faq .section-header h2');
     if (h2 && faq.sectionTitle) h2.textContent = faq.sectionTitle;
+
+    // Update FAQPage schema
+    const faqSchema = document.getElementById('faqSchema');
+    if (faqSchema && faq.items) {
+        const schema = {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faq.items.map(item => ({
+                "@type": "Question",
+                "name": item.question,
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": item.answer
+                }
+            }))
+        };
+        faqSchema.textContent = JSON.stringify(schema, null, 2);
+    }
 
     const list = document.querySelector('.faq-list');
     if (list && faq.items) {

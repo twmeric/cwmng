@@ -9,6 +9,7 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="canonical" href="https://cwmng.jkdcoding.com/">
+    <link rel="alternate" hreflang="x-default" href="https://cwmng.jkdcoding.com/">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#1E3A8A">
     <noscript><style>.reveal { opacity: 1 !important; transform: none !important; }</style></noscript>
@@ -17,6 +18,8 @@
     <meta property="og:title" content="香港支付閘道 | 駿匯聯 C&W Management | 銀聯商務官方代理">
     <meta property="og:description" content="駿匯聯 C&W Management 是銀聯商務香港官方代理，提供比 Xtripe / XayPal 更優惠的線上支付閘道。本地信用卡費率低至 2.6%，AI 智能客服 7x24 待命，支援銀聯卡、微信支付、支付寶及 FPS 轉數快。">
     <meta property="og:image" content="https://cwmng.jkdcoding.com/images/logo.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:url" content="https://cwmng.jkdcoding.com/">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="zh_HK">
@@ -64,6 +67,54 @@
       },
       "sameAs": [
         "https://www.cwmanagement.com.hk"
+      ]
+    }
+    </script>
+    <script type="application/ld+json" id="faqSchema">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "開戶需要什麼文件？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "一般只需提供香港公司註冊證（CI）、商業登記證（BR）及最近三個月的銀行月結單即可。我們的專員會在收到文件後 1-2 個工作天內完成初審。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "資金多久到帳？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "我們提供 T+1 每日自動結算服務。交易成功後，資金將於下一個工作日直接匯入你的指定香港銀行帳戶，資金周轉更高效。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "支援哪些平台？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "我們原生支援 Shopify、WooCommerce、OpenCart 等主流電商平台，同時提供完善的自有 API 文件，讓開發者可以輕鬆整合到任何網站或手機應用程式。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "如何處理退款？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "商戶可透過管理後台進行一鍵退款操作，款項將原路退回至消費者的付款帳戶，且我們不會收取任何額外的退款手續費。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "交易安全嗎？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "我們的系統通過 PCI DSS Level 1 最高級別安全認證，並全面支援 3D Secure 2.0 驗證，配合 256 位 SSL 加密傳輸，全方位保障每一筆交易安全。"
+          }
+        }
       ]
     }
     </script>
@@ -130,9 +181,9 @@
             <div class="hero-visual reveal delay-1">
                 <div class="hero-illustration">
                     <div class="hero-slider">
-                        <img src="images/textless/216808905A.png" alt="邊行都啱！" class="hero-slide active">
-                        <img src="images/textless/216808905C.png" alt="你仲諗咩！" class="hero-slide">
-                        <img src="images/textless/216808905B.png" alt="收咁貴！" class="hero-slide">
+                        <img src="images/textless/216808905A.png" alt="邊行都啱！" class="hero-slide active" fetchpriority="high" width="400" height="400">
+                        <img src="images/textless/216808905C.png" alt="你仲諗咩！" class="hero-slide" fetchpriority="low" loading="lazy" width="400" height="400">
+                        <img src="images/textless/216808905B.png" alt="收咁貴！" class="hero-slide" fetchpriority="low" loading="lazy" width="400" height="400">
                     </div>
                     <div class="hero-glow"></div>
                     <div class="hero-spark spark-1"><i class="ph-fill ph-star"></i></div>
@@ -143,6 +194,11 @@
                     <div class="hero-burst b1"></div>
                     <div class="hero-burst b2"></div>
                     <div class="hero-burst b3"></div>
+                    <div class="hero-dots" id="heroDots">
+                        <button data-slide="0" class="active" aria-label="Slide 1"></button>
+                        <button data-slide="1" aria-label="Slide 2"></button>
+                        <button data-slide="2" aria-label="Slide 3"></button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -178,7 +234,7 @@
             <div class="problem-grid">
                 <div class="problem-card reveal delay-1">
                     <div class="card-art">
-                        <img src="images/textless/190514290.png" alt="利潤被層層費用壓垮" class="card-illustration">
+                        <img src="images/textless/190514290.png" alt="利潤被層層費用壓垮" class="card-illustration" loading="lazy" decoding="async" width="300" height="300">
                     </div>
                     <div class="problem-icon">💸</div>
                     <h3>每筆交易的手續費，月尾就疊成一座山，把你的利潤壓到見底</h3>
@@ -190,7 +246,7 @@
                 </div>
                 <div class="problem-card reveal delay-2">
                     <div class="card-art">
-                        <img src="images/textless/230569377.png" alt="交易出問題，腦子一片空白，無計可施" class="card-illustration">
+                        <img src="images/textless/230569377.png" alt="交易出問題，腦子一片空白，無計可施" class="card-illustration" loading="lazy" decoding="async" width="300" height="300">
                     </div>
                     <div class="problem-icon">⏰</div>
                     <h3>交易出問題時，你只能夠一個人望天打掛</h3>
@@ -202,7 +258,7 @@
                 </div>
                 <div class="problem-card reveal delay-3">
                     <div class="card-art">
-                        <img src="images/textless/242460541.png" alt="內地市場遙遠如月球，缺一艘火箭" class="card-illustration">
+                        <img src="images/textless/242460541.png" alt="內地市場遙遠如月球，缺一艘火箭" class="card-illustration" loading="lazy" decoding="async" width="300" height="300">
                     </div>
                     <div class="problem-icon">🚫</div>
                     <h3>內地客戶想買卻付不了錢，市場就像月球一樣遙遠</h3>
@@ -358,7 +414,7 @@
                 <h2>3 步開通，今天正規申請，往後安心收款</h2>
             </div>
             <div class="process-hero reveal delay-1">
-                <img src="images/textless/242354730.png" alt="順暢的開通流程" class="process-img">
+                <img src="images/textless/242354730.png" alt="順暢的開通流程" class="process-img" loading="lazy" decoding="async" width="400" height="300">
             </div>
             <div class="process-grid">
                 <div class="process-step reveal delay-1">
@@ -459,7 +515,7 @@
         <div class="container">
             <div class="download-card reveal">
                 <div class="download-art">
-                    <img src="images/textless/134950753.png" alt="申請文件清單" class="download-img">
+                    <img src="images/textless/134950753.png" alt="申請文件清單" class="download-img" loading="lazy" decoding="async" width="240" height="240">
                 </div>
                 <div class="download-content">
                     <h3>準備開戶？先下載申請資料清單</h3>
@@ -563,7 +619,7 @@
     <section class="cta section-padding" id="contact">
         <div class="container cta-container reveal">
             <div class="cta-art">
-                <img src="images/textless/156545017.png" alt="滿意客戶" class="cta-img">
+                <img src="images/textless/156545017.png" alt="滿意客戶" class="cta-img" loading="lazy" decoding="async" width="320" height="320">
             </div>
             <h2>本月限定：免費獲得價值 $3,000 的 API 對接收費</h2>
             <p class="cta-subtitle">名額所剩無幾，額滿即恢復標準收費。立即鎖定你的專屬優惠，零風險開始：</p>
@@ -584,7 +640,7 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <img src="images/logo.png" alt="駿匯聯" class="footer-logo">
+                    <img src="images/logo.png" alt="駿匯聯" class="footer-logo" loading="lazy" decoding="async" width="120" height="40">
                     <p>駿匯聯有限公司 C&W Management Limited<br>Agency authorized by UnionPay Merchant Services (HK)</p>
                 </div>
                 <div class="footer-col">
@@ -617,7 +673,7 @@
                 <p>&copy; 2026 駿匯聯有限公司 C&W Management Limited. 銀聯商務香港官方代理.</p>
                 <p>
                     <a href="https://jkdcoding.com" target="_blank" class="powered-by">
-                        Powered by <img src="images/jkd-logo.png" alt="jkdcoding.com">
+                        Powered by <img src="images/jkd-logo.png" alt="jkdcoding.com" loading="lazy" decoding="async" width="80" height="18">
                     </a>
                     <span style="margin:0 0.5rem;">|</span>
                     <a href="#">隱私政策</a> | <a href="#">服務條款</a>
