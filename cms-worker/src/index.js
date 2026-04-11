@@ -721,7 +721,7 @@ function getDefaultCMSData() {
         },
       ],
       copyright: `© ${new Date().getFullYear()} 駿匯聯有限公司 C&W Management Limited. 銀聯商務香港官方代理.`,
-      poweredBy: "Powered by <a href='https://jkdcoding.com' target='_blank'><img src='images/jkd-logo.png' alt='jkdcoding.com' style='height:18px;width:auto;display:inline-block;vertical-align:middle;'></a>",
+      poweredBy: "Powered by <a href='https://jkdcoding.com' target='_blank'>JKD Coding</a>",
     },
     mediaLibrary: [
       { id: "media_1", name: "駿匯聯 Logo", url: "images/logo.png", type: "image", alt: "駿匯聯 C&W Management Logo" },
