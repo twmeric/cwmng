@@ -256,12 +256,18 @@ function renderNav(nav) {
     if (!nav) return;
     const navLinks = document.getElementById('navLinks');
     if (navLinks && nav.items) {
-        const ctaLi = navLinks.querySelector('li:last-child');
-        navLinks.innerHTML = nav.items.map(item => `<li><a href="${item.href || '#'}">${item.text}</a></li>`).join('') + (ctaLi ? ctaLi.outerHTML : '');
+        const items = Array.from(navLinks.querySelectorAll('li'));
+        const ctaLi = items.find(li => li.querySelector('.btn-primary'));
+        const themeLi = items.find(li => li.querySelector('#themeToggle'));
+        navLinks.innerHTML = nav.items.map(item => `<li><a href="${item.href || '#'}">${item.text}</a></li>`).join('')
+            + (ctaLi ? ctaLi.outerHTML : '')
+            + (themeLi ? themeLi.outerHTML : '');
         if (nav.cta) {
-            const newCtaA = navLinks.querySelector('li:last-child a');
+            const newCtaA = navLinks.querySelector('.btn-primary');
             if (newCtaA) newCtaA.textContent = nav.cta;
         }
+        // Re-bind theme toggle after innerHTML rebuild
+        initTheme();
     }
 }
 
