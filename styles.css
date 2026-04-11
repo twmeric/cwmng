@@ -137,7 +137,21 @@ body {
             drop-shadow(-1px -1px 0 rgba(255,255,255,0.95))
             drop-shadow(1px -1px 0 rgba(255,255,255,0.95))
             drop-shadow(-1px 1px 0 rgba(255,255,255,0.95))
-            drop-shadow(0 0 10px rgba(212,168,83,0.55));
+            drop-shadow(0 0 12px rgba(234,179,8,0.65))
+            drop-shadow(0 0 26px rgba(250,204,21,0.4));
+}
+[data-theme="dark"] .footer-brand:hover .footer-logo {
+    filter: brightness(1.25)
+            drop-shadow(1px 0 0 rgba(255,255,255,0.95))
+            drop-shadow(-1px 0 0 rgba(255,255,255,0.95))
+            drop-shadow(0 1px 0 rgba(255,255,255,0.95))
+            drop-shadow(0 -1px 0 rgba(255,255,255,0.95))
+            drop-shadow(1px 1px 0 rgba(255,255,255,0.95))
+            drop-shadow(-1px -1px 0 rgba(255,255,255,0.95))
+            drop-shadow(1px -1px 0 rgba(255,255,255,0.95))
+            drop-shadow(-1px 1px 0 rgba(255,255,255,0.95))
+            drop-shadow(0 0 16px rgba(234,179,8,0.8))
+            drop-shadow(0 0 32px rgba(250,204,21,0.55));
 }
 
 .nav-links {
@@ -683,12 +697,6 @@ body {
 .footer-logo { height: 42px; width: auto; object-fit: contain; margin-bottom: 1rem; transition: transform 0.4s ease, filter 0.4s ease; }
 .footer-brand:hover .footer-logo { transform: scale(1.06); }
 
-[data-theme="dark"] .footer-logo {
-    filter: brightness(1.15) drop-shadow(0 0 10px rgba(37,99,235,0.45)) drop-shadow(0 0 18px rgba(212,168,83,0.25));
-}
-[data-theme="dark"] .footer-brand:hover .footer-logo {
-    filter: brightness(1.25) drop-shadow(0 0 14px rgba(37,99,235,0.55)) drop-shadow(0 0 24px rgba(212,168,83,0.35));
-}
 .footer-brand p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.7; }
 .footer-col h4 { font-size: 1rem; font-weight: 700; margin-bottom: 1.125rem; color: var(--text-primary); letter-spacing: 0.01em; }
 .footer-col ul { list-style: none; }
