@@ -586,6 +586,7 @@
                     ${inputRow('顯示電話', 'site.phoneDisplay')}
                     ${inputRow('電郵地址', 'site.email', 'email')}
                 </div>
+                ${inputRow('WhatsApp 預設訊息', 'site.whatsappDefaultMessage')}
                 ${inputRow('網站描述 (SEO)', 'site.description', 'textarea')}
                 <div class="flex justify-end pt-2">
                     <button onclick="saveCMSFromForm()" class="px-5 py-2 rounded-lg gold-btn font-bold transition"><i class="fas fa-save"></i> 儲存變更</button>
@@ -1274,20 +1275,42 @@
             list.innerHTML = filtered.map(iq => `
                 <div class="inquiry-card bg-card border border-theme rounded-xl p-5">
                     <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
-                        <div class="flex-1 space-y-2">
+                        <div class="flex-1 space-y-3">
                             <div class="flex items-center gap-3 flex-wrap">
-                                <h3 class="font-bold text-lg text-main">${esc(iq.name)}</h3>
+                                <h3 class="font-bold text-lg text-main">${esc(iq.phone || '未留電話')}</h3>
                                 <span class="px-2 py-0.5 rounded-full text-xs font-medium ${statusClass(iq.status)}">${statusText(iq.status)}</span>
                                 <span class="text-xs text-muted">${fmtTime(iq.submittedAt)}</span>
-                                ${iq.interest ? `<span class="text-xs px-2 py-0.5 rounded bg-[var(--bg-hover)] border border-theme text-sub">${esc(iq.interest)}</span>` : ''}
                             </div>
-                            <div class="grid md:grid-cols-2 gap-2 text-sm text-sub">
-                                <div class="flex items-center gap-2"><i class="fas fa-phone text-[var(--gold)]"></i> ${esc(iq.phone)}</div>
-                                ${iq.email ? `<div class="flex items-center gap-2"><i class="fas fa-envelope text-[var(--gold)]"></i> ${esc(iq.email)}</div>` : ''}
-                                ${iq.company ? `<div class="flex items-center gap-2"><i class="fas fa-building text-[var(--gold)]"></i> ${esc(iq.company)}</div>` : ''}
-                                ${iq.monthlyRevenue ? `<div class="flex items-center gap-2"><i class="fas fa-coins text-[var(--gold)]"></i> ${esc(iq.monthlyRevenue)}</div>` : ''}
+                            <div class="grid md:grid-cols-2 gap-3 text-sm">
+                                <div>
+                                    <label class="block text-xs text-sub mb-1">稱呼</label>
+                                    <input type="text" value="${esc(iq.name||'')}" onchange="updateInquiryField('${iq.id}', 'name', this.value)" class="w-full px-3 py-2 rounded-lg input-theme text-sm outline-none focus:ring-2 focus:ring-[var(--gold)]" placeholder="客戶稱呼">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-sub mb-1">WhatsApp 號碼</label>
+                                    <input type="text" value="${esc(iq.phone||'')}" onchange="updateInquiryField('${iq.id}', 'phone', this.value)" class="w-full px-3 py-2 rounded-lg input-theme text-sm outline-none focus:ring-2 focus:ring-[var(--gold)]" placeholder="WhatsApp 號碼">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-sub mb-1">電郵</label>
+                                    <input type="email" value="${esc(iq.email||'')}" onchange="updateInquiryField('${iq.id}', 'email', this.value)" class="w-full px-3 py-2 rounded-lg input-theme text-sm outline-none focus:ring-2 focus:ring-[var(--gold)]" placeholder="電郵地址">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-sub mb-1">公司</label>
+                                    <input type="text" value="${esc(iq.company||'')}" onchange="updateInquiryField('${iq.id}', 'company', this.value)" class="w-full px-3 py-2 rounded-lg input-theme text-sm outline-none focus:ring-2 focus:ring-[var(--gold)]" placeholder="公司名稱">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-sub mb-1">月營業額</label>
+                                    <input type="text" value="${esc(iq.monthlyRevenue||'')}" onchange="updateInquiryField('${iq.id}', 'monthlyRevenue', this.value)" class="w-full px-3 py-2 rounded-lg input-theme text-sm outline-none focus:ring-2 focus:ring-[var(--gold)]" placeholder="月營業額">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-sub mb-1">查詢類型</label>
+                                    <input type="text" value="${esc(iq.interest||'')}" onchange="updateInquiryField('${iq.id}', 'interest', this.value)" class="w-full px-3 py-2 rounded-lg input-theme text-sm outline-none focus:ring-2 focus:ring-[var(--gold)]" placeholder="查詢類型">
+                                </div>
                             </div>
-                            ${iq.message ? `<div class="text-sm text-main bg-[var(--bg-hover)] border border-theme rounded-lg p-3">${esc(iq.message)}</div>` : ''}
+                            <div>
+                                <label class="block text-xs text-sub mb-1">訊息 / 備註</label>
+                                <textarea onchange="updateInquiryField('${iq.id}', 'message', this.value)" rows="2" class="w-full px-3 py-2 rounded-lg input-theme text-sm outline-none focus:ring-2 focus:ring-[var(--gold)] resize-none" placeholder="客戶訊息或 admin 備註...">${esc(iq.message||'')}</textarea>
+                            </div>
                         </div>
                         <div class="lg:w-64 space-y-3">
                             <div>
@@ -1300,7 +1323,7 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs text-sub mb-1">備註</label>
+                                <label class="block text-xs text-sub mb-1">內部備註</label>
                                 <textarea onchange="updateInquiryNotes('${iq.id}', this.value)" rows="2" class="w-full px-3 py-2 rounded-lg input-theme text-sm outline-none focus:ring-2 focus:ring-[var(--gold)] resize-none" placeholder="輸入備註...">${esc(iq.notes||'')}</textarea>
                             </div>
                             <a href="https://wa.me/${(iq.phone||'').replace(/\D/g,'')}" target="_blank" class="flex items-center justify-center gap-2 w-full px-3 py-2 rounded-lg text-sm font-medium text-white" style="background: #16a34a;">
@@ -1311,6 +1334,7 @@
                 </div>
             `).join('');
         }
+        async function updateInquiryField(id, field, value) { await updateInquiry(id, { [field]: value }); }
         async function updateInquiryStatus(id, status) { await updateInquiry(id, { status }); }
         async function updateInquiryNotes(id, notes) { await updateInquiry(id, { notes }); }
         async function updateInquiry(id, fields) {

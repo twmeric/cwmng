@@ -27,5 +27,3 @@ build/
 *.tmp
 *.bak
 
-# Large source image sets not needed for web deployment
-images/jamestyle/

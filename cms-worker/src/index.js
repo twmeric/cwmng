@@ -185,9 +185,9 @@ async function saveCMSData(request, env, corsHeaders) {
 async function saveInquiry(request, env, corsHeaders) {
   const data = await request.json();
 
-  // 驗證必填
-  if (!data.name || !data.phone) {
-    return jsonResponse({ success: false, error: "姓名和電話為必填項" }, 400, corsHeaders);
+  // 驗證必填（只需電話號碼）
+  if (!data.phone) {
+    return jsonResponse({ success: false, error: "電話為必填項" }, 400, corsHeaders);
   }
 
   const inquiryId = `inquiry_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -242,7 +242,7 @@ async function updateInquiry(request, env, corsHeaders) {
     return jsonResponse({ success: false, error: auth.error }, 401, corsHeaders);
   }
 
-  const { id, status, notes } = body;
+  const { id, status, notes, name, email, company, monthlyRevenue, phone, interest, message } = body;
   if (!id) {
     return jsonResponse({ success: false, error: "Inquiry ID is required" }, 400, corsHeaders);
   }
@@ -253,8 +253,15 @@ async function updateInquiry(request, env, corsHeaders) {
   }
 
   const inquiry = JSON.parse(existing);
-  if (status) inquiry.status = status;
+  if (status !== undefined) inquiry.status = status;
   if (notes !== undefined) inquiry.notes = notes;
+  if (name !== undefined) inquiry.name = name;
+  if (email !== undefined) inquiry.email = email;
+  if (company !== undefined) inquiry.company = company;
+  if (monthlyRevenue !== undefined) inquiry.monthlyRevenue = monthlyRevenue;
+  if (phone !== undefined) inquiry.phone = phone;
+  if (interest !== undefined) inquiry.interest = interest;
+  if (message !== undefined) inquiry.message = message;
   inquiry.updatedAt = new Date().toISOString();
 
   await env.CMS_DATA.put(id, JSON.stringify(inquiry));
@@ -432,6 +439,7 @@ function getDefaultCMSData() {
       title: "香港支付閘道 | 駿匯聯 C&W Management | 銀聯商務官方代理",
       description: "駿匯聯 C&W Management 是銀聯商務香港官方代理，提供比 Xtripe / XayPal 更優惠的線上支付閘道。本地信用卡費率低至 2.6%，AI 智能客服 7x24 待命，支援銀聯卡、微信支付、支付寶及 FPS 轉數快。",
       whatsappNumber: "85251164453",
+      whatsappDefaultMessage: "你好，我想了解駿匯聯的收款方案",
       phoneDisplay: "+852 3987 1078",
       email: "info@cwmanagement.com.hk",
     },

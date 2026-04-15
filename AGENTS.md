@@ -217,21 +217,81 @@ npx wrangler deploy
 CWMNG/
 ├── index.html              # 主頁（含 Modal 表單）
 ├── script.js               # CMS 動態載入 + Leads Capture + Analytics
-├── styles.css              # 樣式
-├── admin.html              # 管理後台
+├── styles.css              # 樣式（含 dark mode 變數與組件動畫）
+├── admin.html              # 管理後台（分段式表單 + JSON 進階編輯）
 ├── merchant-checklist.html # 申請清單頁面
+├── privacy-policy.html     # 隱私政策
+├── terms-of-service.html   # 服務條款
 ├── cms-worker/             # Cloudflare Worker
-│   ├── src/index.js        # API 邏輯
+│   ├── src/index.js        # API 邏輯（含 deepMerge 保護）
 │   ├── wrangler.toml       # Worker 設定（KV ID 已填入）
 │   └── package.json
 ├── .github/workflows/
 │   └── deploy.yml          # 自動部署 Pipeline
 └── images/
-    └── textless/           # 透明背景 PNG 素材
+    ├── logo.png            # 主品牌 Logo
+    ├── jkd-logo.png        # merchant-checklist 頁尾 Powered By 圖示
+    └── textless/           # 透明背景 PNG 素材（已清理，僅保留線上使用檔案）
 ```
+
+## 圖片資產管理規範
+
+### 當前活躍圖片清單
+以下為**唯一**被代碼直接引用的圖片，其餘檔案已於 2026-04 清理移除：
+
+| 檔案 | 用途 |
+|------|------|
+| `images/logo.png` | Navbar / Footer / OG Image / merchant-checklist |
+| `images/jkd-logo.png` | merchant-checklist 頁尾 Powered By |
+| `images/textless/216808905.png` | Admin 後台 Logo/Avatar |
+| `images/textless/216808905A.png` | 吉祥物 A（媒體庫原始檔） |
+| `images/textless/216808905B.png` | 吉祥物 B（媒體庫原始檔） |
+| `images/textless/216808905C.png` | 吉祥物 C（媒體庫原始檔） |
+| `images/textless/216808905A-stroke.png` | Hero Slider（深色模式可讀） |
+| `images/textless/216808905B-stroke.png` | Hero Slider（深色模式可讀） |
+| `images/textless/216808905C-stroke.png` | Hero Slider（深色模式可讀） |
+| `images/textless/190514290-stroke.png` | Solutions 卡片插圖 |
+| `images/textless/230569377-stroke.png` | Solutions 卡片插圖 |
+| `images/textless/242460541-stroke.png` | Solutions 卡片插圖 |
+| `images/textless/242354730-stroke.png` | Process 區塊插圖 |
+| `images/textless/134950753-stroke.png` | Checklist 區塊插圖 |
+| `images/textless/156545017-stroke.png` | CTA 區塊插圖 |
+
+### `-stroke.png` 生成規範
+為了讓透明背景 PNG 在 dark mode 下仍可讀（黑色文字/線條不會融入深色背景），所有用於頁面的透明插圖都必須準備帶**白色描邊**的 `-stroke.png` 版本：
+- 白色 2-3px 外描邊
+- 檔名格式：`{original}-stroke.png`
+- 引用時優先使用 `-stroke.png`（HTML fallback 與 Worker `getDefaultCMSData()` 均需同步）
+
+### 已清理資產
+- `images/jamestyle/` — 約 150+ 張 WhatsApp 原始圖 dump 與亂碼檔名舊素材，已全數移除
+- `images/textless/` 中所有 `.jpg`、未使用 `.png`、WhatsApp `.jpeg` 檔案，已全數移除
+- `images/textless_raw/` — 空資料夾，已移除
 
 ## 修改須知
 - **純文字/價格修改**：登入 `admin.html` 修改 CMS 內容，無需重新部署 Pages。
 - **HTML/CSS/JS 結構變更**：修改後 push 到 `master`，GitHub Actions 會自動部署 Pages 與 Worker。
 - **新增圖片**：將圖片放入 `images/` 或 `images/textless/`，確保已加入 git index 後再 push。
 - **任何 CMS 相關修改**：務必遵循本文件「CMS 驅動網站開發 SOP」與「四點同步原則」。
+- **Dark Mode 插圖修改**：若替換透明 PNG，必須同時生成或更新 `-stroke.png` 版本，並同步 Worker / HTML / Admin 三處路徑。
+
+## WhatsApp CTA 與客戶查詢架構（2026-04 更新）
+
+### 前端 CTA 機制
+- **所有頁面 CTA 按鈕**（包括 `.open-modal` 與 `.open-checklist`）已統一改為 **WhatsApp deep link**。
+- 點擊後**不再彈出填表 Modal**，直接開啟 WhatsApp 對話。
+- **Button 文字即為預設訊息**：`script.js` 會自動將按鈕的 `textContent` 編碼後帶入 `https://wa.me/{號碼}?text={訊息}`。
+- WhatsApp 號碼與預設訊息在 CMS `site.whatsappNumber` / `site.whatsappDefaultMessage` 中管理，Admin 後台可直接修改。
+
+### Inquiry（客戶查詢）簡化
+- 由於前端不再透過表單收集詳細資料，**Inquiry 系統以「WhatsApp 號碼」為唯一核心欄位**。
+- `saveInquiry` API 已放寬驗證：`phone` 為必填，`name` 改為 optional。
+- Admin 後台的客戶查詢卡片已改為**可編輯表單**：admin 可在後台直接補充 `name`、`email`、`company`、`monthlyRevenue`、`interest`、`message` 與 `notes`。
+- `updateInquiry` API 已擴展為支援更新上述所有欄位。
+
+### 修改 CTA 時的四點同步
+若新增或修改任何頁面區塊的 CTA 按鈕，請務必同步：
+1. `cms-worker/src/index.js` → `getDefaultCMSData()` 中對應區塊的 `cta` 文字
+2. `admin.html` → 對應區塊的表單欄位
+3. `index.html` → fallback 按鈕文字與預設 WhatsApp URL
+4. `script.js` → 若為動態渲染區塊（如 `renderPricing`、`renderFAQ`），需確保生成 `.wa-cta` 與 `buildWhatsAppUrl(...)`

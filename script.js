@@ -12,6 +12,24 @@ function getWhatsAppNumber() {
     return cmsCache?.site?.whatsappNumber || '85251164453';
 }
 
+function buildWhatsAppUrl(text) {
+    const number = getWhatsAppNumber();
+    const msg = (text || cmsCache?.site?.whatsappDefaultMessage || '你好，我想了解駿匯聯的收款方案').trim();
+    return 'https://wa.me/' + number + '?text=' + encodeURIComponent(msg);
+}
+
+function bindWhatsAppLinks() {
+    const selectors = '.wa-cta, .open-modal, .open-checklist';
+    document.querySelectorAll(selectors).forEach(el => {
+        const text = el.textContent.trim();
+        el.setAttribute('href', buildWhatsAppUrl(text));
+        el.setAttribute('target', '_blank');
+        el.addEventListener('click', () => {
+            trackEvent('whatsapp_click', { label: text || 'wa_cta' });
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     initTheme();
     initBaseInteractions();
@@ -157,8 +175,8 @@ function initBaseInteractions() {
     }, { threshold: 0.5 });
     counters.forEach(c => counterObserver.observe(c));
 
-    // Modals
-    initModals();
+    // WhatsApp Links
+    bindWhatsAppLinks();
 
     // FAQ Accordion
     const faqItems = document.querySelectorAll('.faq-item');
@@ -232,7 +250,7 @@ function renderCMS(data) {
     renderCTA(data.cta);
     renderFooter(data.footer);
     renderStickyCta(data.stickyCta);
-    renderModals(data.modals);
+    bindWhatsAppLinks();
 }
 
 function renderSiteMeta(site) {
@@ -278,52 +296,10 @@ function renderStickyCta(sticky) {
         const span = container.querySelector('span');
         const btn = container.querySelector('a');
         if (span && sticky.text) span.textContent = sticky.text;
-        if (btn && sticky.button) btn.textContent = sticky.button;
-    }
-}
-
-function renderModals(modals) {
-    if (!modals) return;
-    // Re-render lead modal content if exists
-    const leadModal = document.getElementById('leadModal');
-    if (leadModal && modals.lead) {
-        const h3 = leadModal.querySelector('h3');
-        const desc = leadModal.querySelector('p');
-        const btn = leadModal.querySelector('form button[type="submit"]');
-        const note = leadModal.querySelector('.modal-note');
-        if (h3) h3.textContent = modals.lead.title;
-        if (desc) desc.textContent = modals.lead.description;
-        if (btn) btn.textContent = modals.lead.submitButton;
-        if (note) note.textContent = modals.lead.note;
-        const inputs = leadModal.querySelectorAll('input, select');
-        inputs.forEach(el => {
-            const ph = modals.lead.placeholders && modals.lead.placeholders[el.name];
-            if (ph) el.setAttribute('placeholder', ph);
-        });
-        const select = leadModal.querySelector('select[name="monthlyRevenue"]');
-        if (select && modals.lead.revenueOptions) {
-            select.innerHTML = modals.lead.revenueOptions.map(opt => `<option value="${opt.value}">${opt.label}</option>`).join('');
+        if (btn && sticky.button) {
+            btn.textContent = sticky.button;
+            btn.setAttribute('href', buildWhatsAppUrl(sticky.button));
         }
-    }
-    // Re-render checklist modal content if exists
-    const checklistModal = document.getElementById('checklistModal');
-    if (checklistModal && modals.checklist) {
-        const h3 = checklistModal.querySelector('h3');
-        const desc = checklistModal.querySelector('p');
-        const btn = checklistModal.querySelector('form button[type="submit"]');
-        const note = checklistModal.querySelector('.modal-note');
-        if (h3) h3.textContent = modals.checklist.title;
-        if (desc) desc.textContent = modals.checklist.description;
-        if (btn) {
-            const hasIcon = modals.checklist.submitButton && modals.checklist.submitButton.includes('WhatsApp');
-            btn.innerHTML = hasIcon ? `<i class="ph ph-whatsapp-logo"></i> ${modals.checklist.submitButton}` : modals.checklist.submitButton;
-        }
-        if (note) note.textContent = modals.checklist.note;
-        const inputs = checklistModal.querySelectorAll('input');
-        inputs.forEach(el => {
-            const ph = modals.checklist.placeholders && modals.checklist.placeholders[el.name];
-            if (ph) el.setAttribute('placeholder', ph);
-        });
     }
 }
 
@@ -386,9 +362,10 @@ function renderQuickLinks(links) {
     const grid = document.querySelector('.quick-links-grid');
     if (!grid) return;
     grid.innerHTML = links.map(l => {
-        const href = l.type === 'modal_checklist' ? '#checklist' : (l.href || '#');
-        const cls = l.type === 'modal_checklist' ? 'open-checklist' : (href.startsWith('http') ? '' : 'open-modal');
-        const target = href.startsWith('http') ? 'target="_blank"' : '';
+        const isExternal = l.href && l.href.startsWith('http');
+        const href = isExternal ? l.href : buildWhatsAppUrl(l.text);
+        const cls = isExternal ? '' : 'wa-cta';
+        const target = 'target="_blank"';
         return `<a href="${href}" ${target} class="quick-link-card ${cls}">
             <i class="ph ${l.icon}"></i>
             <span>${l.text}</span>
@@ -465,7 +442,7 @@ function renderSolutions(solutions) {
                         <span class="price-unit">${item.priceUnit}</span>
                         ${item.priceNote ? `<small>${item.priceNote}</small>` : ''}
                     </div>
-                    <a href="#contact" class="btn btn-primary btn-block open-modal">${item.cta}</a>
+                    <a href="${buildWhatsAppUrl(item.cta)}" class="btn btn-primary btn-block wa-cta" target="_blank">${item.cta}</a>
                 </div>
             </div>
         `).join('');
@@ -719,7 +696,7 @@ function renderFAQ(faq) {
     if (list && faq.items) {
         list.innerHTML = faq.items.map((item, i) => {
             const cta1 = item.ctaText
-                ? `<p style="margin-top:0.75rem;"><a href="${item.ctaLink || '#contact'}" class="text-accent ${item.ctaLink === '#checklist' ? 'open-checklist' : 'open-modal'}" style="font-weight:600;">${item.ctaText}</a></p>`
+                ? `<p style="margin-top:0.75rem;"><a href="${buildWhatsAppUrl(item.ctaText)}" class="text-accent wa-cta" style="font-weight:600;" target="_blank">${item.ctaText}</a></p>`
                 : '';
             const cta2 = item.ctaText2
                 ? `<p style="margin-top:0.5rem;"><a href="${item.ctaLink2 || '#contact'}" class="text-accent" style="font-weight:600;" target="_blank">${item.ctaText2}</a></p>`
@@ -798,9 +775,11 @@ function renderFooter(footer) {
             let linksHtml = '';
             if (col.links) {
                 linksHtml = '<ul>' + col.links.map(l => {
-                    const target = l.href?.startsWith('http') ? 'target="_blank"' : '';
-                    const cls = l.type === 'modal_checklist' ? 'open-checklist' : '';
-                    return `<li><a href="${l.href || '#'}" ${target} class="${cls}">${l.text}</a></li>`;
+                    const isExternal = l.href && l.href.startsWith('http');
+                    const href = isExternal ? l.href : buildWhatsAppUrl(l.text);
+                    const target = 'target="_blank"';
+                    const cls = isExternal ? '' : 'wa-cta';
+                    return `<li><a href="${href}" ${target} class="${cls}">${l.text}</a></li>`;
                 }).join('') + '</ul>';
             }
             if (col.contactLines) {
@@ -885,152 +864,8 @@ function initPricingCalculator() {
 }
 
 /* ========================================
-   Modals & Leads Capture
+   WhatsApp CTA Helpers
    ======================================== */
-function initModals() {
-    // Ensure modals exist with expanded fields
-    ensureLeadModal();
-    ensureChecklistModal();
-    bindModalTriggers();
-
-    // Bind lead modal close & submit (once)
-    const leadModal = document.getElementById('leadModal');
-    const closeLead = document.getElementById('closeModal');
-    closeLead?.addEventListener('click', hideLeadModal);
-    leadModal?.addEventListener('click', (e) => { if (e.target === leadModal) hideLeadModal(); });
-    const leadForm = document.getElementById('leadForm');
-    leadForm?.addEventListener('submit', (e) => handleFormSubmit(e, 'lead'));
-
-    // Bind checklist modal close & submit (once)
-    const checklistModal = document.getElementById('checklistModal');
-    const closeChecklist = document.getElementById('closeChecklistModal');
-    closeChecklist?.addEventListener('click', hideChecklistModal);
-    checklistModal?.addEventListener('click', (e) => { if (e.target === checklistModal) hideChecklistModal(); });
-    const checklistForm = document.getElementById('checklistForm');
-    checklistForm?.addEventListener('submit', (e) => handleFormSubmit(e, 'checklist'));
-}
-
-function ensureLeadModal() {
-    if (document.getElementById('leadModal')) return;
-    const m = cmsCache?.modals?.lead || {};
-    const div = document.createElement('div');
-    div.id = 'leadModal';
-    div.className = 'modal-overlay';
-    div.innerHTML = `
-        <div class="modal-content">
-            <button class="modal-close" id="closeModal" aria-label="Close">&times;</button>
-            <h3>${m.title || '獲取專屬優惠報價'}</h3>
-            <p>${m.description || '留下資料，我們的支付顧問會在 5 分鐘內透過 WhatsApp 聯絡你。'}</p>
-            <form id="leadForm">
-                <div class="input-group"><input type="text" name="name" placeholder="${m.placeholders?.name || '稱呼（例如：陳先生）'}" required></div>
-                <div class="input-group"><input type="tel" name="phone" placeholder="${m.placeholders?.phone || 'WhatsApp 電話號碼'}" required></div>
-                <div class="input-group"><input type="email" name="email" placeholder="${m.placeholders?.email || '電郵地址'}"></div>
-                <div class="input-group"><input type="text" name="company" placeholder="${m.placeholders?.company || '公司名稱（選填）'}"></div>
-                <div class="input-group">
-                    <select name="monthlyRevenue">
-                        ${(m.revenueOptions || [
-                            { value: '', label: '每月交易額（選填）' },
-                            { value: '少於 $50,000', label: '少於 $50,000' },
-                            { value: '$50,000 - $200,000', label: '$50,000 - $200,000' },
-                            { value: '$200,000 - $500,000', label: '$200,000 - $500,000' },
-                            { value: '$500,000 以上', label: '$500,000 以上' }
-                        ]).map(opt => `<option value="${opt.value}">${opt.label}</option>`).join('')}
-                    </select>
-                </div>
-                <input type="hidden" name="interest" value="一般查詢">
-                <button type="submit" class="btn btn-primary btn-block">${m.submitButton || '開始對話'}</button>
-            </form>
-            <p class="modal-note">${m.note || '無需綁約，隨時可取消。'}</p>
-        </div>
-    `;
-    document.body.appendChild(div);
-}
-
-function ensureChecklistModal() {
-    if (document.getElementById('checklistModal')) return;
-    const m = cmsCache?.modals?.checklist || {};
-    const btnText = m.submitButton || '免費索取清單';
-    const div = document.createElement('div');
-    div.id = 'checklistModal';
-    div.className = 'modal-overlay';
-    div.innerHTML = `
-        <div class="modal-content">
-            <button class="modal-close" id="closeChecklistModal" aria-label="Close">&times;</button>
-            <h3>${m.title || '免費索取《商戶申請文件清單》'}</h3>
-            <p>${m.description || '請留下 WhatsApp 號碼，我們會立即將文件清單傳送給你，並解答任何開戶疑問。'}</p>
-            <form id="checklistForm">
-                <div class="input-group"><input type="text" name="name" placeholder="${m.placeholders?.name || '稱呼（例如：陳先生）'}" required></div>
-                <div class="input-group"><input type="tel" name="phone" placeholder="${m.placeholders?.phone || 'WhatsApp 電話號碼'}" required></div>
-                <div class="input-group"><input type="email" name="email" placeholder="${m.placeholders?.email || '電郵地址（選填）'}"></div>
-                <div class="input-group"><input type="text" name="company" placeholder="${m.placeholders?.company || '公司名稱（選填）'}"></div>
-                <input type="hidden" name="interest" value="申請清單">
-                <button type="submit" class="btn btn-primary btn-block"><i class="ph ph-whatsapp-logo"></i> ${btnText}</button>
-            </form>
-            <p class="modal-note">${m.note || '資料只會用於發送清單及跟進，絕不外洩。'}</p>
-        </div>
-    `;
-    document.body.appendChild(div);
-}
-
-function bindModalTriggers() {
-    // Lead modal triggers (.open-modal)
-    document.querySelectorAll('.open-modal').forEach(btn => {
-        btn.removeEventListener('click', openLeadModalHandler);
-        btn.addEventListener('click', openLeadModalHandler);
-    });
-    // Checklist modal triggers (.open-checklist)
-    document.querySelectorAll('.open-checklist').forEach(btn => {
-        btn.removeEventListener('click', openChecklistModalHandler);
-        btn.addEventListener('click', openChecklistModalHandler);
-    });
-
-    document.removeEventListener('keydown', escapeKeyHandler);
-    document.addEventListener('keydown', escapeKeyHandler);
-}
-
-function openLeadModalHandler(e) {
-    e.preventDefault();
-    const modal = document.getElementById('leadModal');
-    if (modal) {
-        modal.classList.add('open');
-        document.body.style.overflow = 'hidden';
-        trackEvent('modal_open', { label: 'lead_modal' });
-    }
-}
-
-function openChecklistModalHandler(e) {
-    e.preventDefault();
-    const modal = document.getElementById('checklistModal');
-    if (modal) {
-        modal.classList.add('open');
-        document.body.style.overflow = 'hidden';
-        trackEvent('modal_open', { label: 'checklist_modal' });
-    }
-}
-
-function hideLeadModal() {
-    const modal = document.getElementById('leadModal');
-    if (modal) {
-        modal.classList.remove('open');
-        document.body.style.overflow = '';
-    }
-}
-
-function hideChecklistModal() {
-    const modal = document.getElementById('checklistModal');
-    if (modal) {
-        modal.classList.remove('open');
-        document.body.style.overflow = '';
-    }
-}
-
-function escapeKeyHandler(e) {
-    if (e.key === 'Escape') {
-        hideLeadModal();
-        hideChecklistModal();
-    }
-}
-
 function showToast(message, type = 'success') {
     let toast = document.getElementById('app-toast');
     if (!toast) {
@@ -1052,65 +887,6 @@ function validatePhone(phone) {
     return digits.length >= 8;
 }
 
-async function handleFormSubmit(e, type) {
-    e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-    const data = {
-        name: (formData.get('name') || '').trim(),
-        phone: (formData.get('phone') || '').trim(),
-        email: (formData.get('email') || '').trim(),
-        company: (formData.get('company') || '').trim(),
-        monthlyRevenue: (formData.get('monthlyRevenue') || '').trim(),
-        interest: (formData.get('interest') || '一般查詢').trim(),
-        message: '',
-        source: type === 'checklist' ? 'checklist_modal' : 'lead_modal'
-    };
-
-    if (!data.name || !data.phone) {
-        showToast('請填寫稱呼和電話號碼。', 'error');
-        return;
-    }
-    if (!validatePhone(data.phone)) {
-        showToast('請輸入有效的電話號碼（至少 8 位數字）。', 'error');
-        return;
-    }
-
-    trackEvent('lead_submit', { label: data.source });
-
-    // 1. Save to backend
-    let saved = false;
-    try {
-        const res = await fetch(API_BASE_URL + '/api/inquiries', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-        saved = res.ok;
-    } catch (err) {
-        console.error('[Inquiry Save]', err);
-    }
-
-    // 2. Show success toast, then redirect
-    showToast('資料已送出，即將為你轉到 WhatsApp…', 'success');
-
-    let msg = '';
-    if (type === 'checklist') {
-        msg = `你好，我是 ${data.name}。\n電話： ${data.phone}${data.email ? '\n電郵： ' + data.email : ''}${data.company ? '\n公司： ' + data.company : ''}\n\n我想索取商戶申請文件清單，謝謝。`;
-    } else {
-        msg = `你好，我是 ${data.name}。\n電話： ${data.phone}${data.email ? '\n電郵： ' + data.email : ''}${data.company ? '\n公司： ' + data.company : ''}${data.monthlyRevenue ? '\n月營業額約： ' + data.monthlyRevenue : ''}\n\n我有興趣了解駿匯聯的收款方案，請聯絡我，謝謝。`;
-    }
-    const url = 'https://wa.me/' + getWhatsAppNumber() + '?text=' + encodeURIComponent(msg);
-
-    setTimeout(() => {
-        window.open(url, '_blank');
-        // 3. Close modal & reset
-        if (type === 'checklist') hideChecklistModal();
-        else hideLeadModal();
-        form.reset();
-    }, 1200);
-}
-
 /* ========================================
    Calculator
    ======================================== */
@@ -1130,16 +906,14 @@ function trackPageView() {
 function trackEvent(type, data) {
     try {
         if (typeof gtag === 'function') {
-            if (type === 'modal_open') gtag('event', 'modal_open', { event_category: 'engagement', event_label: data.label });
-            if (type === 'lead_submit') gtag('event', 'lead_submit', { event_category: 'conversion', event_label: data.label });
+            if (type === 'whatsapp_click') gtag('event', 'whatsapp_click', { event_category: 'engagement', event_label: data.label });
         }
         if (typeof fbq === 'function') {
-            if (type === 'modal_open') fbq('track', 'Lead');
-            if (type === 'lead_submit') fbq('track', 'Contact');
+            if (type === 'whatsapp_click') fbq('track', 'Lead');
         }
     } catch (e) {}
     const payload = JSON.stringify({
-        type: type === 'lead_submit' ? 'form_submit' : 'click',
+        type: type === 'whatsapp_click' ? 'whatsapp_click' : 'click',
         element: data.label || type,
         page: location.pathname,
         value: data.label || '',
